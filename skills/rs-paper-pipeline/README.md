@@ -34,9 +34,18 @@ skills/rs-paper-pipeline/
 
 ## Setup
 
+### Linux / macOS
+
 ```bash
 cd skills/rs-paper-pipeline
 ./bootstrap.sh
+```
+
+### Windows PowerShell
+
+```powershell
+Set-Location skills/rs-paper-pipeline
+.\bootstrap.ps1
 ```
 
 Fill `.env` with at least:

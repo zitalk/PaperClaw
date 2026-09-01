@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Shared runtime configuration for the RS paper pipeline."""
+"""Shared runtime configuration for the personal PaperClaw pipeline."""
 
 from __future__ import annotations
 
@@ -95,6 +95,11 @@ def install_urllib_proxy() -> None:
         urllib.request.install_opener(urllib.request.build_opener(urllib.request.ProxyHandler(proxy_map)))
 
 
+def _resolve_root_relative_path(value: str, root_dir: Path) -> Path:
+    path = Path(value).expanduser()
+    return path if path.is_absolute() else (root_dir / path).resolve()
+
+
 @dataclass(frozen=True)
 class PipelineConfig:
     root_dir: Path
@@ -124,9 +129,9 @@ class PipelineConfig:
 
 
 def load_config() -> PipelineConfig:
-    github_repo = _env("RS_GITHUB_REPO", "thinson/RS-PaperClaw")
-    temp_dir = Path(_env("RS_TEMP_DIR", "/tmp")).expanduser()
+    github_repo = _env("RS_GITHUB_REPO", "zitalk/PaperClaw")
     root_dir, workspace_warning = resolve_workspace_root()
+    temp_dir = _resolve_root_relative_path(_env("RS_TEMP_DIR", "tmp"), root_dir)
     return PipelineConfig(
         root_dir=root_dir,
         scripts_dir=root_dir / "scripts",
@@ -148,9 +153,15 @@ def load_config() -> PipelineConfig:
         dingtalk_webhook=_env("DINGTALK_WEBHOOK"),
         raw_content_base=f"https://raw.githubusercontent.com/{github_repo}/main",
         arxiv_api=_env("ARXIV_API_URL", "https://export.arxiv.org/api/query"),
-        arxiv_user_agent=_env("ARXIV_USER_AGENT", f"RS-PaperClaw/1.0 (+https://github.com/{github_repo})"),
-        filter_keywords_path=Path(_env("RS_FILTER_KEYWORDS_FILE", str(root_dir / "scripts" / "config" / "filter_keywords.json"))).expanduser(),
-        filter_prompt_path=Path(_env("RS_FILTER_PROMPT_FILE", str(root_dir / "scripts" / "prompts" / "filter_cross_prompt.md"))).expanduser(),
+        arxiv_user_agent=_env("ARXIV_USER_AGENT", f"PaperClaw/1.0 (+https://github.com/{github_repo})"),
+        filter_keywords_path=_resolve_root_relative_path(
+            _env("RS_FILTER_KEYWORDS_FILE", "scripts/config/filter_keywords.json"),
+            root_dir,
+        ),
+        filter_prompt_path=_resolve_root_relative_path(
+            _env("RS_FILTER_PROMPT_FILE", "scripts/prompts/filter_cross_prompt.md"),
+            root_dir,
+        ),
         workspace_warning=workspace_warning,
     )
 

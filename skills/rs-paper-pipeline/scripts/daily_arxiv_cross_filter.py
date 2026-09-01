@@ -2,8 +2,8 @@
 from __future__ import annotations
 
 """
-从 arXiv 拉取今天+昨天提交的论文，先按遥感关键词 OR 初筛，
-再用 LLM 筛选“遥感 x 基础模型/计算机视觉/人工智能交叉”论文，
+从 arXiv 拉取今天+昨天提交的论文，先按个人研究方向关键词 OR 初筛，
+再用 LLM 筛选多模态视觉、显著目标检测、多视角跟踪和无人机视觉论文，
 最后去重（已存在于 GitHub issues 的 arXiv id）并调用现有流程更新/创建 issue。
 """
 

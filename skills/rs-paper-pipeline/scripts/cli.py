@@ -15,7 +15,7 @@ from pipeline_config import get_repo, load_config
 
 
 def build_parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(description="RS-PaperClaw pipeline CLI")
+    parser = argparse.ArgumentParser(description="Personal PaperClaw pipeline CLI")
     subparsers = parser.add_subparsers(dest="command", required=True)
 
     doctor_parser = subparsers.add_parser("doctor", help="检查运行环境")

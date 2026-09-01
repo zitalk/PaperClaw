@@ -3,7 +3,7 @@ from __future__ import annotations
 
 """
 工作日 09:05 自动执行：
-1) 抓取并筛选“当天”遥感xAI论文，生成/更新单篇 issue
+1) 抓取并筛选“当天”个人研究方向论文，生成/更新单篇 issue
 2) 生成当天日报 issue
 3) 推送日报到 Feishu 私聊
 """
@@ -11,10 +11,18 @@ from __future__ import annotations
 import os
 import json
 import time
-import fcntl
 import re
 import subprocess
+import sys
+import urllib.error
+import urllib.request
+from contextlib import contextmanager
 from datetime import datetime, timedelta, timezone
+
+if os.name == "nt":
+    import msvcrt
+else:
+    import fcntl
 
 from clients.github_ops import daily_report_file_exists, get_today_digest_issue
 from clients.notify_client import has_available_notify_channel, send_dingtalk_markdown, send_feishu_message
@@ -24,6 +32,7 @@ CONFIG = load_config()
 BEIJING_TZ = timezone(timedelta(hours=8))
 LOCK_FILE = CONFIG.memory_dir / "rs_daily_workday.lock"
 STATE_DIR = CONFIG.pipeline_state_dir
+PYTHON_BIN = sys.executable
 
 
 def _env_with_proxy() -> dict:
@@ -31,15 +40,61 @@ def _env_with_proxy() -> dict:
 
 
 def check_github_connectivity() -> bool:
-    cmd = [
-        "curl", "-s", "-o", "/dev/null", "-w", "%{http_code}",
+    headers = {
+        "Accept": "application/vnd.github+json",
+        "User-Agent": "PaperClaw-Local/1.0",
+    }
+    if CONFIG.github_token:
+        headers["Authorization"] = f"Bearer {CONFIG.github_token}"
+    request = urllib.request.Request(
         f"https://api.github.com/repos/{CONFIG.github_repo}",
-    ]
+        headers=headers,
+    )
     try:
-        out = subprocess.check_output(cmd, cwd=CONFIG.root_dir, env=_env_with_proxy(), timeout=20).decode().strip()
-        return out == "200"
-    except Exception:
+        proxy_url = os.environ.get("RS_PROXY_URL")
+        opener = urllib.request.build_opener(
+            urllib.request.ProxyHandler({"http": proxy_url, "https": proxy_url})
+            if proxy_url
+            else urllib.request.ProxyHandler()
+        )
+        with opener.open(request, timeout=20) as response:
+            return 200 <= response.status < 300
+    except (OSError, urllib.error.URLError):
         return False
+
+
+@contextmanager
+def _exclusive_lock(path):
+    """Acquire a non-blocking one-byte lock on Windows or a flock on Unix."""
+    path.parent.mkdir(parents=True, exist_ok=True)
+    lock_file = open(path, "a+b")
+    locked = False
+    try:
+        if os.name == "nt":
+            lock_file.seek(0, os.SEEK_END)
+            if lock_file.tell() == 0:
+                lock_file.write(b"\0")
+                lock_file.flush()
+            lock_file.seek(0)
+            try:
+                msvcrt.locking(lock_file.fileno(), msvcrt.LK_NBLCK, 1)
+            except OSError as exc:
+                raise RuntimeError("另一个 pipeline 正在运行，请稍后重试") from exc
+        else:
+            try:
+                fcntl.flock(lock_file.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
+            except BlockingIOError as exc:
+                raise RuntimeError("另一个 pipeline 正在运行，请稍后重试") from exc
+        locked = True
+        yield
+    finally:
+        if locked:
+            lock_file.seek(0)
+            if os.name == "nt":
+                msvcrt.locking(lock_file.fileno(), msvcrt.LK_UNLCK, 1)
+            else:
+                fcntl.flock(lock_file.fileno(), fcntl.LOCK_UN)
+        lock_file.close()
 
 
 def run(cmd: list[str], retries: int = 4):
@@ -244,7 +299,7 @@ def _build_daily_report_urls(date_str: str) -> tuple[str, str]:
 
 
 def _build_notify_message(date_str: str, stats_path: str, issue) -> tuple[str, str]:
-    title = f"遥感AI日报 {date_str}"
+    title = f"多模态视觉与无人机日报 {date_str}"
     stats = _load_stats(stats_path)
     selected_items = stats.get("selected_items") or []
     selected_count = stats.get("llm_selected_count")
@@ -404,7 +459,7 @@ def _process_date(date_str: str, notify: bool, force: bool = False):
     _run_step(
         date_str,
         "filter",
-        ["python3", "scripts/daily_arxiv_cross_filter.py", "--date", date_str, "--stats-out", stats_path],
+        [PYTHON_BIN, "scripts/daily_arxiv_cross_filter.py", "--date", date_str, "--stats-out", stats_path],
         ok_extra={"stats_path": stats_path},
         running_extra={"notify": notify},
     )
@@ -412,14 +467,14 @@ def _process_date(date_str: str, notify: bool, force: bool = False):
     _run_step(
         date_str,
         "digest",
-        ["python3", "scripts/daily_digest_llm_upgrade.py", "--date", date_str, "--stats-json", stats_path],
+        [PYTHON_BIN, "scripts/daily_digest_llm_upgrade.py", "--date", date_str, "--stats-json", stats_path],
     )
 
     _write_state(date_str, "sync", "running")
     max_sync_attempts = 3
     try:
         for attempt in range(1, max_sync_attempts + 1):
-            run(["python3", "scripts/sync_daily_reports_to_repo.py"])
+            run([PYTHON_BIN, "scripts/sync_daily_reports_to_repo.py"])
             if daily_report_file_exists(_get_repo(), date_str):
                 break
             if attempt < max_sync_attempts:
@@ -431,7 +486,7 @@ def _process_date(date_str: str, notify: bool, force: bool = False):
             "failed",
             {
                 "reason": _format_exc(exc),
-                "failed_command": "python3 scripts/sync_daily_reports_to_repo.py",
+                "failed_command": f"{PYTHON_BIN} scripts/sync_daily_reports_to_repo.py",
             },
         )
         raise
@@ -484,13 +539,7 @@ def main(target_date: str | None = None, notify: bool | None = None, force: bool
     if notify is None:
         notify = (target_date is None)
 
-    LOCK_FILE.parent.mkdir(parents=True, exist_ok=True)
-    with open(LOCK_FILE, "w", encoding="utf-8") as lf:
-        try:
-            fcntl.flock(lf.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
-        except BlockingIOError:
-            raise RuntimeError("另一个 pipeline 正在运行，请稍后重试")
-
+    with _exclusive_lock(LOCK_FILE):
         # 前置网络检查
         if not check_github_connectivity():
             for date_str in target_dates:

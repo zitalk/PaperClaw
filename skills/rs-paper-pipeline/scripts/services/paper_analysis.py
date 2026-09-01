@@ -134,7 +134,7 @@ def generate_tldr(title: str, abstract_en: str) -> str:
     output = (call_llm(prompt, max_tokens=120, timeout=60) or "").strip()
     output = re.sub(r"\s+", " ", output)
     output = re.sub(r"^(TL;DR[:：]?\s*)", "", output, flags=re.IGNORECASE)
-    return output or "面向遥感任务，提出可扩展的推理框架并验证有效性。"
+    return output or "面向多模态或无人机视觉任务，提出可扩展的方法并验证有效性。"
 
 
 def _dedupe_institutions(institutions: list[str]) -> list[str]:

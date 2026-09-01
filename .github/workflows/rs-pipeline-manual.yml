@@ -1,4 +1,4 @@
-name: RS Pipeline Manual
+name: PaperClaw Manual Pipeline
 
 on:
   workflow_dispatch:
@@ -130,6 +130,6 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: rs-pipeline-runtime-manual
+          name: paperclaw-runtime-manual
           path: |
             skills/rs-paper-pipeline/memory/

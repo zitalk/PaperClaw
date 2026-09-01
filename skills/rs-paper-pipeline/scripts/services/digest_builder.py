@@ -84,7 +84,7 @@ def build_digest_with_llm(date: str, papers: list, stats: dict | None = None, fa
         llm_selected_count = (stats or {}).get("llm_selected_count", len(failed_items or []))
         overview_text = (
             f"今日共检索候选论文 {candidate_count} 篇；"
-            f"关键词+LLM 智能匹配遥感交叉论文 {llm_selected_count} 篇；"
+            f"关键词+LLM 智能匹配研究方向论文 {llm_selected_count} 篇；"
             "最终纳入日报 0 篇。\n\n"
         )
         if llm_selected_count:
@@ -107,7 +107,7 @@ def build_digest_with_llm(date: str, papers: list, stats: dict | None = None, fa
         return "\n".join(lines)
 
     prompt = (
-        "你是遥感AI日报编辑。请基于给定论文列表输出严格JSON：\n"
+        "你是多模态视觉与无人机视觉论文日报编辑。请基于给定论文列表输出严格JSON：\n"
         "{\n"
         '  "overview": "120-180字，概述今日研究趋势",\n'
         '  "highlights": ["3条，每条20-40字"],\n'
@@ -132,7 +132,7 @@ def build_digest_with_llm(date: str, papers: list, stats: dict | None = None, fa
         if isinstance(item, dict)
     }
 
-    overview_text = data.get("overview") or "今日论文总体呈现出遥感与AI交叉深化趋势。"
+    overview_text = data.get("overview") or "今日论文围绕多模态视觉、显著目标检测、跨视角跟踪与无人机感知展开。"
     candidate_count = (stats or {}).get("candidate_count")
     llm_selected_count = (stats or {}).get("llm_selected_count")
     included_count = len(items)
@@ -144,7 +144,7 @@ def build_digest_with_llm(date: str, papers: list, stats: dict | None = None, fa
 
     overview_text = (
         f"今日共检索候选论文 {candidate_count} 篇；"
-        f"关键词+LLM 智能匹配遥感交叉论文 {llm_selected_count} 篇；"
+        f"关键词+LLM 智能匹配研究方向论文 {llm_selected_count} 篇；"
         f"最终纳入日报 {included_count} 篇。\n\n{overview_text}"
     )
 
@@ -160,7 +160,7 @@ def build_digest_with_llm(date: str, papers: list, stats: dict | None = None, fa
     lines += ["## 🗂 今日文章列表", "", "| 标题 | 作者 | 单位 | 一句话概括 | Issue |", "|---|---|---|---|---|"]
     for i, paper in enumerate(items, 1):
         summary = one_liners.get(i) or (
-            f"聚焦{('、'.join(paper['labels'][:2]) if paper['labels'] else '遥感AI方法')}，给出可复现的模型与评测方案。"
+            f"聚焦{('、'.join(paper['labels'][:2]) if paper['labels'] else '多模态视觉方法')}，给出可复现的模型与评测方案。"
         )
         lines.append(
             f"| {paper['title']} | {paper['authors']} | {paper['institution']} | {summary} | [#{paper['issue']}]({paper['url']}) |"
@@ -169,8 +169,8 @@ def build_digest_with_llm(date: str, papers: list, stats: dict | None = None, fa
     append_failed_items(lines, failed_items)
 
     observations = data.get("observations") or [
-        "基础模型与遥感任务结合持续增强，评测与推理能力成为关键。",
-        "多数工作关注算法有效性与泛化，而非硬件实现。",
+        "多模态融合正从理想对齐设置转向缺失、错位和不确定模态下的鲁棒感知。",
+        "无人机与多视角视觉持续关注小目标、跨视角关联和复杂环境泛化。",
     ]
     lines += ["", "## 🔎 观察", ""]
     for observation in observations[:2]:

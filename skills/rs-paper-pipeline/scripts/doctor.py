@@ -86,8 +86,8 @@ def main() -> int:
     temp_ok = CONFIG.temp_dir.exists() or CONFIG.temp_dir.parent.exists()
     checks.append((temp_ok, check_mark("temp-dir", temp_ok, str(CONFIG.temp_dir))))
 
-    print("RS Pipeline Doctor")
-    print("=" * 18)
+    print("PaperClaw Doctor")
+    print("=" * 16)
     for _, line in checks:
         print(line)
 
