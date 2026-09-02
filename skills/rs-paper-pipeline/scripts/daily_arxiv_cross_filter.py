@@ -22,6 +22,7 @@ from services.issue_index import ensure_index, lookup_issue, update_index_from_i
 
 CONFIG = load_config()
 AI_MATCH_PATTERNS = load_ai_signal_patterns()
+LLM_FILTER_BATCH_SIZE = 35
 
 
 def has_ai_signal(text: str) -> bool:
@@ -51,13 +52,10 @@ def _match_id(cid: str, keep_set: set[str]) -> bool:
     return False
 
 
-def llm_cross_filter(candidates):
-    if not candidates:
-        return []
-
+def _llm_cross_filter_batch(candidates, batch_number: int, batch_total: int):
     payload = []
     for i, c in enumerate(candidates, 1):
-        payload.append(f"[{i}] id={c['arxiv_id']} | title={c['title']} | abstract={c['abstract'][:500]}")
+        payload.append(f"[{i}] id={c['arxiv_id']} | title={c['title']} | abstract={c['abstract'][:700]}")
 
     prompt = render_filter_prompt(payload)
 
@@ -76,7 +74,7 @@ def llm_cross_filter(candidates):
     if keep_ids is not None:
         selected = [c for c in candidates if _match_id(c["arxiv_id"], keep_ids)]
         result = [c for c in selected if has_remote_sensing_signal(f"{c['title']}\n{c['abstract']}")]
-        print(f"  [LLM 解析] 成功，命中 {len(result)} 篇")
+        print(f"  [LLM {batch_number}/{batch_total}] 解析成功，命中 {len(result)}/{len(candidates)} 篇")
         return result
 
     # 两次都失败，降级到关键词交叉筛选
@@ -88,6 +86,20 @@ def llm_cross_filter(candidates):
             out_items.append(c)
     print(f"  [关键词降级] 命中 {len(out_items)} 篇")
     return out_items
+
+
+def llm_cross_filter(candidates):
+    if not candidates:
+        return []
+
+    batches = [
+        candidates[start : start + LLM_FILTER_BATCH_SIZE]
+        for start in range(0, len(candidates), LLM_FILTER_BATCH_SIZE)
+    ]
+    selected = []
+    for batch_number, batch in enumerate(batches, 1):
+        selected.extend(_llm_cross_filter_batch(batch, batch_number, len(batches)))
+    return selected
 
 
 def compact_item(item: dict[str, str]) -> dict[str, str]:
@@ -129,10 +141,10 @@ def main(dry_run=False, days_back=2, stats_out: str | None = None, target_date: 
 
     if target_date:
         print(f"[1/5] 拉取指定日期 {target_date} 候选...")
-        cands = fetch_recent_candidates(max_results=180, days_back=days_back, target_date=target_date)
+        cands = fetch_recent_candidates(max_results=1200, days_back=days_back, target_date=target_date)
     else:
         print(f"[1/5] 拉取最近 {days_back} 天候选...")
-        cands = fetch_recent_candidates(max_results=180, days_back=days_back)
+        cands = fetch_recent_candidates(max_results=1200, days_back=days_back)
     cand_count = len(cands)
     print(f"  候选数: {cand_count}")
 

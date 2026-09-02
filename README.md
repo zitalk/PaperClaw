@@ -8,7 +8,7 @@ Zitalk 的个人论文自动追踪与分析系统。
 
 每天自动执行：
 
-> arXiv 检索 → 研究方向硬过滤 → LLM 精筛 → 单篇 GitHub Issue → 每日汇总 Issue → Markdown 归档
+> arXiv 视觉类别广搜与关键词补充 → 同义词/视觉上下文硬过滤 → LLM 分批精筛 → 单篇 GitHub Issue → 每日汇总 Issue → Markdown 归档
 
 ## 研究范围
 
@@ -21,6 +21,8 @@ Zitalk 的个人论文自动追踪与分析系统。
 
 - `skills/rs-paper-pipeline/scripts/config/filter_keywords.json`
 - `skills/rs-paper-pipeline/scripts/prompts/filter_cross_prompt.md`
+
+默认广搜 `cs.CV`、`eess.IV`、`cs.RO`、`cs.MM` 和 `eess.SP`，再用跨类别关键词补充可能落在其他类别的相关论文。候选按 35 篇一批交给 LLM，避免扩大召回后单次提示过长。
 
 ## Windows 本地初始化
 

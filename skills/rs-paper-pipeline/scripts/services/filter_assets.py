@@ -38,8 +38,12 @@ def _load_string_list(data: dict, key: str, path: Path) -> list[str]:
 def load_filter_keywords() -> dict[str, list[str]]:
     data = _read_json(CONFIG.filter_keywords_path)
     return {
+        "arxiv_categories": _load_string_list(data, "arxiv_categories", CONFIG.filter_keywords_path),
         "rs_query_terms": _load_string_list(data, "rs_query_terms", CONFIG.filter_keywords_path),
         "rs_signal_patterns": _load_string_list(data, "rs_signal_patterns", CONFIG.filter_keywords_path),
+        "broad_signal_patterns": _load_string_list(data, "broad_signal_patterns", CONFIG.filter_keywords_path),
+        "visual_context_patterns": _load_string_list(data, "visual_context_patterns", CONFIG.filter_keywords_path),
+        "exclusion_patterns": _load_string_list(data, "exclusion_patterns", CONFIG.filter_keywords_path),
         "ai_signal_patterns": _load_string_list(data, "ai_signal_patterns", CONFIG.filter_keywords_path),
     }
 
@@ -58,8 +62,28 @@ def load_rs_query_terms() -> list[str]:
 
 
 @lru_cache(maxsize=1)
+def load_arxiv_categories() -> list[str]:
+    return load_filter_keywords()["arxiv_categories"]
+
+
+@lru_cache(maxsize=1)
 def load_rs_signal_patterns() -> list[re.Pattern[str]]:
     return [re.compile(pattern) for pattern in load_filter_keywords()["rs_signal_patterns"]]
+
+
+@lru_cache(maxsize=1)
+def load_broad_signal_patterns() -> list[re.Pattern[str]]:
+    return [re.compile(pattern) for pattern in load_filter_keywords()["broad_signal_patterns"]]
+
+
+@lru_cache(maxsize=1)
+def load_visual_context_patterns() -> list[re.Pattern[str]]:
+    return [re.compile(pattern) for pattern in load_filter_keywords()["visual_context_patterns"]]
+
+
+@lru_cache(maxsize=1)
+def load_exclusion_patterns() -> list[re.Pattern[str]]:
+    return [re.compile(pattern) for pattern in load_filter_keywords()["exclusion_patterns"]]
 
 
 @lru_cache(maxsize=1)

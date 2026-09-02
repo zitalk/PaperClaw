@@ -12,14 +12,25 @@ from urllib.error import HTTPError
 from pathlib import Path
 
 from pipeline_config import install_urllib_proxy, load_config
-from services.filter_assets import load_rs_query_terms, load_rs_signal_patterns
+from services.filter_assets import (
+    load_arxiv_categories,
+    load_broad_signal_patterns,
+    load_exclusion_patterns,
+    load_rs_query_terms,
+    load_rs_signal_patterns,
+    load_visual_context_patterns,
+)
 
 
 CONFIG = load_config()
 install_urllib_proxy()
 RS_QUERY_TERMS = load_rs_query_terms()
 RS_KEYWORDS = RS_QUERY_TERMS
+ARXIV_CATEGORIES = load_arxiv_categories()
 RS_MATCH_PATTERNS = load_rs_signal_patterns()
+BROAD_MATCH_PATTERNS = load_broad_signal_patterns()
+VISUAL_CONTEXT_PATTERNS = load_visual_context_patterns()
+EXCLUSION_PATTERNS = load_exclusion_patterns()
 ATOM_NAMESPACE = {
     "atom": "http://www.w3.org/2005/Atom",
     "arxiv": "http://arxiv.org/schemas/atom",
@@ -27,7 +38,16 @@ ATOM_NAMESPACE = {
 
 
 def has_remote_sensing_signal(text: str) -> bool:
-    return any(pattern.search(text) for pattern in RS_MATCH_PATTERNS)
+    # Direct task/sensor combinations are high-confidence signals. Broader
+    # synonyms must also have an explicit visual context so that generic
+    # multimodal NLP and UAV networking papers do not flood the LLM stage.
+    if any(pattern.search(text) for pattern in RS_MATCH_PATTERNS):
+        return True
+    if any(pattern.search(text) for pattern in EXCLUSION_PATTERNS):
+        return False
+    return any(pattern.search(text) for pattern in BROAD_MATCH_PATTERNS) and any(
+        pattern.search(text) for pattern in VISUAL_CONTEXT_PATTERNS
+    )
 
 
 def _retry_after_seconds(headers) -> int | None:
@@ -68,7 +88,7 @@ def fetch_url_with_retry(url: str, retries: int = 6, timeout: int = 90) -> str:
 
 
 def fetch_recent_candidates(
-    max_results: int = 180,
+    max_results: int = 1200,
     days_back: int = 2,
     target_date: str | None = None,
 ) -> list[dict[str, str]]:
@@ -78,7 +98,8 @@ def fetch_recent_candidates(
             query_parts.append(f'all:"{keyword}"')
         else:
             query_parts.append(f"all:{keyword}")
-    base_query = " OR ".join(query_parts)
+    keyword_query = " OR ".join(query_parts)
+    category_query = " OR ".join(f"cat:{category}" for category in ARXIV_CATEGORIES)
     namespace = {"atom": "http://www.w3.org/2005/Atom"}
 
     if target_date:
@@ -93,7 +114,7 @@ def fetch_recent_candidates(
 
         for start in range(0, max_scan, page_size):
             if start > 0:
-                time.sleep(20 if target_date else 10)
+                time.sleep(3)
             params = {
                 "search_query": query,
                 "start": start,
@@ -143,19 +164,32 @@ def fetch_recent_candidates(
                     }
                 )
 
+            if len(entries) < page_size:
+                break
             if target_date and min_page_date and min_page_date < next(iter(valid_days)):
+                break
+            if not target_date and min_page_date and min_page_date < min(valid_days):
                 break
 
         return items
 
-    if target_date:
-        scoped_query = f"({base_query}) AND submittedDate:[{target_date}0000 TO {target_date}2359]"
-        items = run_query(scoped_query, max_scan=max_results, page_size=min(max_results, 100))
-        if items:
-            return items
-        print("  [arXiv] 日期限定查询返回 0，回退到提交时间扫描")
+    date_clause = f"submittedDate:[{target_date}0000 TO {target_date}2359]" if target_date else None
+    discovery_queries = [
+        ("视觉类别广搜", category_query, max_results),
+        ("跨类别关键词补充", keyword_query, min(max_results, 400)),
+    ]
+    merged: dict[str, dict[str, str]] = {}
+    for index, (label, query, scan_limit) in enumerate(discovery_queries):
+        if index:
+            time.sleep(3)
+        scoped_query = f"({query}) AND {date_clause}" if date_clause else f"({query})"
+        items = run_query(scoped_query, max_scan=scan_limit, page_size=min(scan_limit, 200))
+        before = len(merged)
+        for item in items:
+            merged.setdefault(item["arxiv_id"], item)
+        print(f"  [arXiv] {label}: 命中 {len(items)}，新增 {len(merged) - before}")
 
-    return run_query(base_query, max_scan=3000, page_size=min(max_results, 100 if target_date else 200))
+    return sorted(merged.values(), key=lambda item: (item["published"], item["arxiv_id"]), reverse=True)
 
 
 def download_pdf(arxiv_id: str) -> tuple[Path | None, bool]:
