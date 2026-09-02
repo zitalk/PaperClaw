@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="PaperClaw：多模态视觉、显著目标检测与无人机视觉论文追踪。">
+  <meta name="theme-color" content="#0d2f33">
+  <title>PaperClaw · 论文雷达</title>
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="assets/styles.css">
+</head>
+<body>
+  <div class="ambient ambient-one"></div>
+  <div class="ambient ambient-two"></div>
+  <header class="topbar shell">
+    <a class="brand" href="./" aria-label="PaperClaw 首页">
+      <span class="brand-mark" aria-hidden="true">PC</span>
+      <span><strong>PaperClaw</strong><small>Personal research radar</small></span>
+    </a>
+    <nav aria-label="主要导航">
+      <a href="#latest">最新日报</a>
+      <a href="#papers">论文库</a>
+      <a href="https://github.com/zitalk/PaperClaw/issues" target="_blank" rel="noreferrer">GitHub Issues ↗</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero shell">
+      <div class="hero-copy">
+        <p class="eyebrow">MULTIMODAL VISION · UAV · SALIENCY</p>
+        <h1>把每天的新论文，<br><em>收束成可读的研究线索。</em></h1>
+        <p class="hero-lead">自动检索 arXiv，经过研究方向硬过滤与 LLM 精筛，以 GitHub Issues 保存论文卡片，并在这里形成可检索的个人研究门户。</p>
+        <div class="hero-actions">
+          <a class="button primary" href="#papers">浏览论文</a>
+          <a class="button secondary" href="https://github.com/zitalk/PaperClaw" target="_blank" rel="noreferrer">查看仓库</a>
+        </div>
+      </div>
+      <div class="radar-card" aria-label="站点统计">
+        <div class="radar-orbit"><span></span><span></span><span></span></div>
+        <div class="stat-grid">
+          <div><strong id="paper-count">—</strong><span>收录论文</span></div>
+          <div><strong id="report-count">—</strong><span>每日报告</span></div>
+          <div><strong id="latest-date">—</strong><span>最近更新</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="latest" class="latest shell section-block">
+      <div class="section-heading">
+        <div><p class="eyebrow">DAILY SYNTHESIS</p><h2>最新日报</h2></div>
+        <a id="latest-report-link" class="text-link" href="https://github.com/zitalk/PaperClaw/tree/main/daily_reports" target="_blank" rel="noreferrer">查看 Markdown 归档 ↗</a>
+      </div>
+      <article class="report-card">
+        <div class="report-date"><span id="report-month">—</span><strong id="report-day">—</strong></div>
+        <div class="report-content">
+          <p id="report-overview" class="report-overview">正在读取最新日报…</p>
+          <ul id="report-highlights" class="highlights"></ul>
+        </div>
+      </article>
+    </section>
+
+    <section id="papers" class="library shell section-block">
+      <div class="section-heading">
+        <div><p class="eyebrow">RESEARCH LIBRARY</p><h2>论文库</h2></div>
+        <p id="result-count" class="result-count">正在载入…</p>
+      </div>
+      <div class="filters" role="search">
+        <label class="search-box">
+          <span class="sr-only">搜索论文</span>
+          <input id="search-input" type="search" placeholder="搜索标题、作者、机构或摘要…" autocomplete="off">
+          <kbd>⌘ K</kbd>
+        </label>
+        <label>
+          <span class="sr-only">研究方向</span>
+          <select id="category-filter">
+            <option value="">全部方向</option>
+          </select>
+        </label>
+        <label>
+          <span class="sr-only">日期</span>
+          <select id="date-filter">
+            <option value="">全部日期</option>
+          </select>
+        </label>
+      </div>
+      <div id="paper-grid" class="paper-grid" aria-live="polite"></div>
+      <div class="load-wrap"><button id="load-more" class="button secondary" type="button">加载更多</button></div>
+    </section>
+  </main>
+
+  <footer class="shell footer">
+    <p>PaperClaw · Built from GitHub Issues and daily research reports.</p>
+    <p><a href="https://github.com/zitalk/PaperClaw" target="_blank" rel="noreferrer">zitalk/PaperClaw ↗</a></p>
+  </footer>
+
+  <template id="paper-template">
+    <article class="paper-card">
+      <div class="paper-meta"><span class="paper-category"></span><time></time></div>
+      <h3></h3>
+      <p class="paper-summary"></p>
+      <p class="paper-authors"></p>
+      <div class="paper-links"><a class="issue-link" target="_blank" rel="noreferrer">论文卡片 ↗</a><a class="arxiv-link" target="_blank" rel="noreferrer">arXiv ↗</a></div>
+    </article>
+  </template>
+  <script src="assets/app.js" defer></script>
+</body>
+</html>
