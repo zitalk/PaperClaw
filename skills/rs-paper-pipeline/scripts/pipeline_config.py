@@ -40,6 +40,13 @@ def _env(name: str, default: str | None = None) -> str | None:
     return value
 
 
+def _env_bool(name: str, default: bool = False) -> bool:
+    value = _env(name)
+    if value is None:
+        return default
+    return value.strip().lower() in {"1", "true", "yes", "on"}
+
+
 def require_env(name: str) -> str:
     value = _env(name)
     if not value:
@@ -110,6 +117,7 @@ class PipelineConfig:
     papers_dir: Path
     figures_dir: Path
     temp_dir: Path
+    keep_downloads: bool
     github_repo: str
     github_token: str | None
     github_timeout: int
@@ -141,6 +149,7 @@ def load_config() -> PipelineConfig:
         papers_dir=root_dir / "papers",
         figures_dir=root_dir / "papers" / "figures",
         temp_dir=temp_dir,
+        keep_downloads=_env_bool("RS_KEEP_DOWNLOADS", False),
         github_repo=github_repo,
         github_token=_env("GITHUB_TOKEN"),
         github_timeout=int(_env("GITHUB_TIMEOUT", "15")),

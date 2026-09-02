@@ -83,7 +83,7 @@ def handle_figures(arxiv_id: str, pdf_path: Path, repo=None) -> list:
 
 # ============ 主流程 ============
 
-def process_paper(arxiv_id: str, issue_number: int | None = None, dry_run: bool = False, output_dir: str | None = None, target_date: str | None = None):
+def _process_paper(arxiv_id: str, issue_number: int | None = None, dry_run: bool = False, output_dir: str | None = None, target_date: str | None = None):
     print(f"\n{'='*60}")
     print(f"处理论文: {arxiv_id}")
     print(f"{'='*60}")
@@ -342,6 +342,34 @@ Powered by OpenClaw🦞
     log_step("ISSUE", "CREATED", f"#{new_issue.number}")
     print(f"\n✅ 完成！")
     return new_issue, None
+
+
+def cleanup_downloads(arxiv_id: str, temp_dir: Path | None = None, keep_downloads: bool | None = None) -> list[str]:
+    """Remove transient PDF/source downloads after analysis and remote delivery."""
+    should_keep = CONFIG.keep_downloads if keep_downloads is None else keep_downloads
+    if should_keep:
+        return []
+
+    root = (temp_dir or CONFIG.temp_dir).resolve()
+    removed: list[str] = []
+    for suffix in ("pdf", "src"):
+        candidate = root / f"{arxiv_id}.{suffix}"
+        # Keep cleanup constrained to the configured runtime directory.
+        if candidate.parent.resolve() != root:
+            continue
+        if candidate.exists() and candidate.is_file():
+            candidate.unlink()
+            removed.append(candidate.name)
+    return removed
+
+
+def process_paper(arxiv_id: str, issue_number: int | None = None, dry_run: bool = False, output_dir: str | None = None, target_date: str | None = None):
+    try:
+        return _process_paper(arxiv_id, issue_number, dry_run, output_dir, target_date)
+    finally:
+        removed = cleanup_downloads(arxiv_id)
+        if removed:
+            log_step("CLEANUP", "OK", f"removed={','.join(removed)}")
 
 if __name__ == "__main__":
     import sys

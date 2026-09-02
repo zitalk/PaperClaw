@@ -24,6 +24,8 @@ Zitalk 的个人论文自动追踪与分析系统。
 
 默认广搜 `cs.CV`、`eess.IV`、`cs.RO`、`cs.MM` 和 `eess.SP`，再用跨类别关键词补充可能落在其他类别的相关论文。候选按 35 篇一批交给 LLM，避免扩大召回后单次提示过长。
 
+PDF 和 arXiv 源码只在分析期间临时下载，Issue 与预览图上传成功后自动清理；如需保留，可在流水线 `.env` 中设置 `RS_KEEP_DOWNLOADS=true`。
+
 ## Windows 本地初始化
 
 ```powershell
