@@ -1,5 +1,6 @@
 import sys
 import unittest
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from unittest.mock import patch
 
@@ -12,6 +13,17 @@ import run_remote_schedule
 
 
 class RemoteScheduleTest(unittest.TestCase):
+    def test_schedule_targets_previous_calendar_day_every_day(self):
+        beijing = timezone(timedelta(hours=8))
+        for day in range(1, 8):
+            now = datetime(2026, 9, day, 3, 0, tzinfo=beijing)
+            expected = (now - timedelta(days=1)).strftime("%Y%m%d")
+            with self.subTest(day=day):
+                self.assertEqual(
+                    run_remote_schedule.run_rs_daily_workday.resolve_target_dates(now),
+                    [expected],
+                )
+
     def test_only_runs_dates_with_candidates(self):
         candidate_sets = {
             "20260901": [],

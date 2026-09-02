@@ -74,6 +74,10 @@ Set `GITHUB_TOKEN`, `LLM_API_KEY`, and `RS_GITHUB_REPO=zitalk/PaperClaw` in `.en
 
 Do not commit `.env`. Downloads are cleaned after processing unless `RS_KEEP_DOWNLOADS=true` is set explicitly.
 
+## Automation
+
+GitHub Actions runs the paper search remotely every day of the year, so it does not depend on a personal computer staying online. At **03:00 Asia/Shanghai** it checks the previous day's new papers, with retries at **09:30, 12:30, and 15:30** for delayed arXiv publication. Completed dates are skipped automatically, and the Pages workflow republishes the site after a daily report update.
+
 ## Acknowledgements
 
 PaperClaw originated from the Issue-driven tracking idea in [thinson/RS-PaperClaw](https://github.com/thinson/RS-PaperClaw) and has been independently rebuilt around a personal multimodal-vision, saliency, and UAV research profile.

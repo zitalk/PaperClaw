@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 """
-工作日 09:05 自动执行：
+每日自动执行：
 1) 抓取并筛选“当天”个人研究方向论文，生成/更新单篇 issue
 2) 生成当天日报 issue
 3) 推送日报到 Feishu 私聊
@@ -422,20 +422,10 @@ def _run_step(date_str: str, step: str, cmd: list[str], ok_extra: dict | None = 
 
 def resolve_target_dates(today: datetime | None = None) -> list[str]:
     now = today or datetime.now(BEIJING_TZ)
-    weekday = now.weekday()  # Monday=0
 
-    # 默认按北京时间日期回溯抓取：
-    # - 周一：回溯到上周五（-3天）
-    # - 周二：顺序补跑周六、周日、周一（-3/-2/-1天）
-    # - 其他日期：回溯昨日（-1天）
-    # 说明：arXiv published 为 UTC 时间，这里用“工作日日报”的业务口径。
-    if weekday == 0:
-        deltas = [3]
-    elif weekday == 1:
-        deltas = [3, 2, 1]
-    else:
-        deltas = [1]
-    return [(now - timedelta(days=delta)).strftime("%Y%m%d") for delta in deltas]
+    # 全年每日运行，按北京时间回溯前一自然日。当天的后续重试仍检查
+    # 同一日期；已经生成日报的日期由上层完成性检查直接跳过。
+    return [(now - timedelta(days=1)).strftime("%Y%m%d")]
 
 
 def _process_date(date_str: str, notify: bool, force: bool = False):
