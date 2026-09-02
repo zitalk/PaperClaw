@@ -1,6 +1,56 @@
 const state = { papers: [], reports: [], visible: 12, query: "", category: "", date: "" };
 const el = (id) => document.getElementById(id);
 
+const latexSymbols = {
+  alpha: "α", beta: "β", gamma: "γ", delta: "δ", epsilon: "ε", theta: "θ",
+  lambda: "λ", mu: "μ", pi: "π", sigma: "σ", phi: "φ", omega: "ω",
+  Gamma: "Γ", Delta: "Δ", Theta: "Θ", Lambda: "Λ", Pi: "Π", Sigma: "Σ",
+  Phi: "Φ", Omega: "Ω", times: "×", cdot: "·", pm: "±", leq: "≤", geq: "≥",
+  neq: "≠", approx: "≈", infty: "∞", to: "→", rightarrow: "→", leftarrow: "←"
+};
+
+function plainMath(value) {
+  return value
+    .replace(/\\(?:mathrm|mathbf|mathit|mathsf|text)\s*\{([^{}]*)\}/g, "$1")
+    .replace(/\\([A-Za-z]+)/g, (match, command) => latexSymbols[command] || command)
+    .replace(/\\([{}_$%&#])/g, "$1")
+    .replace(/[{}]/g, "");
+}
+
+function appendMath(container, source) {
+  const tokenPattern = /([_^])\s*(?:\{([^{}]*)\}|\\([A-Za-z]+)|([^\s]))/g;
+  let cursor = 0;
+  for (const match of source.matchAll(tokenPattern)) {
+    if (match.index > cursor) {
+      container.append(document.createTextNode(plainMath(source.slice(cursor, match.index))));
+    }
+    const script = document.createElement(match[1] === "^" ? "sup" : "sub");
+    script.textContent = plainMath(match[2] ?? (match[3] ? `\\${match[3]}` : match[4]));
+    container.append(script);
+    cursor = match.index + match[0].length;
+  }
+  if (cursor < source.length) {
+    container.append(document.createTextNode(plainMath(source.slice(cursor))));
+  }
+}
+
+function renderInlineMath(container, value) {
+  container.replaceChildren();
+  const source = value || "";
+  const delimiterPattern = /\$([^$]+)\$|\\\((.*?)\\\)/g;
+  let cursor = 0;
+  for (const match of source.matchAll(delimiterPattern)) {
+    if (match.index > cursor) {
+      container.append(document.createTextNode(source.slice(cursor, match.index)));
+    }
+    appendMath(container, match[1] ?? match[2]);
+    cursor = match.index + match[0].length;
+  }
+  if (cursor < source.length) {
+    container.append(document.createTextNode(source.slice(cursor)));
+  }
+}
+
 function formatDate(value) {
   if (!/^\d{8}$/.test(value || "")) return value || "—";
   return `${value.slice(0, 4)}-${value.slice(4, 6)}-${value.slice(6, 8)}`;
@@ -29,7 +79,7 @@ function renderLatest() {
   list.replaceChildren();
   latest.highlights.forEach((highlight) => {
     const item = document.createElement("li");
-    item.textContent = highlight;
+    renderInlineMath(item, highlight);
     list.appendChild(item);
   });
 }
@@ -50,7 +100,7 @@ function createPaperCard(paper) {
   fragment.querySelector(".paper-category").textContent = paper.category;
   fragment.querySelector("time").textContent = formatDate(paper.date);
   fragment.querySelector("time").dateTime = formatDate(paper.date);
-  fragment.querySelector("h3").textContent = paper.title;
+  renderInlineMath(fragment.querySelector("h3"), paper.title);
   fragment.querySelector(".paper-summary").textContent = paper.summary;
   fragment.querySelector(".paper-institution").textContent = `单位 · ${paper.institution || "未公开"}`;
   fragment.querySelector(".paper-authors").textContent = paper.authors;
