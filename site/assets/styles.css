@@ -30,7 +30,7 @@ a { color: inherit; }
 
 .topbar { min-height: 88px; display: flex; align-items: center; justify-content: space-between; gap: 32px; border-bottom: 1px solid var(--line); }
 .brand { display: inline-flex; align-items: center; gap: 12px; text-decoration: none; }
-.brand-mark { width: 42px; height: 42px; border-radius: 14px; display: grid; place-items: center; color: var(--paper-strong); background: var(--deep); font: 700 12px/1 ui-monospace, monospace; letter-spacing: .08em; }
+.brand-mark { width: 42px; height: 42px; display: block; }
 .brand strong, .brand small { display: block; }
 .brand strong { font-size: 17px; letter-spacing: -.02em; }
 .brand small { color: var(--muted); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; }

@@ -1,203 +1,78 @@
 <div align="center">
-  <img src="./docs/logo-220.png" alt="RS-PaperClaw Logo" width="120" />
+  <img src="./docs/paperclaw-mark.svg" alt="PaperClaw research radar mark" width="132" />
 
-# RS-PaperClaw🦞
+  <h1>PaperClaw</h1>
 
-### Automated Remote-Sensing Paper Tracking & Analysis Pipeline
+  <p><strong>A personal paper radar for multimodal vision and UAV research</strong></p>
+  <p>Broad visual search · Local rule recall · LLM filtering · GitHub Issue knowledge cards</p>
 
-[![Python](https://img.shields.io/badge/Python-3.10%2B-3776AB?logo=python&logoColor=white)](#)
-[![Status](https://img.shields.io/badge/Status-Active-2EA043)](#)
-[![Workflow](https://img.shields.io/badge/Workflow-arXiv%20%E2%86%92%20Issue%20%E2%86%92%20Digest-8A2BE2)](#)
-[![Pages](https://img.shields.io/badge/GitHub%20Pages-Live-b55f34)](https://thinson.github.io/RS-PaperClaw/)
+  <p>
+    <a href="https://zitalk.github.io/PaperClaw/"><img src="https://img.shields.io/badge/Research_Portal-Live-0D6B66?style=flat-square" alt="Research portal" /></a>
+    <a href="https://github.com/zitalk/PaperClaw/issues"><img src="https://img.shields.io/badge/Paper_Cards-GitHub_Issues-24292F?style=flat-square&logo=github" alt="GitHub Issues" /></a>
+    <img src="https://img.shields.io/badge/Python-3.10%2B-3776AB?style=flat-square&logo=python&logoColor=white" alt="Python 3.10+" />
+  </p>
 
-**arXiv → Per-paper Issue Report → Daily Digest → Visual Reading Portal**
-
-中文版本：**[README.md](./README.md)**
-
+  <p><a href="./README.md">中文</a> · <a href="https://zitalk.github.io/PaperClaw/">Portal</a> · <a href="./daily_reports/">Daily reports</a> · <a href="https://github.com/zitalk/PaperClaw/issues">Paper library</a></p>
 </div>
 
 ---
 
-## 🌐 Live Portal
+> PaperClaw turns the daily stream of new papers into searchable research leads instead of a local pile of PDFs.
 
-- GitHub Pages: **https://thinson.github.io/RS-PaperClaw/**
-- CVPR 2026 GeoAI Collection: **https://thinson.github.io/RS-PaperClaw/cvpr2026_geoai.html**
-- Digest archive: **[daily_reports/](./daily_reports/README.md)**
+## What it does
 
-## 🖼️ UI Preview
+PaperClaw searches broad arXiv vision categories, supplements them with cross-category synonyms, applies high-recall visual-context rules, and asks an LLM to make the final research-relevance decision in batches.
 
-| Desktop UI | Mobile UI |
+Each selected paper becomes a structured GitHub Issue. Daily results are published as a digest, a Markdown archive, and a searchable GitHub Pages portal.
+
+| Stage | Behavior |
 |---|---|
-| <img src="./docs/screenshots/ui-desktop.jpg" alt="RS-PaperClaw Desktop UI" height="260" /> | <img src="./docs/screenshots/ui-mobile.jpg" alt="RS-PaperClaw Mobile UI" height="260" /> |
+| Discovery | Searches `cs.CV`, `eess.IV`, `cs.RO`, `cs.MM`, and `eess.SP` plus keyword supplements |
+| Recall | Expands synonyms and applies local visual-context rules |
+| Precision | Uses batched LLM filtering against the personal research profile |
+| Reading | Creates one structured GitHub Issue per paper |
+| Delivery | Builds a daily digest, Markdown archive, and web portal |
+| Storage | Treats PDFs and arXiv sources as transient analysis inputs and removes them by default |
 
----
+## Research radar
 
-## 📰 News
+- Multimodal perception: RGB-T, RGB-D, RGB-NIR, RGB-Event, hyperspectral and audio-visual learning
+- Salient and small targets: multimodal saliency, infrared small targets, text-guided detection and segmentation
+- Tracking and multi-view vision: MOT, ReID, cross-camera association and 3D perception
+- UAV vision: detection, tracking, segmentation, navigation, reconstruction and multi-UAV cooperation
 
-- `2026-05-27`: Switched the default LLM to `deepseek-v4-flash`; other OpenAI-like Chat Completions-compatible models are also supported via `LLM_MODEL` and `LLM_API_URL`.
-- `2026-04-24`: Added a CVPR 2026 GeoAI paper collection with 139 papers (9 Oral + 20 Highlight + 110 Poster), browseable by topic tags.
-- `2026-04-20`: Added a short project timeline to the README for easier maintenance tracking.
-- `2026-04-19`: Completed a focused GitHub Pages frontend update, including paged archive loading, date deep links, merged `More` interaction, and multiple Papers table display fixes.
-- `2026-04-17`: Added institution metadata to per-paper reports and daily digests; author rendering was also updated to stop using `et al.`.
-- `2026-03-05`: The earliest traceable daily report currently archived in this repository is `20260305`, marking the start of the report archive timeline.
+## Pipeline
 
----
-
-## ✨ What this project does
-
-RS-PaperClaw automates the daily pipeline:
-
-- 🔎 Fetch arXiv candidates (remote-sensing related)
-- 🧠 Run keyword + LLM cross filtering
-- 📝 Generate / update per-paper reading reports (GitHub Issues)
-- 🗞️ Generate daily digest issues
-- 🗂️ Sync digest markdown to `daily_reports/YYYYMM/YYYYMMDD.md`
-- 📮 Deliver summaries to DingTalk / Feishu
-
----
-
-## 🎯 Why issue-centric
-
-- 🧭 **Traceable**: one paper, one issue; full history is preserved
-- 🤝 **Collaborative**: comments become discussion and knowledge capture
-- ⚙️ **Automation-friendly**: stable targets for incremental updates
-- 🗂️ **Closed loop**: dynamic issue workflow + static markdown archive
-
----
-
-## 🧩 Core capabilities
-
-| Module | Output |
-|---|---|
-| Per-paper report | metadata, TL;DR, Chinese abstract, tags, first-3-page previews, 10-question analysis |
-| Daily digest | numeric overview, highlights, article list, observations |
-| Quality control | filters placeholders and incomplete structures |
-| Archive | issue + markdown dual-track sync |
-| Web portal | recent digest browser, mobile cards, issue deep-dive overlay |
-
----
-
-## 🗺️ Repository layout (main)
-
-```text
-RS-PaperClaw/
-├── .github/workflows/                 # GitHub Actions for scheduled and manual ops
-├── docs/                             # GitHub Pages static site
-│   ├── index.html
-│   └── logo-220.png
-├── daily_reports/                    # digest archive by month
-│   ├── README.md
-│   └── YYYYMM/YYYYMMDD.md
-├── papers/previews/                  # preview images for issue display
-├── skills/rs-paper-pipeline/         # skill and scripts
-│   ├── README.md
-│   ├── SKILL.md
-│   ├── .env.example
-│   ├── RUNBOOK_RS_PIPELINE.md
-│   ├── AGENT_GUIDE_RS_PIPELINE.md
-│   └── scripts/
-│       ├── cli.py
-│       ├── clients/
-│       ├── services/
-│       ├── config/filter_keywords.json
-│       └── prompts/filter_cross_prompt.md
-└── README.md
+```mermaid
+flowchart LR
+    A[Broad arXiv vision search] --> B[Synonym expansion]
+    B --> C[Local context rules]
+    C --> D[Batched LLM filtering]
+    D --> E[Per-paper GitHub Issue]
+    E --> F[Daily digest and archive]
+    F --> G[Research portal]
 ```
 
----
+The research profile lives in [`filter_keywords.json`](./skills/rs-paper-pipeline/scripts/config/filter_keywords.json), while the final relevance rubric lives in [`filter_cross_prompt.md`](./skills/rs-paper-pipeline/scripts/prompts/filter_cross_prompt.md).
 
-## 🚀 Quick start
+## Run locally
 
-### 0) Clone the repo
-
-The repo contains many paper preview images (400MB+). To skip them:
-
-```bash
-# Lightweight clone (skips papers/previews/, ~1MB)
-git clone --filter=blob:none --sparse https://github.com/thinson/RS-PaperClaw.git
-cd RS-PaperClaw
-git sparse-checkout set --no-cone '/*' '!papers/previews'
-
-# Full clone (includes all preview images, ~400MB)
-git clone https://github.com/thinson/RS-PaperClaw.git
+```powershell
+Set-Location skills/rs-paper-pipeline
+.\bootstrap.ps1
+Copy-Item .env.example .env
 ```
 
-### 1) Bootstrap
+Set `GITHUB_TOKEN`, `LLM_API_KEY`, and `RS_GITHUB_REPO=zitalk/PaperClaw` in `.env`, then run:
 
-```bash
-cd skills/rs-paper-pipeline
-./bootstrap.sh
+```powershell
+.\.venv\Scripts\python.exe scripts\cli.py doctor
+.\.venv\Scripts\python.exe scripts\cli.py filter --dry-run --date YYYYMMDD
+.\.venv\Scripts\python.exe scripts\cli.py run --date YYYYMMDD --no-notify
 ```
 
-### 2) Configure `.env`
+Do not commit `.env`. Downloads are cleaned after processing unless `RS_KEEP_DOWNLOADS=true` is set explicitly.
 
-Required:
+## Acknowledgements
 
-- `GITHUB_TOKEN`
-- `LLM_API_KEY`
-
-Optional:
-
-- `LLM_MODEL` (default: `deepseek-v4-flash`)
-- `LLM_API_URL` (default: `https://api.deepseek.com/chat/completions`; supports other OpenAI-like Chat Completions-compatible endpoints)
-- `DINGTALK_WEBHOOK`
-- `FEISHU_TARGET`
-- `RS_GITHUB_REPO`
-
-### 3) Run today's workflow
-
-```bash
-cd skills/rs-paper-pipeline
-python3 scripts/cli.py run
-```
-
-### 4) Common commands
-
-```bash
-cd skills/rs-paper-pipeline
-python3 scripts/cli.py doctor
-python3 scripts/cli.py filter --dry-run --date 20260317
-python3 scripts/cli.py run --date 20260317 --no-notify
-python3 scripts/cli.py reconcile --date 20260317 --dry-run
-```
-
----
-
-## ⏰ Scheduler example
-
-```cron
-Prefer the repository workflows:
-
-- `.github/workflows/rs-pipeline-schedule.yml`
-- `.github/workflows/rs-pipeline-manual.yml`
-
-Both workflows execute `skills/rs-paper-pipeline/scripts/cli.py` and read the filter config files from the repository.
-```
-
----
-
-## 📎 Notes
-
-- Chinese README is the default entry: [README.md](./README.md)
-- GitHub Pages deployment source: `main` branch + `/docs`
-- Article-list filtering rules come from:
-  - `skills/rs-paper-pipeline/scripts/config/filter_keywords.json`
-  - `skills/rs-paper-pipeline/scripts/prompts/filter_cross_prompt.md`
-
----
-
-## ✅ TODO
-
-- Add journal sources: RSE (Remote Sensing of Environment), ISPRS JPRS, and IEEE journals (as complements beyond arXiv, including ingestion and filtering).
-
----
-
-## 🔗 Related Projects
-
-- **papers.cool**: https://papers.cool/
-
----
-
-## ⭐ Star History
-
-[![Star History Chart](https://api.star-history.com/svg?repos=thinson/RS-PaperClaw&type=Date)](https://star-history.com/#thinson/RS-PaperClaw&Date)
+PaperClaw originated from the Issue-driven tracking idea in [thinson/RS-PaperClaw](https://github.com/thinson/RS-PaperClaw) and has been independently rebuilt around a personal multimodal-vision, saliency, and UAV research profile.
