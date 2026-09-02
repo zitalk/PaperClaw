@@ -27,15 +27,17 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 120
     permissions:
-      contents: read
+      actions: write
+      contents: write
+      issues: write
     env:
-      GITHUB_TOKEN: ${{ secrets.RS_GITHUB_TOKEN }}
+      GITHUB_TOKEN: ${{ github.token }}
       LLM_API_KEY: ${{ secrets.LLM_API_KEY }}
       RS_GITHUB_REPO: ${{ vars.RS_GITHUB_REPO }}
       LLM_MODEL: ${{ vars.LLM_MODEL }}
       LLM_API_URL: ${{ vars.LLM_API_URL }}
-      GITHUB_TIMEOUT: ${{ vars.GITHUB_TIMEOUT }}
-      GITHUB_RETRY: ${{ vars.GITHUB_RETRY }}
+      GITHUB_TIMEOUT: ${{ vars.RS_GITHUB_TIMEOUT }}
+      GITHUB_RETRY: ${{ vars.RS_GITHUB_RETRY }}
       ARXIV_API_URL: ${{ vars.ARXIV_API_URL }}
       ARXIV_USER_AGENT: ${{ vars.ARXIV_USER_AGENT }}
       DINGTALK_WEBHOOK: ${{ secrets.DINGTALK_WEBHOOK }}
@@ -43,6 +45,7 @@ jobs:
       OPENCLAW_BIN: ${{ vars.OPENCLAW_BIN }}
       RS_FILTER_KEYWORDS_FILE: scripts/config/filter_keywords.json
       RS_FILTER_PROMPT_FILE: scripts/prompts/filter_cross_prompt.md
+      RS_KEEP_DOWNLOADS: "false"
       PYTHONUNBUFFERED: "1"
 
     steps:
@@ -112,6 +115,12 @@ jobs:
               exit 1
               ;;
           esac
+
+      - name: Refresh Pages
+        if: ${{ success() && github.event.inputs.command != 'doctor' }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run pages.yml --ref main
 
       - name: Print pipeline state
         if: always()

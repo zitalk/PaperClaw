@@ -106,16 +106,17 @@ RS_GITHUB_REPO=zitalk/PaperClaw
 
 ## 自动化
 
-当前个人任务每天北京时间 **03:00** 检索前一天论文。仓库同时保留手动运行与工作日 GitHub Actions 补充调度；Pages 工作流会在日报更新后自动发布网站。
+论文检索由 GitHub Actions 远端执行，不依赖个人电脑开机。工作日北京时间 **03:00** 首次检查，若 arXiv 尚未发布候选，则在 **09:30、12:30、15:30** 继续补查；已完成日期会自动跳过。Pages 工作流会在日报更新后自动发布网站。
 
 远程运行前，在仓库中配置：
 
 | 类型 | 名称 | 用途 |
 |---|---|---|
-| Actions secret | `RS_GITHUB_TOKEN` | 创建 Issues 与推送归档 |
 | Actions secret | `LLM_API_KEY` | LLM 精筛与论文分析 |
 | Actions variable | `RS_GITHUB_REPO` | 目标仓库，值为 `zitalk/PaperClaw` |
 | Actions variable（可选） | `LLM_MODEL`、`LLM_API_URL` | 自定义模型与兼容接口 |
+
+仓库内写入使用 GitHub Actions 自动签发的短期 `github.token`，无需保存个人 GitHub PAT。
 
 ## 项目结构
 

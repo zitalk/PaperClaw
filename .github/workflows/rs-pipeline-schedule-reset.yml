@@ -3,6 +3,9 @@ name: PaperClaw Scheduled Pipeline
 on:
   workflow_dispatch:
   schedule:
+    # 03:00 Asia/Shanghai, Monday-Friday (19:00 UTC on the previous day).
+    - cron: "0 19 * * 0-4"
+    # Later retries cover arXiv publication delays; completed dates are skipped.
     - cron: "30 1,4,7 * * 1-5"
 
 concurrency:
@@ -14,15 +17,17 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 120
     permissions:
-      contents: read
+      actions: write
+      contents: write
+      issues: write
     env:
-      GITHUB_TOKEN: ${{ secrets.RS_GITHUB_TOKEN }}
+      GITHUB_TOKEN: ${{ github.token }}
       LLM_API_KEY: ${{ secrets.LLM_API_KEY }}
       RS_GITHUB_REPO: ${{ vars.RS_GITHUB_REPO }}
       LLM_MODEL: ${{ vars.LLM_MODEL }}
       LLM_API_URL: ${{ vars.LLM_API_URL }}
-      GITHUB_TIMEOUT: ${{ vars.GITHUB_TIMEOUT }}
-      GITHUB_RETRY: ${{ vars.GITHUB_RETRY }}
+      GITHUB_TIMEOUT: ${{ vars.RS_GITHUB_TIMEOUT }}
+      GITHUB_RETRY: ${{ vars.RS_GITHUB_RETRY }}
       ARXIV_API_URL: ${{ vars.ARXIV_API_URL }}
       ARXIV_USER_AGENT: ${{ vars.ARXIV_USER_AGENT }}
       DINGTALK_WEBHOOK: ${{ secrets.DINGTALK_WEBHOOK }}
@@ -30,6 +35,7 @@ jobs:
       OPENCLAW_BIN: ${{ vars.OPENCLAW_BIN }}
       RS_FILTER_KEYWORDS_FILE: scripts/config/filter_keywords.json
       RS_FILTER_PROMPT_FILE: scripts/prompts/filter_cross_prompt.md
+      RS_KEEP_DOWNLOADS: "false"
       PYTHONUNBUFFERED: "1"
 
     steps:
@@ -63,15 +69,13 @@ jobs:
 
       - name: Run scheduled pipeline
         working-directory: skills/rs-paper-pipeline
-        run: |
-          set -euo pipefail
-          if [[ -n "${DINGTALK_WEBHOOK:-}" || -n "${FEISHU_TARGET:-}" ]]; then
-            echo "MODE run"
-            python3 scripts/cli.py run
-          else
-            echo "MODE run --no-notify"
-            python3 scripts/cli.py run --no-notify
-          fi
+        run: python3 scripts/run_remote_schedule.py
+
+      - name: Refresh Pages
+        if: success()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run pages.yml --ref main
 
       - name: Print pipeline state
         if: always()
