@@ -52,6 +52,7 @@ function createPaperCard(paper) {
   fragment.querySelector("time").dateTime = formatDate(paper.date);
   fragment.querySelector("h3").textContent = paper.title;
   fragment.querySelector(".paper-summary").textContent = paper.summary;
+  fragment.querySelector(".paper-institution").textContent = `单位 · ${paper.institution || "未公开"}`;
   fragment.querySelector(".paper-authors").textContent = paper.authors;
   fragment.querySelector(".issue-link").href = paper.issue_url;
   const arxiv = fragment.querySelector(".arxiv-link");

@@ -12,6 +12,11 @@ def main() -> int:
     processed = 0
 
     for date_str in target_dates:
+        already_done, reason = run_rs_daily_workday._date_already_completed(date_str)
+        if already_done:
+            print(f"REMOTE_SKIP date={date_str} reason=already_completed detail={reason}")
+            continue
+
         candidates = fetch_recent_candidates(
             max_results=1200,
             days_back=2,
@@ -35,4 +40,3 @@ def main() -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
-

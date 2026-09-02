@@ -25,6 +25,11 @@ class RemoteScheduleTest(unittest.TestCase):
                 return_value=["20260901", "20260902"],
             ),
             patch.object(
+                run_remote_schedule.run_rs_daily_workday,
+                "_date_already_completed",
+                return_value=(False, "not completed"),
+            ),
+            patch.object(
                 run_remote_schedule,
                 "fetch_recent_candidates",
                 side_effect=lambda **kwargs: candidate_sets[kwargs["target_date"]],
@@ -42,7 +47,26 @@ class RemoteScheduleTest(unittest.TestCase):
             force=False,
         )
 
+    def test_completed_date_skips_arxiv_preflight(self):
+        with (
+            patch.object(
+                run_remote_schedule.run_rs_daily_workday,
+                "resolve_target_dates",
+                return_value=["20260901"],
+            ),
+            patch.object(
+                run_remote_schedule.run_rs_daily_workday,
+                "_date_already_completed",
+                return_value=(True, "digest=#18 papers=17"),
+            ),
+            patch.object(run_remote_schedule, "fetch_recent_candidates") as fetch,
+            patch.object(run_remote_schedule.run_rs_daily_workday, "main") as pipeline_main,
+        ):
+            self.assertEqual(run_remote_schedule.main(), 0)
+
+        fetch.assert_not_called()
+        pipeline_main.assert_not_called()
+
 
 if __name__ == "__main__":
     unittest.main()
-
