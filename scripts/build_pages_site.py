@@ -111,15 +111,24 @@ def _load_arxiv_by_issue() -> dict[int, str]:
 
 def _classify_paper(title: str, summary: str) -> str:
     text = f"{title} {summary}".lower()
-    if re.search(r"salien(?:cy|t)", text):
-        return "显著目标"
+    if (
+        re.search(r"\b(?:training[- ]free|annotation[- ]free|zero[- ]shot|inference[- ]time|test[- ]time)\b", text)
+        and re.search(r"\b(?:open[- ](?:vocabulary|set|world)|zero[- ]shot)\b", text)
+        and re.search(r"\bsegment(?:ation|er|ing)?\b", text)
+    ) or re.search(r"(?:免训练|零样本|开放词汇|开放集|开放世界).{0,24}分割", text):
+        return "免训练开放集分割"
+    if re.search(r"salien(?:cy|t)|显著(?:目标)?", text):
+        return "多模态显著目标检测"
     if re.search(r"\b(?:uav|drone|aerial|low-altitude)\b", text):
         return "无人机视觉"
-    if re.search(r"\b(?:tracking|multi-view|multiview|multi-camera|re-identification)\b", text):
-        return "跟踪与多视角"
+    if re.search(
+        r"\b(?:tracking|multi-object|multi-target|multi-view|multiview|multi-camera|cross-camera|cross-view|re-identification)\b",
+        text,
+    ):
+        return "多视角与多目标感知"
     if re.search(r"\b(?:multimodal|multi-modal|fusion|rgb-|infrared|thermal|hyperspectral|cross-modal)\b", text):
-        return "多模态融合"
-    return "综合视觉"
+        return "多模态视觉学习"
+    return "多模态视觉学习"
 
 
 def parse_report(path: Path, arxiv_by_issue: dict[int, str] | None = None) -> dict:

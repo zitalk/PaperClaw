@@ -9,6 +9,7 @@ REPO_ROOT = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(REPO_ROOT / "scripts"))
 
 from build_pages_site import (
+    _classify_paper,
     _display_authors,
     _display_institutions,
     build_site,
@@ -17,6 +18,27 @@ from build_pages_site import (
 
 
 class PagesBuilderTest(unittest.TestCase):
+    def test_page_categories_match_research_directions(self):
+        examples = {
+            "RGB-T Salient Object Detection with Cross-Modal Guidance": "多模态显著目标检测",
+            "Robust Multimodal Fusion under Missing Modalities": "多模态视觉学习",
+            "Cross-Camera Multi-Object Tracking and Re-Identification": "多视角与多目标感知",
+            "Small Object Detection in UAV Aerial Imagery": "无人机视觉",
+            "Training-Free Open-Vocabulary Semantic Segmentation": "免训练开放集分割",
+        }
+        for title, expected in examples.items():
+            with self.subTest(title=title):
+                self.assertEqual(_classify_paper(title, ""), expected)
+
+    def test_training_free_aerial_segmentation_uses_specific_direction(self):
+        self.assertEqual(
+            _classify_paper(
+                "Restrict, Don't Retrain: Inference-Time VLM Guidance for Zero-Shot Aerial Segmentation",
+                "无需重训练即可提升航拍图像零样本分割精度。",
+            ),
+            "免训练开放集分割",
+        )
+
     def test_card_authors_are_limited_to_three(self):
         self.assertEqual(
             _display_authors("Alice A, Bob B, Carol C, David D"),

@@ -1,5 +1,12 @@
 const state = { papers: [], reports: [], visible: 12, query: "", category: "", date: "" };
 const el = (id) => document.getElementById(id);
+const researchDirections = [
+  "多模态显著目标检测",
+  "多模态视觉学习",
+  "多视角与多目标感知",
+  "无人机视觉",
+  "免训练开放集分割"
+];
 
 const latexSymbols = {
   alpha: "α", beta: "β", gamma: "γ", delta: "δ", epsilon: "ε", theta: "θ",
@@ -163,9 +170,8 @@ async function initialize() {
     if (!paperResponse.ok || !reportResponse.ok) throw new Error("数据文件不可用");
     state.papers = (await paperResponse.json()).papers || [];
     state.reports = (await reportResponse.json()).reports || [];
-    const categories = [...new Set(state.papers.map((paper) => paper.category))].sort();
     const dates = [...new Set(state.papers.map((paper) => paper.date))].sort().reverse();
-    setOptions(el("category-filter"), categories);
+    setOptions(el("category-filter"), researchDirections);
     dates.forEach((date) => {
       const option = document.createElement("option");
       option.value = date;
