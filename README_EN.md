@@ -76,7 +76,7 @@ Do not commit `.env`. Downloads are cleaned after processing unless `RS_KEEP_DOW
 
 ## Automation
 
-GitHub Actions runs the paper search remotely from Monday to Friday, so it does not depend on a personal computer staying online. At **03:00 Asia/Shanghai** it checks the latest weekday's new papers, with retries at **09:30, 12:30, and 15:30** for delayed arXiv publication. Weekends are neither scanned nor backfilled, completed dates are skipped automatically, and the Pages workflow republishes the site after a daily report update.
+GitHub Actions runs the paper search remotely from Monday to Friday, so it does not depend on a personal computer staying online. At **03:00 Asia/Shanghai**, Monday scans the previous Friday, Saturday, and Sunday in order, while Tuesday through Friday scan the previous day. Retries run at **09:30, 12:30, and 15:30** for delayed arXiv publication. No job starts during the weekend, completed dates are skipped automatically, and the Pages workflow republishes the site after a daily report update.
 
 ## Acknowledgements
 

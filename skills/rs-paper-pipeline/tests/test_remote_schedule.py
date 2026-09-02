@@ -13,23 +13,23 @@ import run_remote_schedule
 
 
 class RemoteScheduleTest(unittest.TestCase):
-    def test_schedule_targets_previous_weekday(self):
+    def test_schedule_targets_previous_day_and_monday_weekend_backfill(self):
         beijing = timezone(timedelta(hours=8))
         expected_by_day = {
-            1: "20260831",
-            2: "20260901",
-            3: "20260902",
-            4: "20260903",
-            5: "20260904",
-            6: "20260904",
-            7: "20260904",
+            1: ["20260831"],
+            2: ["20260901"],
+            3: ["20260902"],
+            4: ["20260903"],
+            5: ["20260904"],
+            6: ["20260904"],
+            7: ["20260904", "20260905", "20260906"],
         }
         for day, expected in expected_by_day.items():
             now = datetime(2026, 9, day, 3, 0, tzinfo=beijing)
             with self.subTest(day=day):
                 self.assertEqual(
                     run_remote_schedule.run_rs_daily_workday.resolve_target_dates(now),
-                    [expected],
+                    expected,
                 )
 
     def test_only_runs_dates_with_candidates(self):

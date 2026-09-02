@@ -423,8 +423,14 @@ def _run_step(date_str: str, step: str, cmd: list[str], ok_extra: dict | None = 
 def resolve_target_dates(today: datetime | None = None) -> list[str]:
     now = today or datetime.now(BEIJING_TZ)
 
-    # 工作日运行，检索最近一个工作日：周一接续上周五，其余工作日
-    # 检索前一天。手动在周末触发时也回落到周五，不补扫周末。
+    # 工作日运行：周一依次补扫上周五、周六、周日；周二至周五
+    # 检索前一天。手动在周末触发时仍回落到最近的周五。
+    if now.weekday() == 0:
+        return [
+            (now - timedelta(days=delta)).strftime("%Y%m%d")
+            for delta in (3, 2, 1)
+        ]
+
     target = now - timedelta(days=1)
     while target.weekday() >= 5:
         target -= timedelta(days=1)
