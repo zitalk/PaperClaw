@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 """
-每日自动执行：
+工作日自动执行：
 1) 抓取并筛选“当天”个人研究方向论文，生成/更新单篇 issue
 2) 生成当天日报 issue
 3) 推送日报到 Feishu 私聊
@@ -423,9 +423,12 @@ def _run_step(date_str: str, step: str, cmd: list[str], ok_extra: dict | None = 
 def resolve_target_dates(today: datetime | None = None) -> list[str]:
     now = today or datetime.now(BEIJING_TZ)
 
-    # 全年每日运行，按北京时间回溯前一自然日。当天的后续重试仍检查
-    # 同一日期；已经生成日报的日期由上层完成性检查直接跳过。
-    return [(now - timedelta(days=1)).strftime("%Y%m%d")]
+    # 工作日运行，检索最近一个工作日：周一接续上周五，其余工作日
+    # 检索前一天。手动在周末触发时也回落到周五，不补扫周末。
+    target = now - timedelta(days=1)
+    while target.weekday() >= 5:
+        target -= timedelta(days=1)
+    return [target.strftime("%Y%m%d")]
 
 
 def _process_date(date_str: str, notify: bool, force: bool = False):

@@ -13,11 +13,19 @@ import run_remote_schedule
 
 
 class RemoteScheduleTest(unittest.TestCase):
-    def test_schedule_targets_previous_calendar_day_every_day(self):
+    def test_schedule_targets_previous_weekday(self):
         beijing = timezone(timedelta(hours=8))
-        for day in range(1, 8):
+        expected_by_day = {
+            1: "20260831",
+            2: "20260901",
+            3: "20260902",
+            4: "20260903",
+            5: "20260904",
+            6: "20260904",
+            7: "20260904",
+        }
+        for day, expected in expected_by_day.items():
             now = datetime(2026, 9, day, 3, 0, tzinfo=beijing)
-            expected = (now - timedelta(days=1)).strftime("%Y%m%d")
             with self.subTest(day=day):
                 self.assertEqual(
                     run_remote_schedule.run_rs_daily_workday.resolve_target_dates(now),
