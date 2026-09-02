@@ -102,8 +102,8 @@ function createPaperCard(paper) {
   fragment.querySelector("time").dateTime = formatDate(paper.date);
   renderInlineMath(fragment.querySelector("h3"), paper.title);
   fragment.querySelector(".paper-summary").textContent = paper.summary;
-  fragment.querySelector(".paper-institution").textContent = `单位 · ${paper.institution || "未公开"}`;
-  fragment.querySelector(".paper-authors").textContent = paper.authors;
+  fragment.querySelector(".paper-institution-value").textContent = paper.display_institution || paper.institution || "未公开";
+  fragment.querySelector(".paper-authors-value").textContent = paper.display_authors || paper.authors || "未公开";
   fragment.querySelector(".issue-link").href = paper.issue_url;
   const arxiv = fragment.querySelector(".arxiv-link");
   if (paper.arxiv_url) arxiv.href = paper.arxiv_url;
