@@ -22,6 +22,7 @@ class ResearchProfileFilterTest(unittest.TestCase):
         self.assertIn("UAV vision", config["rs_query_terms"])
         self.assertIn("camera LiDAR fusion", config["rs_query_terms"])
         self.assertIn("vision language perception", config["rs_query_terms"])
+        self.assertIn("training-free open-vocabulary segmentation", config["rs_query_terms"])
         self.assertIn("{{candidate_lines}}", load_filter_prompt_template())
 
     def test_research_direction_examples_pass_domain_filter(self):
@@ -36,6 +37,9 @@ class ResearchProfileFilterTest(unittest.TestCase):
             "Missing-Modality Robust Multimodal Segmentation with Modality Dropout",
             "Vision-Language Perception for Open-Vocabulary UAV Object Detection",
             "Multispectral Tiny Object Detection in Low-Altitude Imagery",
+            "Training-Free Open-Vocabulary Semantic Segmentation with Frozen CLIP",
+            "Annotation-Free Open-Set Segmentation for Remote Sensing Images",
+            "Zero-Shot Open-World Segmentation in UAV Aerial Imagery",
         ]
         for text in examples:
             with self.subTest(text=text):

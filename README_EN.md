@@ -40,6 +40,7 @@ Each selected paper becomes a structured GitHub Issue. Daily results are publish
 - Salient and small targets: multimodal saliency, infrared small targets, text-guided detection and segmentation
 - Tracking and multi-view vision: MOT, ReID, cross-camera association and 3D perception
 - UAV vision: detection, tracking, segmentation, navigation, reconstruction and multi-UAV cooperation
+- Training-free open-set segmentation: open-vocabulary, zero-shot and annotation-free dense prediction with frozen foundation models
 
 ## Pipeline
 

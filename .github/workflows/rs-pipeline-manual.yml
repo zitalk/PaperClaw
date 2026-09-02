@@ -12,9 +12,14 @@ on:
           - run_no_notify
           - run_notify
           - reconcile
+          - paper_batch
           - doctor
       date:
         description: "Optional target date in YYYYMMDD"
+        required: false
+        type: string
+      arxiv_ids:
+        description: "Comma- or space-separated arXiv IDs for paper_batch"
         required: false
         type: string
 
@@ -82,6 +87,7 @@ jobs:
         env:
           DISPATCH_COMMAND: ${{ github.event.inputs.command }}
           DISPATCH_DATE: ${{ github.event.inputs.date }}
+          DISPATCH_ARXIV_IDS: ${{ github.event.inputs.arxiv_ids }}
         run: |
           set -euo pipefail
 
@@ -95,6 +101,22 @@ jobs:
                 exit 1
               fi
               python3 scripts/cli.py reconcile --date "${DISPATCH_DATE}"
+              ;;
+            paper_batch)
+              if [[ -z "${DISPATCH_ARXIV_IDS:-}" ]]; then
+                echo "workflow_dispatch command=paper_batch requires arxiv_ids" >&2
+                exit 1
+              fi
+              normalized_ids="${DISPATCH_ARXIV_IDS//,/ }"
+              read -r -a paper_ids <<< "${normalized_ids}"
+              for arxiv_id in "${paper_ids[@]}"; do
+                if [[ ! "${arxiv_id}" =~ ^[0-9]{4}\.[0-9]{4,5}(v[0-9]+)?$ ]]; then
+                  echo "invalid arXiv ID: ${arxiv_id}" >&2
+                  exit 1
+                fi
+                python3 scripts/cli.py paper "${arxiv_id}"
+              done
+              python3 scripts/cli.py rebuild-index
               ;;
             run_notify)
               if [[ -n "${DISPATCH_DATE:-}" ]]; then
