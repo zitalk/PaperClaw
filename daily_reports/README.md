@@ -5,14 +5,14 @@
 # [20260902](./202609/20260902.md)
 ## 📌 今日概况
 
-今日共检索候选论文 143 篇；关键词+LLM 智能匹配研究方向论文 17 篇；最终纳入日报 17 篇。
+今日共检索候选论文 143 篇；关键词+LLM 智能匹配研究方向论文 17 篇；最终纳入日报 14 篇。
 
-今日论文覆盖无人机视觉、多模态理解与鲁棒性评估等方向。研究重点包括：面向真实部署的LiDAR语义分割鲁棒性评估、流式视频理解中的视觉token剪枝、RGB到红外图像转换以提升无人机车辆检测、多鱼眼全景感知平台、以及基于MLLM的指称多目标跟踪。此外，生成式图像编辑用于域偏移鲁棒目标检测、雷达Transformer运动检测、旋转诱导显著性漂移审计、多光谱与SAR图像理解、海事3D船舶检测、缺失模态适应、无人机小目标检测及医学图像分割等方向均有涉及，整体呈现从感知精度向部署鲁棒性与计算效率延伸的趋势。
+今日论文覆盖无人机视觉、多模态理解与鲁棒性评估等方向。研究重点包括：面向真实部署的LiDAR语义分割鲁棒性评估、RGB到红外图像转换以提升无人机车辆检测、多鱼眼全景感知平台、以及基于MLLM的指称多目标跟踪。此外，雷达Transformer运动检测、旋转诱导显著性漂移审计、多光谱与SAR图像理解、海事3D船舶检测、无人机小目标检测及医学图像分割等方向均有涉及，整体呈现从感知精度向部署鲁棒性与计算效率延伸的趋势。
 
 ## ✨ 今日亮点
 
 - LiDAR语义分割鲁棒性评估覆盖粗标签、恶劣条件与域偏移，推动真实部署。
-- ShallowStream通过浅层索引与深层回答策略，显著提升流式视频理解效率。
+- RGB到红外图像转换增强无人机车辆检测在未知红外域中的泛化能力。
 - 多鱼眼全景感知平台实现超低空无人机无死角环境建模与视差感知。
 
 ## 🗂 今日文章列表
@@ -20,16 +20,13 @@
 | 标题 | 作者 | 单位 | 一句话概括 | Issue |
 |---|---|---|---|---|
 | [20260902] Toward Robust LiDAR Semantic Segmentation for Real-World Deployment: Evaluation under Coarse Labels, Adverse Conditions, and Domain Shifts | Samir Abou Haidar, Chariot Alexandre, Darouich Mehdi, Joly Cyril, Deschaud Jean-Emmanuel | remains largely centered on standard train/val/test splits of；sity, Centre for Robotics (CAOR)；The authors are with Paris-Saclay University, CEA, List, F-91120, Robustness evaluation measures model performance un- | 评估LiDAR语义分割在粗标签、恶劣条件与域偏移下的鲁棒性，面向真实自动驾驶部署。 | [#25](https://github.com/zitalk/PaperClaw/issues/25) |
-| [20260902] ShallowStream: Index Shallow then Answer Deep for Streaming Video Understanding | Hao Jitai, Yang Ke, Huang Qiang, Yu Jun | Harbin Institute of Technology (Shenzhen) | 提出先浅层索引后深层回答的流式视频理解方法，降低视觉token与KV缓存开销。 | [#26](https://github.com/zitalk/PaperClaw/issues/26) |
 | [20260902] RGB-to-IR image translation for infrared vehicle detection in unseen UAV domains | Thijs A. Eker, Ella P. Fokkinga, Jan Erik van Woerden, Elfi I. S. Hofmeijer, Sebastiaan P. Snel, Schutte Klamer, Friso G. Heslinga | TNO - Intelligent Imaging | 利用RGB到红外图像转换生成合成数据，提升无人机平台红外车辆检测泛化能力。 | [#27](https://github.com/zitalk/PaperClaw/issues/27) |
 | [20260902] From Multi-Fisheye Sensing to Panoramic Perception: A Parallax-Aware Onboard Platform for Ultra-Low-Altitude UAVs | Dai Dun, Lu Ze, He Cheng, Wang Yaowen, Quan Quan | School of Automation Science and Electrical Engineering, Beihang University, Beijing, China (；the Tianmushan Laboratory, Hangzhou, China (；School of Automation Science and Electrical Engineering, Beihang University, Beijing, China | 构建视差感知的多鱼眼机载平台，实现超低空无人机全景感知与等距柱状全景生成。 | [#28](https://github.com/zitalk/PaperClaw/issues/28) |
 | [20260902] YesTrack: Referring Multi-Object Tracking via MLLM-based Yes/No Verification | Hu Quansheng, Sun Qin, Dai Qiansen, Ding Jin, Zhang Wan, Zhou Xue, Zou Jianxiao | University of Electronic Science and Technology of China, Chengdu, China；Shenzhen Institute for Advanced Study, UESTC, Shenzhen, China | 基于MLLM的是非验证机制实现指称多目标跟踪，增强时序一致性与参考传播。 | [#29](https://github.com/zitalk/PaperClaw/issues/29) |
-| [20260902] Domain shift-robust object detection with GenAI image editing | Isabel D. Stein, Thijs A. Eker, Sebastiaan P. Snel, Ella P. Fokkinga, Schutte Klamer, Ambrogioni Luca, Friso G. Heslinga | Radboud University, Nijmegen, the Netherlands | 采用生成式图像编辑进行数据增强，提升目标检测模型对域偏移的鲁棒性。 | [#30](https://github.com/zitalk/PaperClaw/issues/30) |
 | [20260902] If It Moves, Radar Knows: A Physics-Aware Radar Transformer for Class-Agnostic Moving-Object Detection | Sun Yinghao, Li Shuguang, Shao Jinliang, Li Tieshan | School of Automation Engineering of the University of Electronic Science and Technology of China (UESTC), Chengdu, Sichuan, P | 提出物理感知雷达Transformer，利用多普勒运动线索实现类别无关的运动目标检测。 | [#31](https://github.com/zitalk/PaperClaw/issues/31) |
 | [20260902] Signal or Noise? Auditing Rotation-Induced Saliency Drift in Medical and Aerial Imaging | Khawaja Murad ul Hassan, Ebrahimi Mehran | Independent Researcher；Ontario Tech University | 审计医学与航拍图像中旋转引起的显著性漂移，揭示Grad-CAM等方法的旋转等变性缺陷。 | [#32](https://github.com/zitalk/PaperClaw/issues/32) |
 | [20260902] Lightweight Adaptation of General-Purpose VLMs for Multispectral and SAR Image Understanding | Liu Shanji, Yao Kelu, Xue Junxiao, Lv Chenghui, Miao Xiangyang, Huang Yekai, Chen Yaying, Li Chao | Zhejiang University；Zhejiang Lab | 通过轻量级适配将通用视觉语言模型扩展至多光谱与SAR图像理解任务。 | [#33](https://github.com/zitalk/PaperClaw/issues/33) |
 | [20260902] KSG-Net: Key-Sparse and Global-Context Learning for Maritime 3D Ship Detection | Huai Zhouyuan, Wan Meiqi, Yang Yan, Chen Minshi, Yuan Xin, Wang Wei, Wang Xiao | School of Computer Science and Technology, Wuhan University of Science and；Hubei Province Key Laboratory of Intelligent Information Processing and；Real-Time Industrial System, Wuhan University of Science and Technology, Wuhan；State Key Laboratory of Robotics and Intelligent Systems, Shenyang Institute of；Automation, Chinese Academy of Sciences, Shenyang 110016, China；China University of Chinese Academy of Sciences, Beijing 100049, China | 提出关键稀疏与全局上下文学习网络，提升海事场景LiDAR点云3D船舶检测性能。 | [#34](https://github.com/zitalk/PaperClaw/issues/34) |
-| [20260902] Test-Time Logit Prompting for Source-Free Missing Modality Adaptation | Chen Taixi, Guo Nancy | School of Computing；State University of New York at Binghamton | 在测试时利用logit提示实现无源缺失模态适应，增强视觉语言模型鲁棒性。 | [#35](https://github.com/zitalk/PaperClaw/issues/35) |
 | [20260902] BIDC-YOLO Small target detection in drone aerial photography based on YOLOv8s | Chen Yadong, Wang Chenwei, Yang Zhenjian, Zhang Yunjie, Wang Zehua | 暂无 | 基于YOLOv8s改进特征融合与注意力机制，提升无人机航拍小目标检测精度。 | [#37](https://github.com/zitalk/PaperClaw/issues/37) |
 | [20260902] AMFF-DETR: Anti-Interference and Multi-Scale Feature Fusion DETR for SAR Ship Detection in Complex Backgrounds | Zheng Jikai, Wan Keyi, Zheng Zekang, Mingjia jia Wang | 暂无 | 提出抗干扰多尺度特征融合DETR，用于复杂背景下的SAR船舶检测。 | [#38](https://github.com/zitalk/PaperClaw/issues/38) |
 | [20260902] An improved RT-DETR algorithm for small-object detection in UAV aerial images | Long Qiyu, Liang Zhixun, Chen Peng, Tang Peng | Guangxi Normal University；Hechi University；Guilin University of Electronic Technology | 改进RT-DETR算法，通过多尺度特征增强与可变形注意力提升无人机小目标检测。 | [#39](https://github.com/zitalk/PaperClaw/issues/39) |

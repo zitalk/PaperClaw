@@ -74,8 +74,8 @@ def _augment_papers_from_stats(repo, papers: list[dict], stats: dict | None) -> 
     if not stats:
         return papers
 
-    selected_ids = stats.get("successful_selected_arxiv_ids") or []
-    if not selected_ids:
+    selected_ids = stats.get("successful_selected_arxiv_ids")
+    if selected_ids is None:
         return papers
 
     index = ensure_index(repo)
@@ -84,7 +84,7 @@ def _augment_papers_from_stats(repo, papers: list[dict], stats: dict | None) -> 
         for paper in papers
         if _paper_key(paper) is not None
     }
-    merged = list(papers)
+    selected_papers: list[dict] = []
 
     for arxiv_id in selected_ids:
         issue = lookup_issue(repo, index, arxiv_id)
@@ -94,12 +94,10 @@ def _augment_papers_from_stats(repo, papers: list[dict], stats: dict | None) -> 
         raw = issue_data(issue)
         number = _paper_key(raw)
         if number is not None and number in by_issue_number:
-            continue
-        _merge_paper(merged, raw)
-        if number is not None:
-            by_issue_number[number] = raw
+            raw = by_issue_number[number]
+        _merge_paper(selected_papers, raw)
 
-    return merged
+    return selected_papers
 
 
 def main(target_date: str | None = None, stats_json: str | None = None):
@@ -128,8 +126,8 @@ def main(target_date: str | None = None, stats_json: str | None = None):
 
     for date in dates:
         # Open issue list is eventually consistent right after paper creation.
-        # Use stats + issue_index to fetch just-created successful papers by
-        # issue number, then merge with the regular date-labeled issue scan.
+        # When run stats exist, build the digest strictly from this run's
+        # successful selection so stale date-labeled issues cannot inflate it.
         papers = _augment_papers_from_stats(repo, paper_by_date.get(date, []), stats_map.get(date))
         papers = sorted(papers, key=lambda x: x["number"])
         if not papers and date not in stats_map:
