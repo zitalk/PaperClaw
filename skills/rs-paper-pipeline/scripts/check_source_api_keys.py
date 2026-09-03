@@ -114,7 +114,7 @@ def build_checks() -> list[Check]:
             secret_names=("ELSEVIER_API_KEY",),
             url=_url(
                 "https://api.elsevier.com/content/search/scopus",
-                query='TITLE-ABS-KEY("multimodal vision")',
+                query="ALL(multimodal)",
                 count=1,
             ),
             headers=elsevier_headers,
