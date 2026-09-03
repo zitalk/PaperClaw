@@ -153,6 +153,8 @@ def _process_paper(arxiv_id: str, issue_number: int | None = None, dry_run: bool
         info["institutions"] = source_institutions
     elif is_valid_institution_text(pdf_institutions):
         info["institutions"] = pdf_institutions
+    if not is_valid_institution_text(info.get("institutions", "")):
+        info["institutions"] = "暂无"
     log_step("STEP-1", "OK", f"institutions={info['institutions'][:60] if info['institutions'] else 'EMPTY'}")
 
     # 1.3 处理图片（PDF前三页转JPG并上传）
@@ -405,6 +407,8 @@ def _process_metadata_candidate(
         "abstract_en": str(candidate.get("abstract") or "").strip(),
         "date": str(candidate.get("published") or "")[:10],
     }
+    if not is_valid_institution_text(info["institutions"]):
+        info["institutions"] = "暂无"
     log_step("STEP-1", "OK", f"metadata_only | title={info['title'][:40]}")
 
     abstract_zh = translate_text(info["abstract_en"])

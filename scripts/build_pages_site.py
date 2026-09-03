@@ -151,7 +151,7 @@ def _display_institutions(value: str, limit: int = 3) -> str:
         institutions.append(institution)
         seen.add(key)
     if not institutions:
-        return "未公开"
+        return "暂无"
     top_level = [institution for institution in institutions if not _is_secondary_unit(institution)]
     if top_level:
         institutions = top_level

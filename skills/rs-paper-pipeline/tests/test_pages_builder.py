@@ -62,6 +62,10 @@ class PagesBuilderTest(unittest.TestCase):
             "A University, B University, C University, et al.",
         )
 
+    def test_card_without_institution_uses_compact_placeholder(self):
+        self.assertEqual(_display_institutions(""), "暂无")
+        self.assertEqual(_display_institutions("暂无"), "暂无")
+
     def test_card_institutions_rejoin_broken_affiliation_fragments(self):
         raw = (
             "School of Computer Science and Technology, Wuhan University of Science and；"

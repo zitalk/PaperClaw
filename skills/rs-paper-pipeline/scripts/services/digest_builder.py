@@ -32,12 +32,14 @@ def validate_papers_for_digest(papers: list[dict]) -> list[str]:
     for paper in papers:
         title = extract_report_title(paper)
         authors = extract_author(paper.get("body") or "")
-        institution = extract_institution(paper.get("body") or "")
         if is_invalid_digest_field(authors) or "et al." in authors:
             errors.append(f"{title}: 作者信息不合格")
-        if is_invalid_digest_institution(institution):
-            errors.append(f"{title}: 单位信息不合格")
     return errors
+
+
+def display_institution(body: str) -> str:
+    institution = extract_institution(body)
+    return "暂无" if is_invalid_digest_institution(institution) else institution
 
 
 def extract_report_title(issue: dict) -> str:
@@ -73,7 +75,7 @@ def build_digest_with_llm(date: str, papers: list, stats: dict | None = None, fa
                 "issue": paper["number"],
                 "title": extract_report_title(paper),
                 "authors": extract_author(paper.get("body") or ""),
-                "institution": extract_institution(paper.get("body") or ""),
+                "institution": display_institution(paper.get("body") or ""),
                 "labels": labels,
                 "url": paper["html_url"],
             }

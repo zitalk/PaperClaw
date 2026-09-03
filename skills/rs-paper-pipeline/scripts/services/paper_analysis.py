@@ -96,8 +96,6 @@ def quality_gate(
         errors.append("标题为空或无效")
     if not info.get("authors") or has_bad_placeholder(info.get("authors")):
         errors.append("作者为空或无效")
-    if not is_valid_institution_text(info.get("institutions", "")):
-        errors.append("单位为空或无效")
     if not info.get("date"):
         errors.append("日期为空")
     if not abstract_zh or len(abstract_zh.strip()) < 20:

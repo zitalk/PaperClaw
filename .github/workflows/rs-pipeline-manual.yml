@@ -22,6 +22,11 @@ on:
         description: "Comma- or space-separated arXiv IDs for paper_batch"
         required: false
         type: string
+      force:
+        description: "Force replay even when the target date already has a completed digest"
+        required: false
+        default: false
+        type: boolean
 
 concurrency:
   group: paperclaw-academic-api-clients
@@ -94,8 +99,14 @@ jobs:
           DISPATCH_COMMAND: ${{ github.event.inputs.command }}
           DISPATCH_DATE: ${{ github.event.inputs.date }}
           DISPATCH_ARXIV_IDS: ${{ github.event.inputs.arxiv_ids }}
+          DISPATCH_FORCE: ${{ github.event.inputs.force }}
         run: |
           set -euo pipefail
+
+          force_args=()
+          if [[ "${DISPATCH_FORCE:-false}" == "true" ]]; then
+            force_args+=(--force)
+          fi
 
           case "${DISPATCH_COMMAND:-run_no_notify}" in
             doctor)
@@ -126,16 +137,16 @@ jobs:
               ;;
             run_notify)
               if [[ -n "${DISPATCH_DATE:-}" ]]; then
-                python3 scripts/cli.py run --date "${DISPATCH_DATE}" --notify
+                python3 scripts/cli.py run --date "${DISPATCH_DATE}" --notify "${force_args[@]}"
               else
-                python3 scripts/cli.py run --notify
+                python3 scripts/cli.py run --notify "${force_args[@]}"
               fi
               ;;
             run_no_notify)
               if [[ -n "${DISPATCH_DATE:-}" ]]; then
-                python3 scripts/cli.py run --date "${DISPATCH_DATE}" --no-notify
+                python3 scripts/cli.py run --date "${DISPATCH_DATE}" --no-notify "${force_args[@]}"
               else
-                python3 scripts/cli.py run --no-notify
+                python3 scripts/cli.py run --no-notify "${force_args[@]}"
               fi
               ;;
             *)

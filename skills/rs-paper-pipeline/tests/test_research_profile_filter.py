@@ -2,6 +2,7 @@ from pathlib import Path
 import sys
 import unittest
 from unittest.mock import patch
+from types import SimpleNamespace
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -77,6 +78,16 @@ class ResearchProfileFilterTest(unittest.TestCase):
 
         self.assertEqual(batch_sizes, [(35, 1, 3), (35, 2, 3), (1, 3, 3)])
         self.assertEqual(len(selected), 3)
+
+    def test_existing_issue_without_institution_is_not_refreshed(self):
+        issue = SimpleNamespace(
+            body=(
+                "| **作者** | Alice Example, Bob Example |\n"
+                "| **单位** | 暂无 |"
+            )
+        )
+
+        self.assertTrue(daily_arxiv_cross_filter.issue_has_valid_metadata(issue))
 
 
 if __name__ == "__main__":

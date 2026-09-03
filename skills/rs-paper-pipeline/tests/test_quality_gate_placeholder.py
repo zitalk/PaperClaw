@@ -70,6 +70,27 @@ class QualityGatePlaceholderTest(unittest.TestCase):
 
         self.assertTrue(ok, errors)
 
+    def test_missing_institution_does_not_reject_paper(self):
+        info = {
+            "title": "Training-Free Open-Set Segmentation with Frozen Vision Models",
+            "authors": "Alice Example, Bob Example",
+            "institutions": "暂无",
+            "date": "2026-09-02",
+        }
+        analysis = {
+            f"q{i}": "该回答依据论文内容说明研究问题、方法、实验结果与适用边界。"
+            for i in range(1, 11)
+        }
+
+        ok, errors = quality_gate(
+            info,
+            analysis,
+            "本文研究冻结视觉模型条件下的免训练开放集分割，并报告实验结果。",
+            uploaded_images=1,
+        )
+
+        self.assertTrue(ok, errors)
+
 
 if __name__ == "__main__":
     unittest.main()
