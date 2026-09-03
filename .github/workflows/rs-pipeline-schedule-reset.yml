@@ -9,7 +9,7 @@ on:
     - cron: "30 1,4,7 * * 1-5"
 
 concurrency:
-  group: rs-pipeline-schedule
+  group: paperclaw-academic-api-clients
   cancel-in-progress: false
 
 jobs:

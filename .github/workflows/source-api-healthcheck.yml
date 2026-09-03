@@ -6,6 +6,10 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: paperclaw-academic-api-clients
+  cancel-in-progress: false
+
 jobs:
   validate:
     runs-on: ubuntu-latest
@@ -15,7 +19,6 @@ jobs:
       SEMANTIC_SCHOLAR_API_KEY: ${{ secrets.SEMANTIC_SCHOLAR_API_KEY }}
       IEEE_API_KEY: ${{ secrets.IEEE_API_KEY }}
       ELSEVIER_API_KEY: ${{ secrets.ELSEVIER_API_KEY }}
-      ELSEVIER_INSTTOKEN: ${{ secrets.ELSEVIER_INSTTOKEN }}
       SPRINGER_NATURE_API_KEY: ${{ secrets.SPRINGER_NATURE_API_KEY }}
       PYTHONUNBUFFERED: "1"
 

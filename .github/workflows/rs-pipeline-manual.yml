@@ -24,7 +24,7 @@ on:
         type: string
 
 concurrency:
-  group: rs-pipeline-manual
+  group: paperclaw-academic-api-clients
   cancel-in-progress: false
 
 jobs:
