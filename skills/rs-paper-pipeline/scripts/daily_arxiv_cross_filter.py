@@ -121,6 +121,7 @@ def compact_item(item: dict[str, str]) -> dict[str, str]:
         "abstract": item.get("abstract", ""),
         "authors": item.get("authors", ""),
         "institutions": item.get("institutions", ""),
+        "venue": item.get("venue", ""),
     }
 
 

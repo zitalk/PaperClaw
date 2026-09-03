@@ -28,6 +28,31 @@ _COUNTRIES = (
     "China|India|Australia|Canada|France|Germany|Italy|Japan|Malaysia|Portugal|"
     "Singapore|Spain|Sweden|Switzerland|UK|USA|U\\.K\\.|U\\.S\\.A\\."
 )
+_ARXIV_ID_RE = re.compile(r"\d{4}\.\d{4,5}(?:v\d+)?")
+_VENUE_ABBREVIATIONS = (
+    (re.compile(r"IEEE Transactions on Multimedia", re.IGNORECASE), "TMM"),
+    (re.compile(r"IEEE Transactions on Pattern Analysis and Machine Intelligence", re.IGNORECASE), "TPAMI"),
+    (re.compile(r"IEEE Transactions on Image Processing", re.IGNORECASE), "TIP"),
+    (re.compile(r"IEEE Transactions on Circuits and Systems for Video Technology", re.IGNORECASE), "TCSVT"),
+    (re.compile(r"IEEE Transactions on Geoscience and Remote Sensing", re.IGNORECASE), "TGRS"),
+    (re.compile(r"IEEE Transactions on Neural Networks and Learning Systems", re.IGNORECASE), "TNNLS"),
+    (re.compile(r"Computer Vision and Pattern Recognition", re.IGNORECASE), "CVPR"),
+    (re.compile(r"International Conference on Computer Vision", re.IGNORECASE), "ICCV"),
+    (re.compile(r"European Conference on Computer Vision", re.IGNORECASE), "ECCV"),
+    (re.compile(r"Winter Conference on Applications of Computer Vision", re.IGNORECASE), "WACV"),
+    (re.compile(r"International Conference on Robotics and Automation", re.IGNORECASE), "ICRA"),
+    (re.compile(r"Intelligent Robots and Systems", re.IGNORECASE), "IROS"),
+    (re.compile(r"ACM International Conference on Multimedia", re.IGNORECASE), "ACM MM"),
+    (re.compile(r"Neural Information Processing Systems", re.IGNORECASE), "NeurIPS"),
+    (re.compile(r"International Conference on Machine Learning", re.IGNORECASE), "ICML"),
+    (re.compile(r"International Conference on Learning Representations", re.IGNORECASE), "ICLR"),
+    (re.compile(r"Scientific Reports", re.IGNORECASE), "Sci Rep"),
+    (re.compile(r"Engineering Research Express", re.IGNORECASE), "Eng Res Express"),
+)
+_DOI_VENUE_PREFIXES = (
+    ("doi:10.1038/s41598-", "Sci Rep"),
+    ("doi:10.1088/2631-8695/", "Eng Res Express"),
+)
 
 
 def _extract_section(markdown: str, heading: str) -> str:
@@ -159,14 +184,55 @@ def _display_institutions(value: str, limit: int = 3) -> str:
     return ", ".join(shown) + (", et al." if len(institutions) > limit else "")
 
 
-def _load_arxiv_by_issue() -> dict[int, str]:
+def _source_label(venue: str, source: str, paper_id: str) -> str:
+    venue = re.sub(r"\s+", " ", venue or "").strip()
+    source = re.sub(r"\s+", " ", source or "").strip()
+    if _ARXIV_ID_RE.fullmatch(paper_id or "") and venue.casefold() in {"", "arxiv", "arxiv preprint"}:
+        return "arXiv"
+    for prefix, abbreviation in _DOI_VENUE_PREFIXES:
+        if paper_id.casefold().startswith(prefix):
+            return abbreviation
+    for pattern, abbreviation in _VENUE_ABBREVIATIONS:
+        if pattern.search(venue):
+            return abbreviation
+    acronym = re.search(r"\(([A-Z][A-Z0-9&-]{1,11})\)", venue)
+    if acronym:
+        return acronym.group(1)
+    if venue and venue.casefold() not in {"暂无", "unknown", "n/a"}:
+        return venue if len(venue) <= 26 else f"{venue[:25].rstrip()}…"
+    source_aliases = {
+        "ieee xplore": "IEEE",
+        "elsevier scopus": "Elsevier",
+        "springer nature": "Springer",
+    }
+    if source.casefold() in source_aliases:
+        return source_aliases[source.casefold()]
+    if paper_id.startswith("doi:"):
+        return "DOI"
+    return source or "来源"
+
+
+def _load_paper_metadata_by_issue() -> dict[int, dict[str, str]]:
     if not ISSUE_INDEX_PATH.exists():
         return {}
     payload = json.loads(ISSUE_INDEX_PATH.read_text(encoding="utf-8"))
-    result: dict[int, str] = {}
-    for arxiv_id, metadata in payload.items():
+    result: dict[int, dict[str, str]] = {}
+    for paper_id, metadata in payload.items():
         if isinstance(metadata, dict) and isinstance(metadata.get("number"), int):
-            result[metadata["number"]] = arxiv_id
+            source = str(metadata.get("source") or "")
+            venue = str(metadata.get("venue") or "")
+            url = str(metadata.get("url") or "")
+            arxiv_id = paper_id if _ARXIV_ID_RE.fullmatch(paper_id) else ""
+            if not url and arxiv_id:
+                url = f"https://arxiv.org/abs/{arxiv_id}"
+            elif not url and paper_id.startswith("doi:"):
+                url = f"https://doi.org/{paper_id[4:]}"
+            result[metadata["number"]] = {
+                "paper_id": paper_id,
+                "arxiv_id": arxiv_id,
+                "source_label": _source_label(venue, source, paper_id),
+                "source_url": url,
+            }
     return result
 
 
@@ -192,8 +258,8 @@ def _classify_paper(title: str, summary: str) -> str:
     return "多模态视觉学习"
 
 
-def parse_report(path: Path, arxiv_by_issue: dict[int, str] | None = None) -> dict:
-    arxiv_by_issue = arxiv_by_issue or {}
+def parse_report(path: Path, metadata_by_issue: dict[int, dict[str, str]] | None = None) -> dict:
+    metadata_by_issue = metadata_by_issue or {}
     markdown = path.read_text(encoding="utf-8")
     date = path.stem
     papers: list[dict[str, str | int]] = []
@@ -222,7 +288,8 @@ def parse_report(path: Path, arxiv_by_issue: dict[int, str] | None = None) -> di
         if not issue_url.startswith(ISSUE_URL_PREFIX):
             continue
         title = re.sub(r"^\[\d{8}\]\s*", "", cells[0]).strip()
-        arxiv_id = arxiv_by_issue.get(issue_number, "")
+        source_metadata = metadata_by_issue.get(issue_number, {})
+        arxiv_id = source_metadata.get("arxiv_id", "")
         papers.append(
             {
                 "date": date,
@@ -236,6 +303,8 @@ def parse_report(path: Path, arxiv_by_issue: dict[int, str] | None = None) -> di
                 "issue_url": issue_url,
                 "arxiv_id": arxiv_id,
                 "arxiv_url": f"https://arxiv.org/abs/{arxiv_id}" if arxiv_id else "",
+                "source_label": source_metadata.get("source_label", "arXiv" if arxiv_id else "DOI"),
+                "source_url": source_metadata.get("source_url", ""),
                 "category": _classify_paper(title, cells[3]),
             }
         )
@@ -251,7 +320,7 @@ def parse_report(path: Path, arxiv_by_issue: dict[int, str] | None = None) -> di
 
 
 def collect_site_data() -> tuple[list[dict], list[dict]]:
-    arxiv_by_issue = _load_arxiv_by_issue()
+    metadata_by_issue = _load_paper_metadata_by_issue()
     report_paths = [
         path
         for path in REPORTS_DIR.rglob("*.md")
@@ -259,7 +328,7 @@ def collect_site_data() -> tuple[list[dict], list[dict]]:
         and re.fullmatch(r"\d{6}", path.parent.name)
     ]
     reports = [
-        parse_report(path, arxiv_by_issue)
+        parse_report(path, metadata_by_issue)
         for path in sorted(report_paths, reverse=True)
     ]
     reports = [report for report in reports if report["papers"]]

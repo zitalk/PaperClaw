@@ -431,6 +431,7 @@ def _process_metadata_candidate(
         title_date = date_str.replace("-", "")
 
     sources = ", ".join(candidate.get("sources") or [candidate.get("primary_source") or "Unknown"])
+    venue = str(candidate.get("venue") or "").strip() or "暂无"
     tldr = generate_tldr(info["title"], info["abstract_en"])
     abstract_short = abstract_zh[:400] + "..." if len(abstract_zh) > 400 else abstract_zh
     qa_md = {f"q{i}": format_answer_md(analysis.get(f"q{i}", "")) for i in range(1, 11)}
@@ -445,6 +446,7 @@ def _process_metadata_candidate(
 | **单位** | {info['institutions']} |
 | **日期** | {date_str} |
 | **来源** | {sources} |
+| **出版物** | {venue} |
 | **链接** | {_generic_source_links(candidate)} |
 | **PaperClaw ID** | `{paper_id}` |
 | **分析层级** | 摘要级（未下载或保存全文） |

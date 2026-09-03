@@ -12,6 +12,7 @@ from build_pages_site import (
     _classify_paper,
     _display_authors,
     _display_institutions,
+    _source_label,
     build_site,
     parse_report,
 )
@@ -65,6 +66,29 @@ class PagesBuilderTest(unittest.TestCase):
     def test_card_without_institution_uses_compact_placeholder(self):
         self.assertEqual(_display_institutions(""), "暂无")
         self.assertEqual(_display_institutions("暂无"), "暂无")
+
+    def test_source_label_uses_common_venue_abbreviations(self):
+        self.assertEqual(
+            _source_label("IEEE Transactions on Multimedia", "IEEE Xplore", "doi:10.1/example"),
+            "TMM",
+        )
+        self.assertEqual(
+            _source_label(
+                "Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition",
+                "OpenAlex",
+                "doi:10.1/example",
+            ),
+            "CVPR",
+        )
+        self.assertEqual(_source_label("arXiv", "arXiv", "2609.00001v1"), "arXiv")
+        self.assertEqual(
+            _source_label("", "", "doi:10.1038/s41598-026-69495-2"),
+            "Sci Rep",
+        )
+        self.assertEqual(
+            _source_label("", "", "doi:10.1088/2631-8695/aea1db"),
+            "Eng Res Express",
+        )
 
     def test_card_institutions_rejoin_broken_affiliation_fragments(self):
         raw = (

@@ -153,6 +153,7 @@ def _candidate(
     arxiv_id: Any = "",
     authors: list[str] | None = None,
     institutions: list[str] | None = None,
+    venue: Any = "",
     url: Any = "",
 ) -> dict[str, Any] | None:
     date_value = str(published or "")[:10]
@@ -171,6 +172,7 @@ def _candidate(
         "published": date_value,
         "authors": format_authors(authors or []),
         "institutions": format_affiliations(institutions or []),
+        "venue": _clean_text(venue),
         "url": str(url or "").strip(),
     }
     item["paper_id"] = _paper_id(item)
@@ -221,6 +223,7 @@ def fetch_openalex(target_date: str) -> list[dict[str, Any]]:
                         institutions.append(str(institution["display_name"]))
             ids = work.get("ids") or {}
             primary_location = work.get("primary_location") or {}
+            location_source = primary_location.get("source") or {} if isinstance(primary_location, dict) else {}
             item = _candidate(
                 source="OpenAlex",
                 source_id=work.get("id", ""),
@@ -231,6 +234,7 @@ def fetch_openalex(target_date: str) -> list[dict[str, Any]]:
                 arxiv_id=(ids.get("arxiv") if isinstance(ids, dict) else ""),
                 authors=authors,
                 institutions=institutions,
+                venue=(location_source.get("display_name") if isinstance(location_source, dict) else ""),
                 url=(primary_location.get("landing_page_url") if isinstance(primary_location, dict) else "")
                 or work.get("doi")
                 or work.get("id"),
@@ -244,7 +248,7 @@ def fetch_semantic_scholar(target_date: str) -> list[dict[str, Any]]:
     if not CONFIG.semantic_scholar_api_key:
         return []
     output: list[dict[str, Any]] = []
-    fields = "paperId,title,abstract,publicationDate,authors,externalIds,url,openAccessPdf"
+    fields = "paperId,title,abstract,publicationDate,authors,externalIds,url,openAccessPdf,venue,publicationVenue"
     for query in QUERY_BUNDLES:
         payload = _json_request(
             "Semantic Scholar",
@@ -263,6 +267,7 @@ def fetch_semantic_scholar(target_date: str) -> list[dict[str, Any]]:
                 continue
             external_ids = work.get("externalIds") or {}
             authors = [str(author.get("name")) for author in (work.get("authors") or []) if author.get("name")]
+            publication_venue = work.get("publicationVenue") or {}
             item = _candidate(
                 source="Semantic Scholar",
                 source_id=work.get("paperId", ""),
@@ -272,6 +277,9 @@ def fetch_semantic_scholar(target_date: str) -> list[dict[str, Any]]:
                 doi=external_ids.get("DOI") if isinstance(external_ids, dict) else "",
                 arxiv_id=external_ids.get("ArXiv") if isinstance(external_ids, dict) else "",
                 authors=authors,
+                venue=work.get("venue") or (
+                    publication_venue.get("name") if isinstance(publication_venue, dict) else ""
+                ),
                 url=work.get("url"),
             )
             if item:
@@ -301,6 +309,7 @@ def fetch_crossref(target_date: str) -> list[dict[str, Any]]:
                 if name:
                     authors.append(name)
             titles = work.get("title") or []
+            container_titles = work.get("container-title") or []
             item = _candidate(
                 source="Crossref",
                 source_id=work.get("DOI", ""),
@@ -309,6 +318,7 @@ def fetch_crossref(target_date: str) -> list[dict[str, Any]]:
                 published=target_date,
                 doi=work.get("DOI"),
                 authors=authors,
+                venue=container_titles[0] if container_titles else "",
                 url=work.get("URL"),
             )
             if item:
@@ -348,6 +358,7 @@ def fetch_springer(target_date: str) -> list[dict[str, Any]]:
                 published=work.get("onlineDate") or work.get("publicationDate"),
                 doi=work.get("doi"),
                 authors=[str(value) for value in (work.get("creators") or [])],
+                venue=work.get("publicationName"),
                 url=landing_url,
             )
             if item:
@@ -397,6 +408,7 @@ def fetch_ieee(target_date: str) -> list[dict[str, Any]]:
                 doi=work.get("doi"),
                 authors=authors,
                 institutions=institutions,
+                venue=work.get("publication_title"),
                 url=work.get("html_url") or work.get("abstract_url"),
             )
             if item:
@@ -438,6 +450,7 @@ def fetch_elsevier_scopus(target_date: str) -> list[dict[str, Any]]:
                 doi=work.get("prism:doi"),
                 authors=[str(work.get("dc:creator"))] if work.get("dc:creator") else [],
                 institutions=affiliations,
+                venue=work.get("prism:publicationName"),
                 url=work.get("prism:url"),
             )
             if item:
@@ -459,7 +472,7 @@ def _merge_items(items: list[dict[str, Any]]) -> list[dict[str, Any]]:
             merged.append(current)
         else:
             current["sources"] = list(dict.fromkeys([*(current.get("sources") or []), *(item.get("sources") or [])]))
-            for field in ("abstract", "authors", "institutions", "url", "doi"):
+            for field in ("abstract", "authors", "institutions", "venue", "url", "doi"):
                 old_value = str(current.get(field) or "")
                 new_value = str(item.get(field) or "")
                 if len(new_value) > len(old_value):
@@ -496,6 +509,7 @@ def fetch_recent_candidates(
             abstract=item["abstract"],
             published=item["published"],
             arxiv_id=item["arxiv_id"],
+            venue="arXiv",
             url=f"https://arxiv.org/abs/{item['arxiv_id']}",
         )
         if normalized_item:

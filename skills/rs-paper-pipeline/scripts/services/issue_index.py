@@ -24,6 +24,36 @@ def _extract_arxiv_id(body: str) -> str | None:
     return match.group(1).strip() if match else None
 
 
+def _extract_table_value(body: str, label: str) -> str:
+    match = re.search(rf"\| \*\*{re.escape(label)}\*\* \|\s*(.*?)\s*\|", body or "")
+    return match.group(1).strip() if match else ""
+
+
+def _source_metadata(body: str, paper_id: str) -> dict[str, str]:
+    source = _extract_table_value(body, "来源")
+    venue = _extract_table_value(body, "出版物")
+    link_text = _extract_table_value(body, "链接") or _extract_table_value(body, "arXiv")
+    link_match = re.search(r"\[[^\]]+\]\((https?://[^)]+)\)", link_text)
+    url = link_match.group(1) if link_match else ""
+
+    if re.fullmatch(r"\d{4}\.\d{4,5}(?:v\d+)?", paper_id or ""):
+        source = source or "arXiv"
+        venue = venue or "arXiv"
+        url = url or f"https://arxiv.org/abs/{paper_id}"
+
+    metadata = {"source": source, "venue": venue, "url": url}
+    return {key: value for key, value in metadata.items() if value and value not in {"暂无", "未提供"}}
+
+
+def _index_entry(paper_id: str, issue) -> dict:
+    body = issue.body or ""
+    return {
+        "number": issue.number,
+        "updated_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
+        **_source_metadata(body, paper_id),
+    }
+
+
 def load_index(repo) -> dict[str, dict]:
     """Load the index from the repo file. Returns {} if not found."""
     try:
@@ -48,10 +78,7 @@ def rebuild_index(repo) -> dict[str, dict]:
         paper_id = _extract_arxiv_id(body)
         if not paper_id:
             continue
-        index[paper_id] = {
-            "number": issue.number,
-            "updated_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
-        }
+        index[paper_id] = _index_entry(paper_id, issue)
     return index
 
 
@@ -81,10 +108,7 @@ def update_index_from_issue(index: dict[str, dict], arxiv_id: str, issue) -> boo
     """Update index entry for a source-agnostic paper ID."""
     if not arxiv_id:
         return False
-    index[arxiv_id] = {
-        "number": issue.number,
-        "updated_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
-    }
+    index[arxiv_id] = _index_entry(arxiv_id, issue)
     return True
 
 

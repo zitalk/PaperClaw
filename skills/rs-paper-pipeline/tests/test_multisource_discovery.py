@@ -24,6 +24,7 @@ class MultiSourceDiscoveryTest(unittest.TestCase):
             published="2026-09-01",
             doi="10.1000/example",
             authors=["Alice Example"],
+            venue="IEEE Transactions on Multimedia",
             url="https://example.org/scopus/1",
         )
         arxiv = multisource_client._candidate(
@@ -44,6 +45,7 @@ class MultiSourceDiscoveryTest(unittest.TestCase):
         self.assertEqual(merged[0]["paper_id"], "2609.00001")
         self.assertEqual(merged[0]["arxiv_id"], "2609.00001")
         self.assertEqual(merged[0]["sources"], ["Elsevier Scopus", "arXiv"])
+        self.assertEqual(merged[0]["venue"], "IEEE Transactions on Multimedia")
         self.assertIn("longer abstract", merged[0]["abstract"])
 
     def test_semantic_scholar_slot_enforces_cumulative_one_rps(self):
@@ -82,6 +84,31 @@ class MultiSourceDiscoveryTest(unittest.TestCase):
         body = "| **PaperClaw ID** | `doi:10.1000/example` |"
         self.assertEqual(github_ops.extract_arxiv_id_from_text(body), "doi:10.1000/example")
         self.assertEqual(issue_index._extract_arxiv_id(body), "doi:10.1000/example")
+
+    def test_issue_index_keeps_publication_source_metadata(self):
+        body = (
+            "| **来源** | IEEE Xplore |\n"
+            "| **出版物** | IEEE Transactions on Multimedia |\n"
+            "| **链接** | [来源页面](https://ieeexplore.ieee.org/document/123) |"
+        )
+        self.assertEqual(
+            issue_index._source_metadata(body, "doi:10.1000/example"),
+            {
+                "source": "IEEE Xplore",
+                "venue": "IEEE Transactions on Multimedia",
+                "url": "https://ieeexplore.ieee.org/document/123",
+            },
+        )
+
+    def test_issue_index_recognizes_arxiv_source(self):
+        self.assertEqual(
+            issue_index._source_metadata("", "2609.00001v1"),
+            {
+                "source": "arXiv",
+                "venue": "arXiv",
+                "url": "https://arxiv.org/abs/2609.00001v1",
+            },
+        )
 
     def test_healthcheck_does_not_require_insttoken_or_sciencedirect(self):
         with patch.dict(

@@ -97,7 +97,7 @@ function filteredPapers() {
     if (state.category && paper.category !== state.category) return false;
     if (state.date && paper.date !== state.date) return false;
     if (!query) return true;
-    return [paper.title, paper.authors, paper.institution, paper.summary, paper.arxiv_id]
+    return [paper.title, paper.authors, paper.institution, paper.summary, paper.arxiv_id, paper.source_label]
       .join(" ").toLowerCase().includes(query);
   });
 }
@@ -112,9 +112,10 @@ function createPaperCard(paper) {
   fragment.querySelector(".paper-institution-value").textContent = paper.display_institution || paper.institution || "暂无";
   fragment.querySelector(".paper-authors-value").textContent = paper.display_authors || paper.authors || "未公开";
   fragment.querySelector(".issue-link").href = paper.issue_url;
-  const arxiv = fragment.querySelector(".arxiv-link");
-  if (paper.arxiv_url) arxiv.href = paper.arxiv_url;
-  else arxiv.remove();
+  const source = fragment.querySelector(".source-link");
+  source.textContent = `来源 · ${paper.source_label || "来源"} ↗`;
+  if (paper.source_url || paper.arxiv_url) source.href = paper.source_url || paper.arxiv_url;
+  else source.remove();
   return fragment;
 }
 
