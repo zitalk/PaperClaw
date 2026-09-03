@@ -121,14 +121,14 @@ RS_GITHUB_REPO=zitalk/PaperClaw
 | Actions secret | `OPENALEX_API_KEY` | OpenAlex 元数据检索 |
 | Actions secret | `SEMANTIC_SCHOLAR_API_KEY` | Semantic Scholar 元数据检索（全局严格 ≤ 1 请求/秒） |
 | Actions secret | `IEEE_API_KEY` | IEEE Xplore 元数据检索；未审批时自动跳过 |
-| Actions secret | `ELSEVIER_API_KEY` | Elsevier Scopus `BASIC` 基础接口；不要求 Institutional Token |
+| Actions secret | `ELSEVIER_API_KEY` | Elsevier Scopus 默认 `STANDARD` 元数据接口；不要求 Institutional Token |
 | Actions secret | `SPRINGER_NATURE_API_KEY` | Springer Nature 元数据检索 |
 | Actions variable | `RS_GITHUB_REPO` | 目标仓库，值为 `zitalk/PaperClaw` |
 | Actions variable（可选） | `LLM_MODEL`、`LLM_API_URL` | 自定义模型与兼容接口 |
 
 仓库内写入使用 GitHub Actions 自动签发的短期 `github.token`，无需保存个人 GitHub PAT。
 
-每个来源独立降级：单个接口未授权、限流或临时故障不会阻断其他来源。候选按 arXiv ID、DOI 与规范化标题合并；Semantic Scholar 请求之间至少间隔 1.1 秒，Elsevier 不调用需要机构授权的 ScienceDirect 全文接口。
+每个来源独立降级：单个接口未授权、限流或临时故障不会阻断其他来源。候选按 arXiv ID、DOI 与规范化标题合并；Semantic Scholar 请求之间至少间隔 1.1 秒，Elsevier 使用默认开放额度下的 Scopus `STANDARD` 元数据视图，不调用需要机构授权的 ScienceDirect 全文接口。
 
 ## 项目结构
 

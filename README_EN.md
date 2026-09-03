@@ -78,7 +78,7 @@ Do not commit `.env`. Downloads are cleaned after processing unless `RS_KEEP_DOW
 
 GitHub Actions runs the paper search remotely from Monday to Friday, so it does not depend on a personal computer staying online. At **03:00 Asia/Shanghai**, Monday scans the previous Friday, Saturday, and Sunday in order, while Tuesday through Friday scan the previous day. Retries run at **09:30, 12:30, and 15:30** for delayed indexing. No job starts during the weekend, completed dates are skipped automatically, and zero-result runs stop before creating an empty digest.
 
-Semantic Scholar calls are serialized at no more than one request per second (1.1 seconds between requests). Elsevier uses only `ELSEVIER_API_KEY` with the Scopus `BASIC` metadata endpoint; no Institutional Token or ScienceDirect full-text entitlement is required. Each provider fails independently so one unavailable API does not block the daily run.
+Semantic Scholar calls are serialized at no more than one request per second (1.1 seconds between requests). Elsevier uses only `ELSEVIER_API_KEY` with the default Scopus `STANDARD` metadata view; no Institutional Token or ScienceDirect full-text entitlement is required. Each provider fails independently so one unavailable API does not block the daily run.
 
 ## Acknowledgements
 

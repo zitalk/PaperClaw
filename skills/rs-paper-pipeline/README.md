@@ -58,7 +58,7 @@ Optional:
 - `OPENALEX_API_KEY`
 - `SEMANTIC_SCHOLAR_API_KEY` (serialized at 1 request/second)
 - `IEEE_API_KEY`
-- `ELSEVIER_API_KEY` (Scopus `BASIC`; no Institutional Token)
+- `ELSEVIER_API_KEY` (default Scopus `STANDARD` metadata; no Institutional Token)
 - `SPRINGER_NATURE_API_KEY`
 - `DINGTALK_WEBHOOK`
 - `FEISHU_TARGET`

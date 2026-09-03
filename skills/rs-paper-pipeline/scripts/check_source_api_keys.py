@@ -112,7 +112,7 @@ def build_checks() -> list[Check]:
                 "https://api.elsevier.com/content/search/scopus",
                 query="multimodal",
                 count=25,
-                view="BASIC",
+                view="STANDARD",
             ),
             headers=elsevier_headers,
             validator=lambda value: _is_mapping_with(value, "search-results"),

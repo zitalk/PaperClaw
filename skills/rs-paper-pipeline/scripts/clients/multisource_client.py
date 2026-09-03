@@ -417,7 +417,7 @@ def fetch_elsevier_scopus(target_date: str) -> list[dict[str, Any]]:
                 date=target_date[:4],
                 sort="-coverDate",
                 count=25,
-                view="BASIC",
+                view="STANDARD",
             ),
             headers={"X-ELS-APIKey": CONFIG.elsevier_api_key},
         )

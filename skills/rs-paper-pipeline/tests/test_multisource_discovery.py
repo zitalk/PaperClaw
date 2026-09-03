@@ -57,7 +57,7 @@ class MultiSourceDiscoveryTest(unittest.TestCase):
         sleep.assert_called_once()
         self.assertAlmostEqual(sleep.call_args.args[0], 0.85, places=6)
 
-    def test_elsevier_uses_api_key_and_basic_scopus_endpoint_only(self):
+    def test_elsevier_uses_api_key_and_default_scopus_endpoint_only(self):
         with (
             patch.object(
                 multisource_client,
@@ -74,7 +74,7 @@ class MultiSourceDiscoveryTest(unittest.TestCase):
             query = parse_qs(urlparse(url).query)
             self.assertEqual(source, "Elsevier Scopus")
             self.assertEqual(urlparse(url).path, "/content/search/scopus")
-            self.assertEqual(query["view"], ["BASIC"])
+            self.assertEqual(query["view"], ["STANDARD"])
             self.assertNotIn("insttoken", query)
             self.assertEqual(call.kwargs["headers"], {"X-ELS-APIKey": "test-key"})
 
