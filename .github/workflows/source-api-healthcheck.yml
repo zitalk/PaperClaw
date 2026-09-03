@@ -1,0 +1,36 @@
+name: Academic Source API Health Check
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      OPENALEX_API_KEY: ${{ secrets.OPENALEX_API_KEY }}
+      SEMANTIC_SCHOLAR_API_KEY: ${{ secrets.SEMANTIC_SCHOLAR_API_KEY }}
+      IEEE_API_KEY: ${{ secrets.IEEE_API_KEY }}
+      ELSEVIER_API_KEY: ${{ secrets.ELSEVIER_API_KEY }}
+      ELSEVIER_INSTTOKEN: ${{ secrets.ELSEVIER_INSTTOKEN }}
+      SPRINGER_NATURE_API_KEY: ${{ secrets.SPRINGER_NATURE_API_KEY }}
+      PYTHONUNBUFFERED: "1"
+
+    steps:
+      - name: Checkout API checker
+        uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            skills/rs-paper-pipeline/scripts/check_source_api_keys.py
+          sparse-checkout-cone-mode: false
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Validate academic source credentials
+        run: python3 skills/rs-paper-pipeline/scripts/check_source_api_keys.py
