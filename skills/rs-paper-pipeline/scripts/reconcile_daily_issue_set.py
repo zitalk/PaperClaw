@@ -90,7 +90,7 @@ def process_stats_todo_items(repo, stats: dict, stats_json: str, date_str: str, 
 
     index = ensure_index(repo)
     for item in todo_items:
-        arxiv_id = item.get("arxiv_id")
+        arxiv_id = item.get("paper_id") or item.get("arxiv_id")
         if not arxiv_id or arxiv_id not in target_ids:
             continue
 
@@ -98,8 +98,8 @@ def process_stats_todo_items(repo, stats: dict, stats_json: str, date_str: str, 
         print(
             f"REBUILD_TODO {arxiv_id} | issue={issue_number or '-'} | reason={item.get('reason') or '-'}"
         )
-        result, error_msg = paper_processor.process_paper(
-            arxiv_id,
+        result, error_msg = paper_processor.process_candidate(
+            item,
             issue_number=issue_number,
             target_date=date_str,
         )
@@ -109,6 +109,7 @@ def process_stats_todo_items(repo, stats: dict, stats_json: str, date_str: str, 
             _append_unique(
                 stats.setdefault("successful_selected_items", []),
                 {
+                    "paper_id": arxiv_id,
                     "arxiv_id": arxiv_id,
                     "published": item.get("published", ""),
                     "title": item.get("title", ""),

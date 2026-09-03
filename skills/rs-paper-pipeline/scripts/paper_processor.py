@@ -371,6 +371,191 @@ def process_paper(arxiv_id: str, issue_number: int | None = None, dry_run: bool 
         if removed:
             log_step("CLEANUP", "OK", f"removed={','.join(removed)}")
 
+
+def _real_arxiv_id(candidate: dict) -> str:
+    value = str(candidate.get("arxiv_id") or "")
+    return value if re.fullmatch(r"\d{4}\.\d{4,5}(?:v\d+)?", value) else ""
+
+
+def _generic_source_links(candidate: dict) -> str:
+    links: list[str] = []
+    url = str(candidate.get("url") or "").strip()
+    doi = str(candidate.get("doi") or "").strip()
+    if url:
+        links.append(f"[来源页面]({url})")
+    if doi:
+        links.append(f"[DOI](https://doi.org/{doi})")
+    return " | ".join(links) or "未提供"
+
+
+def _process_metadata_candidate(
+    candidate: dict,
+    issue_number: int | None = None,
+    dry_run: bool = False,
+    output_dir: str | None = None,
+    target_date: str | None = None,
+):
+    paper_id = str(candidate.get("paper_id") or candidate.get("arxiv_id") or "").strip()
+    print(f"\n{'='*60}\n处理元数据论文: {paper_id}\n{'='*60}")
+    repo = None if dry_run else get_repo(CONFIG)
+    info = {
+        "title": str(candidate.get("title") or "").strip(),
+        "authors": str(candidate.get("authors") or "").strip(),
+        "institutions": str(candidate.get("institutions") or "").strip(),
+        "abstract_en": str(candidate.get("abstract") or "").strip(),
+        "date": str(candidate.get("published") or "")[:10],
+    }
+    log_step("STEP-1", "OK", f"metadata_only | title={info['title'][:40]}")
+
+    abstract_zh = translate_text(info["abstract_en"])
+    tags = extract_tags(info["title"], info["abstract_en"])[:5]
+    analysis = summarize_paper(info["title"], info["authors"], info["abstract_en"], "", retry_logger=log_step)
+    ok, errors = quality_gate(info, analysis, abstract_zh, 0, require_images=False)
+    if not ok:
+        log_step("GATE", "RETRY", "; ".join(errors))
+        analysis = summarize_paper(info["title"], info["authors"], info["abstract_en"], "", retry_logger=log_step)
+        ok, errors = quality_gate(info, analysis, abstract_zh, 0, require_images=False)
+    if not ok:
+        log_step("GATE", "FAILED", "; ".join(errors))
+        return None, f"质检未通过: {'; '.join(errors)}"
+
+    if target_date:
+        title_date = target_date
+        date_str = f"{target_date[:4]}-{target_date[4:6]}-{target_date[6:]}"
+    else:
+        date_str = info["date"] or datetime.now().strftime("%Y-%m-%d")
+        title_date = date_str.replace("-", "")
+
+    sources = ", ".join(candidate.get("sources") or [candidate.get("primary_source") or "Unknown"])
+    tldr = generate_tldr(info["title"], info["abstract_en"])
+    abstract_short = abstract_zh[:400] + "..." if len(abstract_zh) > 400 else abstract_zh
+    qa_md = {f"q{i}": format_answer_md(analysis.get(f"q{i}", "")) for i in range(1, 11)}
+    report = f"""# [{title_date}] {info['title']}
+
+## 📋 基础信息
+
+| 项目 | 内容 |
+|------|------|
+| **标题** | {info['title']} |
+| **作者** | {info['authors']} |
+| **单位** | {info['institutions']} |
+| **日期** | {date_str} |
+| **来源** | {sources} |
+| **链接** | {_generic_source_links(candidate)} |
+| **PaperClaw ID** | `{paper_id}` |
+| **分析层级** | 摘要级（未下载或保存全文） |
+| **TL;DR** | {tldr} |
+| **摘要** | {abstract_short} |
+| **标签** | {', '.join([title_date] + tags)} |
+
+---
+
+## 🧠 TL;DR（速览）
+
+- {tldr}
+
+---
+
+## 📸 论文概览
+
+*该来源仅使用元数据与摘要，未下载 PDF，因此没有页面预览。*
+
+---
+
+## ❓ 10 问题深度分析
+
+> 以下内容基于标题与摘要，涉及实验细节的结论应以论文原文为准。
+
+### Q1: 本文主要解决什么问题？
+{qa_md.get('q1', '分析中...')}
+
+### Q2: 前人技术路线？
+{qa_md.get('q2', '分析中...')}
+
+### Q3: 前人方案的局限性？
+{qa_md.get('q3', '分析中...')}
+
+### Q4: 核心思路？
+{qa_md.get('q4', '分析中...')}
+
+### Q5: 方法亮点？
+{qa_md.get('q5', '分析中...')}
+
+### Q6: 主要贡献？
+{qa_md.get('q6', '分析中...')}
+
+### Q7: 实验数据集？
+{qa_md.get('q7', '分析中...')}
+
+### Q8: 代码开源？
+{qa_md.get('q8', '分析中...')}
+
+### Q9: 客观评价？
+{qa_md.get('q9', '分析中...')}
+
+### Q10: 批判审视？
+{qa_md.get('q10', '分析中...')}
+
+---
+
+Powered by OpenClaw🦞
+"""
+
+    if dry_run:
+        target_dir = Path(output_dir) if output_dir else (CONFIG.temp_dir / "RS-PaperClaw" / "paper_reports")
+        target_dir.mkdir(parents=True, exist_ok=True)
+        payload = {
+            "paper_id": paper_id,
+            "issue_number": issue_number,
+            "title": info["title"],
+            "authors": info["authors"],
+            "institutions": info["institutions"],
+            "date": title_date,
+            "labels": [title_date] + tags,
+            "body": report,
+            "number": issue_number or 0,
+        }
+        safe_id = re.sub(r"[^A-Za-z0-9._-]+", "_", paper_id)
+        out_path = target_dir / f"{title_date}_{safe_id}.json"
+        out_path.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
+        return payload, None
+
+    target_issue = repo.get_issue(issue_number) if issue_number is not None else None
+    if target_issue is None:
+        for issue in repo.get_issues(state="all"):
+            if info["title"][:30] in issue.title:
+                target_issue = issue
+                break
+    if target_issue is not None:
+        existing_date = next(
+            (
+                getattr(label, "name", label)
+                for label in target_issue.labels
+                if re.fullmatch(r"\d{8}", str(getattr(label, "name", label)))
+            ),
+            None,
+        )
+        final_date = existing_date or title_date
+        target_issue.edit(title=f"[{final_date}] {info['title'][:200]}", body=report, labels=[final_date] + tags)
+        log_step("ISSUE", "UPDATED", f"#{target_issue.number}")
+        return target_issue, None
+    new_issue = repo.create_issue(title=f"[{title_date}] {info['title'][:200]}", body=report, labels=[title_date] + tags)
+    log_step("ISSUE", "CREATED", f"#{new_issue.number}")
+    return new_issue, None
+
+
+def process_candidate(
+    candidate: dict,
+    issue_number: int | None = None,
+    dry_run: bool = False,
+    output_dir: str | None = None,
+    target_date: str | None = None,
+):
+    arxiv_id = _real_arxiv_id(candidate)
+    if arxiv_id:
+        return process_paper(arxiv_id, issue_number, dry_run, output_dir, target_date)
+    return _process_metadata_candidate(candidate, issue_number, dry_run, output_dir, target_date)
+
 if __name__ == "__main__":
     import sys
     arxiv_id = sys.argv[1] if len(sys.argv) > 1 else "2603.08556"

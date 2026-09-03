@@ -463,6 +463,28 @@ def _process_date(date_str: str, notify: bool, force: bool = False):
         running_extra={"notify": notify},
     )
 
+    stats = _load_stats(stats_path)
+    candidate_count = int(stats.get("candidate_count") or 0)
+    selected_count = int(stats.get("llm_selected_count") or 0)
+    if candidate_count == 0 or selected_count == 0:
+        skip_reason = "no_candidates" if candidate_count == 0 else "no_llm_selected_papers"
+        print(
+            f"SKIP {date_str} | reason={skip_reason} "
+            f"candidates={candidate_count} selected={selected_count}"
+        )
+        _write_state(
+            date_str,
+            "done",
+            "skipped",
+            {
+                "skip_reason": skip_reason,
+                "candidate_count": candidate_count,
+                "selected_count": selected_count,
+                "notify": notify,
+            },
+        )
+        return
+
     _run_step(
         date_str,
         "digest",

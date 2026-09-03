@@ -131,6 +131,12 @@ class PipelineConfig:
     raw_content_base: str
     arxiv_api: str
     arxiv_user_agent: str
+    openalex_api_key: str | None
+    semantic_scholar_api_key: str | None
+    ieee_api_key: str | None
+    elsevier_api_key: str | None
+    springer_nature_api_key: str | None
+    multisource_enabled: bool
     filter_keywords_path: Path
     filter_prompt_path: Path
     workspace_warning: str | None
@@ -163,6 +169,12 @@ def load_config() -> PipelineConfig:
         raw_content_base=f"https://raw.githubusercontent.com/{github_repo}/main",
         arxiv_api=_env("ARXIV_API_URL", "https://export.arxiv.org/api/query"),
         arxiv_user_agent=_env("ARXIV_USER_AGENT", f"PaperClaw/1.0 (+https://github.com/{github_repo})"),
+        openalex_api_key=_env("OPENALEX_API_KEY"),
+        semantic_scholar_api_key=_env("SEMANTIC_SCHOLAR_API_KEY"),
+        ieee_api_key=_env("IEEE_API_KEY"),
+        elsevier_api_key=_env("ELSEVIER_API_KEY"),
+        springer_nature_api_key=_env("SPRINGER_NATURE_API_KEY"),
+        multisource_enabled=_env_bool("RS_MULTISOURCE_ENABLED", True),
         filter_keywords_path=_resolve_root_relative_path(
             _env("RS_FILTER_KEYWORDS_FILE", "scripts/config/filter_keywords.json"),
             root_dir,

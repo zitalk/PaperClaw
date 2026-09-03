@@ -10,6 +10,9 @@ CONFIG = load_config()
 
 
 def extract_arxiv_id_from_text(text: str) -> str | None:
+    generic = re.search(r"\| \*\*PaperClaw ID\*\* \|\s*`([^`]+)`\s*\|", text or "")
+    if generic:
+        return generic.group(1).strip()
     match = re.search(r"arxiv\.org/abs/([^\)\s]+)", text or "")
     return match.group(1).strip() if match else None
 

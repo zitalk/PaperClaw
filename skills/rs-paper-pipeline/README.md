@@ -4,7 +4,7 @@ This directory contains the operational pipeline behind `RS-PaperClaw`.
 
 It is responsible for:
 
-1. fetching remote-sensing related arXiv candidates
+1. fetching candidates from arXiv and six academic metadata sources
 2. filtering `remote sensing x AI/CV/foundation model` papers
 3. generating or updating per-paper GitHub issues
 4. generating daily digest issues
@@ -55,6 +55,11 @@ Fill `.env` with at least:
 
 Optional:
 
+- `OPENALEX_API_KEY`
+- `SEMANTIC_SCHOLAR_API_KEY` (serialized at 1 request/second)
+- `IEEE_API_KEY`
+- `ELSEVIER_API_KEY` (Scopus `BASIC`; no Institutional Token)
+- `SPRINGER_NATURE_API_KEY`
 - `DINGTALK_WEBHOOK`
 - `FEISHU_TARGET`
 - `RS_GITHUB_REPO`

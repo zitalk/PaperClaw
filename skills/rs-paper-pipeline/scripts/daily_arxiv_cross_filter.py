@@ -12,9 +12,10 @@ import json
 from datetime import datetime
 from pathlib import Path
 
-from clients.arxiv_client import fetch_recent_candidates, has_remote_sensing_signal
+from clients.arxiv_client import has_remote_sensing_signal
+from clients.multisource_client import fetch_recent_candidates
 from clients.llm_client import call_llm
-from paper_processor import process_paper
+from paper_processor import process_candidate
 from pipeline_config import get_repo, load_config
 from services.filter_assets import load_ai_signal_patterns, render_filter_prompt
 from services.digest_builder import extract_author, extract_institution, is_invalid_digest_field, is_invalid_digest_institution
@@ -27,6 +28,10 @@ LLM_FILTER_BATCH_SIZE = 35
 
 def has_ai_signal(text: str) -> bool:
     return any(pattern.search(text) for pattern in AI_MATCH_PATTERNS)
+
+
+def candidate_id(candidate: dict) -> str:
+    return str(candidate.get("paper_id") or candidate.get("arxiv_id") or "").strip()
 
 
 def _parse_llm_ids(raw_output: str) -> set[str] | None:
@@ -55,7 +60,7 @@ def _match_id(cid: str, keep_set: set[str]) -> bool:
 def _llm_cross_filter_batch(candidates, batch_number: int, batch_total: int):
     payload = []
     for i, c in enumerate(candidates, 1):
-        payload.append(f"[{i}] id={c['arxiv_id']} | title={c['title']} | abstract={c['abstract'][:700]}")
+        payload.append(f"[{i}] id={candidate_id(c)} | title={c['title']} | abstract={c['abstract'][:700]}")
 
     prompt = render_filter_prompt(payload)
 
@@ -72,7 +77,7 @@ def _llm_cross_filter_batch(candidates, batch_number: int, batch_total: int):
                 print("  [LLM 解析] 重试中...")
 
     if keep_ids is not None:
-        selected = [c for c in candidates if _match_id(c["arxiv_id"], keep_ids)]
+        selected = [c for c in candidates if _match_id(candidate_id(c), keep_ids)]
         result = [c for c in selected if has_remote_sensing_signal(f"{c['title']}\n{c['abstract']}")]
         print(f"  [LLM {batch_number}/{batch_total}] 解析成功，命中 {len(result)}/{len(candidates)} 篇")
         return result
@@ -104,9 +109,18 @@ def llm_cross_filter(candidates):
 
 def compact_item(item: dict[str, str]) -> dict[str, str]:
     return {
-        "arxiv_id": item["arxiv_id"],
+        "paper_id": candidate_id(item),
+        "arxiv_id": item.get("arxiv_id", ""),
+        "doi": item.get("doi", ""),
         "published": item["published"],
         "title": item["title"],
+        "url": item.get("url", ""),
+        "sources": item.get("sources", []),
+        "primary_source": item.get("primary_source", ""),
+        "source_id": item.get("source_id", ""),
+        "abstract": item.get("abstract", ""),
+        "authors": item.get("authors", ""),
+        "institutions": item.get("institutions", ""),
     }
 
 
@@ -154,13 +168,13 @@ def main(dry_run=False, days_back=2, stats_out: str | None = None, target_date: 
     print(f"  入选数: {selected_count}")
 
     print("[3/5] 读取 issue 去重...")
-    selected_arxiv_ids = [x["arxiv_id"] for x in selected]
+    selected_arxiv_ids = [candidate_id(x) for x in selected]
     existing_issue_map = load_existing_issue_map(repo, index, selected_arxiv_ids)
     todo = []
     keep = []
     refresh = []
     for item in selected:
-        issue = existing_issue_map.get(item["arxiv_id"])
+        issue = existing_issue_map.get(candidate_id(item))
         if issue is None:
             todo.append({"candidate": item, "issue_number": None, "reason": "missing"})
             continue
@@ -182,14 +196,16 @@ def main(dry_run=False, days_back=2, stats_out: str | None = None, target_date: 
         "existing_count": existing_count,
         "refresh_count": refresh_count,
         "todo_count": todo_count,
-        "candidate_arxiv_ids": [x["arxiv_id"] for x in cands],
-        "selected_arxiv_ids": [x["arxiv_id"] for x in selected],
-        "existing_arxiv_ids": [x["arxiv_id"] for x in keep],
-        "refresh_arxiv_ids": [x["arxiv_id"] for x in refresh],
-        "todo_arxiv_ids": [x["candidate"]["arxiv_id"] for x in todo],
+        "candidate_arxiv_ids": [candidate_id(x) for x in cands],
+        "selected_arxiv_ids": [candidate_id(x) for x in selected],
+        "existing_arxiv_ids": [candidate_id(x) for x in keep],
+        "refresh_arxiv_ids": [candidate_id(x) for x in refresh],
+        "todo_arxiv_ids": [candidate_id(x["candidate"]) for x in todo],
+        "candidate_paper_ids": [candidate_id(x) for x in cands],
+        "selected_paper_ids": [candidate_id(x) for x in selected],
         "candidate_items": [compact_item(x) for x in cands],
         "selected_items": [compact_item(x) for x in selected],
-        "successful_selected_arxiv_ids": [x["arxiv_id"] for x in keep],
+        "successful_selected_arxiv_ids": [candidate_id(x) for x in keep],
         "successful_selected_items": [compact_item(x) for x in keep],
         "failed_arxiv_ids": [],
         "failed_items": [],
@@ -211,17 +227,17 @@ def main(dry_run=False, days_back=2, stats_out: str | None = None, target_date: 
         for x in todo:
             item = x["candidate"]
             print(
-                f"  - {item['arxiv_id']} | {item['published']} | issue={x['issue_number'] or '-'} | "
+                f"  - {candidate_id(item)} | {item['published']} | issue={x['issue_number'] or '-'} | "
                 f"reason={x['reason']} | {item['title'][:90]}"
             )
         return
 
     print("[4/5] 提交 issue（不重复）...")
     for task in todo:
-        aid = task["candidate"]["arxiv_id"]
+        aid = candidate_id(task["candidate"])
         issue_number = task["issue_number"]
         print(f"  -> 处理 {aid} | issue={issue_number or '-'} | reason={task['reason']}")
-        result, error_msg = process_paper(aid, issue_number=issue_number, target_date=target_date)
+        result, error_msg = process_candidate(task["candidate"], issue_number=issue_number, target_date=target_date)
         if result is not None and hasattr(result, "number"):
             update_index_from_issue(index, aid, result)
         if result is None:

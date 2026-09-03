@@ -38,6 +38,11 @@ jobs:
     env:
       GITHUB_TOKEN: ${{ github.token }}
       LLM_API_KEY: ${{ secrets.LLM_API_KEY }}
+      OPENALEX_API_KEY: ${{ secrets.OPENALEX_API_KEY }}
+      SEMANTIC_SCHOLAR_API_KEY: ${{ secrets.SEMANTIC_SCHOLAR_API_KEY }}
+      IEEE_API_KEY: ${{ secrets.IEEE_API_KEY }}
+      ELSEVIER_API_KEY: ${{ secrets.ELSEVIER_API_KEY }}
+      SPRINGER_NATURE_API_KEY: ${{ secrets.SPRINGER_NATURE_API_KEY }}
       RS_GITHUB_REPO: ${{ vars.RS_GITHUB_REPO }}
       LLM_MODEL: ${{ vars.LLM_MODEL }}
       LLM_API_URL: ${{ vars.LLM_API_URL }}
@@ -51,11 +56,12 @@ jobs:
       RS_FILTER_KEYWORDS_FILE: scripts/config/filter_keywords.json
       RS_FILTER_PROMPT_FILE: scripts/prompts/filter_cross_prompt.md
       RS_KEEP_DOWNLOADS: "false"
+      RS_MULTISOURCE_ENABLED: "true"
       PYTHONUNBUFFERED: "1"
 
     steps:
       - name: Checkout (sparse)
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           sparse-checkout: |
             skills/rs-paper-pipeline
@@ -63,7 +69,7 @@ jobs:
           sparse-checkout-cone-mode: false
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: "3.11"
 

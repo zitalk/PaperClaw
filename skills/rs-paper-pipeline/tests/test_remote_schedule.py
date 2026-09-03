@@ -32,12 +32,7 @@ class RemoteScheduleTest(unittest.TestCase):
                     expected,
                 )
 
-    def test_only_runs_dates_with_candidates(self):
-        candidate_sets = {
-            "20260901": [],
-            "20260902": [{"id": "2609.00001"}],
-        }
-
+    def test_each_incomplete_date_runs_discovery_exactly_once_in_pipeline(self):
         with (
             patch.object(
                 run_remote_schedule.run_rs_daily_workday,
@@ -50,24 +45,17 @@ class RemoteScheduleTest(unittest.TestCase):
                 return_value=(False, "not completed"),
             ),
             patch.object(
-                run_remote_schedule,
-                "fetch_recent_candidates",
-                side_effect=lambda **kwargs: candidate_sets[kwargs["target_date"]],
-            ),
-            patch.object(
                 run_remote_schedule.run_rs_daily_workday,
                 "main",
             ) as pipeline_main,
         ):
             self.assertEqual(run_remote_schedule.main(), 0)
 
-        pipeline_main.assert_called_once_with(
-            target_date="20260902",
-            notify=False,
-            force=False,
-        )
+        self.assertEqual(pipeline_main.call_count, 2)
+        pipeline_main.assert_any_call(target_date="20260901", notify=False, force=False)
+        pipeline_main.assert_any_call(target_date="20260902", notify=False, force=False)
 
-    def test_completed_date_skips_arxiv_preflight(self):
+    def test_completed_date_skips_pipeline(self):
         with (
             patch.object(
                 run_remote_schedule.run_rs_daily_workday,
@@ -79,13 +67,28 @@ class RemoteScheduleTest(unittest.TestCase):
                 "_date_already_completed",
                 return_value=(True, "digest=#18 papers=17"),
             ),
-            patch.object(run_remote_schedule, "fetch_recent_candidates") as fetch,
             patch.object(run_remote_schedule.run_rs_daily_workday, "main") as pipeline_main,
         ):
             self.assertEqual(run_remote_schedule.main(), 0)
 
-        fetch.assert_not_called()
         pipeline_main.assert_not_called()
+
+    def test_empty_filter_stops_before_digest(self):
+        workday = run_remote_schedule.run_rs_daily_workday
+        with (
+            patch.object(workday, "_run_step") as run_step,
+            patch.object(
+                workday,
+                "_load_stats",
+                return_value={"candidate_count": 0, "llm_selected_count": 0},
+            ),
+            patch.object(workday, "_write_state") as write_state,
+        ):
+            workday._process_date("20260901", notify=False, force=True)
+
+        self.assertEqual(run_step.call_count, 1)
+        self.assertEqual(run_step.call_args.args[1], "filter")
+        self.assertEqual(write_state.call_args.args[1:3], ("done", "skipped"))
 
 
 if __name__ == "__main__":

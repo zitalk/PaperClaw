@@ -7,13 +7,13 @@
   <p>视觉类别广搜 · 本地规则召回 · LLM 精筛 · GitHub Issues 知识化</p>
 
   <p>
-    <a href="https://zitalk.github.io/PaperClaw/"><img src="https://img.shields.io/badge/研究门户-在线访问-0D6B66?style=flat-square" alt="研究门户" /></a>
+    <a href="https://papers.zitalk.cn/"><img src="https://img.shields.io/badge/研究门户-在线访问-0D6B66?style=flat-square" alt="研究门户" /></a>
     <a href="https://github.com/zitalk/PaperClaw/issues"><img src="https://img.shields.io/badge/论文卡片-GitHub_Issues-24292F?style=flat-square&logo=github" alt="GitHub Issues" /></a>
     <img src="https://img.shields.io/badge/Python-3.10%2B-3776AB?style=flat-square&logo=python&logoColor=white" alt="Python 3.10+" />
     <img src="https://img.shields.io/badge/更新频率-每日-DB6B4F?style=flat-square" alt="每日更新" />
   </p>
 
-  <p><a href="./README_EN.md">English</a> · <a href="https://zitalk.github.io/PaperClaw/">网页</a> · <a href="./daily_reports/">日报</a> · <a href="https://github.com/zitalk/PaperClaw/issues">论文库</a></p>
+  <p><a href="./README_EN.md">English</a> · <a href="https://papers.zitalk.cn/">网页</a> · <a href="./daily_reports/">日报</a> · <a href="https://github.com/zitalk/PaperClaw/issues">论文库</a></p>
 </div>
 
 ---
@@ -22,18 +22,18 @@
 
 ## 这是什么
 
-PaperClaw 是一个面向个人研究方向的自动化文献发现系统。它先对 arXiv 视觉相关类别进行广泛检索，再通过同义词和视觉上下文规则保留高召回候选，最后交给 LLM 按研究相关性精筛。
+PaperClaw 是一个面向个人研究方向的自动化文献发现系统。它并行检索 arXiv、OpenAlex、Crossref、Semantic Scholar、Springer Nature、IEEE Xplore 与 Elsevier Scopus，再通过同义词和视觉上下文规则保留高召回候选，最后交给 LLM 按研究相关性精筛。
 
 筛选结果不会变成散落在本地的 PDF：每篇论文生成一张 GitHub Issue 论文卡片，每日结果形成汇总与 Markdown 归档，并自动发布到可搜索的网页门户。
 
 | 能力 | PaperClaw 的处理方式 |
 |---|---|
-| 发现 | 广搜 `cs.CV`、`eess.IV`、`cs.RO`、`cs.MM`、`eess.SP`，并用跨类别关键词补充 |
+| 发现 | arXiv 视觉类别广搜，并由六个学术元数据源补充当天新论文 |
 | 筛选 | 同义词扩展与视觉语境硬过滤，再由 LLM 分批精筛 |
 | 阅读 | 每篇论文生成独立 Issue，整理问题、方法、结果、局限与研究启发 |
 | 汇总 | 自动生成每日 Digest 和 Markdown 日报 |
 | 发布 | GitHub Pages 自动构建可搜索、可分类的个人研究门户 |
-| 存储 | PDF 与 arXiv 源码仅作临时分析，默认处理完成后自动清理 |
+| 存储 | arXiv PDF/源码仅作临时分析并自动清理；其他来源仅使用题录与摘要，不下载全文 |
 
 ## 研究雷达
 
@@ -50,8 +50,8 @@ PaperClaw 是一个面向个人研究方向的自动化文献发现系统。它�
 
 ```mermaid
 flowchart LR
-    A[arXiv 视觉类别广搜] --> B[同义词与跨类别补充]
-    B --> C[视觉语境硬过滤]
+    A[arXiv + 六个元数据源广搜] --> B[统一 DOI/arXiv/标题去重]
+    B --> C[同义词与视觉语境硬过滤]
     C --> D[LLM 分批精筛]
     D --> E[单篇 Issue 论文卡片]
     E --> F[每日 Digest 与归档]
@@ -65,7 +65,7 @@ flowchart LR
 
 ## 在线使用
 
-- **研究门户：** [zitalk.github.io/PaperClaw](https://zitalk.github.io/PaperClaw/)
+- **研究门户：** [papers.zitalk.cn](https://papers.zitalk.cn/)
 - **论文卡片：** [GitHub Issues](https://github.com/zitalk/PaperClaw/issues)
 - **每日报告：** [`daily_reports/`](./daily_reports/)
 
@@ -89,6 +89,11 @@ Linux 或 macOS 可运行 `./bootstrap.sh`。
 ```dotenv
 GITHUB_TOKEN=
 LLM_API_KEY=
+OPENALEX_API_KEY=
+SEMANTIC_SCHOLAR_API_KEY=
+IEEE_API_KEY=
+ELSEVIER_API_KEY=
+SPRINGER_NATURE_API_KEY=
 RS_GITHUB_REPO=zitalk/PaperClaw
 ```
 
@@ -106,24 +111,31 @@ RS_GITHUB_REPO=zitalk/PaperClaw
 
 ## 自动化
 
-论文检索由 GitHub Actions 远端在工作日执行，不依赖个人电脑开机。北京时间周一至周五 **03:00** 首次检查：周一依次补扫上周五、周六、周日，周二至周五检查前一天；若 arXiv 尚未发布候选，则在 **09:30、12:30、15:30** 继续补查。周末不启动任务，已完成日期会自动跳过。Pages 工作流会在日报更新后自动发布网站。
+论文检索由 GitHub Actions 远端在工作日执行，不依赖个人电脑开机。北京时间周一至周五 **03:00** 首次检查：周一依次补扫上周五、周六、周日，周二至周五检查前一天；若来源尚未发布候选，则在 **09:30、12:30、15:30** 继续补查。周末不启动任务，已完成日期会自动跳过；无候选或 LLM 未筛中论文时，不生成空日报。Pages 工作流会在日报更新后自动发布网站。
 
 远程运行前，在仓库中配置：
 
 | 类型 | 名称 | 用途 |
 |---|---|---|
 | Actions secret | `LLM_API_KEY` | LLM 精筛与论文分析 |
+| Actions secret | `OPENALEX_API_KEY` | OpenAlex 元数据检索 |
+| Actions secret | `SEMANTIC_SCHOLAR_API_KEY` | Semantic Scholar 元数据检索（全局严格 ≤ 1 请求/秒） |
+| Actions secret | `IEEE_API_KEY` | IEEE Xplore 元数据检索；未审批时自动跳过 |
+| Actions secret | `ELSEVIER_API_KEY` | Elsevier Scopus `BASIC` 基础接口；不要求 Institutional Token |
+| Actions secret | `SPRINGER_NATURE_API_KEY` | Springer Nature 元数据检索 |
 | Actions variable | `RS_GITHUB_REPO` | 目标仓库，值为 `zitalk/PaperClaw` |
 | Actions variable（可选） | `LLM_MODEL`、`LLM_API_URL` | 自定义模型与兼容接口 |
 
 仓库内写入使用 GitHub Actions 自动签发的短期 `github.token`，无需保存个人 GitHub PAT。
+
+每个来源独立降级：单个接口未授权、限流或临时故障不会阻断其他来源。候选按 arXiv ID、DOI 与规范化标题合并；Semantic Scholar 请求之间至少间隔 1.1 秒，Elsevier 不调用需要机构授权的 ScienceDirect 全文接口。
 
 ## 项目结构
 
 ```text
 PaperClaw/
 ├── daily_reports/                 # 每日 Markdown 归档
-├── papers/                        # Issue 与 arXiv 索引
+├── papers/                        # Issue 与统一论文索引
 ├── site/                          # GitHub Pages 前端
 ├── scripts/build_pages_site.py    # 静态站点数据构建
 └── skills/rs-paper-pipeline/      # 检索、筛选、分析与发布流水线

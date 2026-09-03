@@ -1,9 +1,8 @@
 #!/usr/bin/env python3
-"""Run the scheduled pipeline remotely without creating empty daily reports."""
+"""Run the scheduled pipeline remotely without duplicate discovery requests."""
 
 from __future__ import annotations
 
-from clients.arxiv_client import fetch_recent_candidates
 import run_rs_daily_workday
 
 
@@ -17,16 +16,11 @@ def main() -> int:
             print(f"REMOTE_SKIP date={date_str} reason=already_completed detail={reason}")
             continue
 
-        candidates = fetch_recent_candidates(
-            max_results=1200,
-            days_back=2,
-            target_date=date_str,
-        )
-        print(f"REMOTE_PREFLIGHT date={date_str} candidates={len(candidates)}")
-        if not candidates:
-            print(f"REMOTE_SKIP date={date_str} reason=no_arxiv_candidates")
-            continue
-
+        # Discovery happens exactly once inside the workday pipeline.  The
+        # filter writes counts to its stats JSON, and the pipeline stops before
+        # digest/sync/notify when no candidate (or no LLM-selected paper) exists.
+        # This is especially important for Semantic Scholar's cumulative 1 RPS
+        # quota: a separate preflight would immediately repeat every request.
         run_rs_daily_workday.main(
             target_date=date_str,
             notify=False,

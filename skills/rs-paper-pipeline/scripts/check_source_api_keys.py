@@ -59,16 +59,12 @@ def build_checks() -> list[Check]:
     semantic_key = _env("SEMANTIC_SCHOLAR_API_KEY")
     ieee_key = _env("IEEE_API_KEY")
     elsevier_key = _env("ELSEVIER_API_KEY")
-    elsevier_insttoken = _env("ELSEVIER_INSTTOKEN")
     springer_key = _env("SPRINGER_NATURE_API_KEY")
 
     elsevier_headers = {
         "Accept": "application/json",
         "X-ELS-APIKey": elsevier_key,
     }
-    if elsevier_insttoken:
-        elsevier_headers["X-ELS-Insttoken"] = elsevier_insttoken
-
     return [
         Check(
             name="OpenAlex",
@@ -114,19 +110,9 @@ def build_checks() -> list[Check]:
             secret_names=("ELSEVIER_API_KEY",),
             url=_url(
                 "https://api.elsevier.com/content/search/scopus",
-                query="ALL(multimodal)",
-                count=1,
-            ),
-            headers=elsevier_headers,
-            validator=lambda value: _is_mapping_with(value, "search-results"),
-        ),
-        Check(
-            name="Elsevier ScienceDirect",
-            secret_names=("ELSEVIER_API_KEY",),
-            url=_url(
-                "https://api.elsevier.com/content/search/sciencedirect",
-                query='"multimodal vision"',
-                count=1,
+                query="multimodal",
+                count=25,
+                view="BASIC",
             ),
             headers=elsevier_headers,
             validator=lambda value: _is_mapping_with(value, "search-results"),

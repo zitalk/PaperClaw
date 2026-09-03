@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Persistent issue index for fast arxiv_id → issue_number lookup.
+"""Persistent issue index for fast paper_id → issue_number lookup.
 
 Index file lives at ``papers/issue_index.json`` in the repo (committed).
 Avoids full ``repo.get_issues()`` scans on every pipeline run.
@@ -17,6 +17,9 @@ INDEX_PATH = "papers/issue_index.json"
 
 
 def _extract_arxiv_id(body: str) -> str | None:
+    generic = re.search(r"\| \*\*PaperClaw ID\*\* \|\s*`([^`]+)`\s*\|", body or "")
+    if generic:
+        return generic.group(1).strip()
     match = re.search(r"arxiv\.org/abs/([^\)\s]+)", body or "")
     return match.group(1).strip() if match else None
 
@@ -42,10 +45,10 @@ def rebuild_index(repo) -> dict[str, dict]:
     index: dict[str, dict] = {}
     for issue in repo.get_issues(state="all"):
         body = issue.body or ""
-        arxiv_id = _extract_arxiv_id(body)
-        if not arxiv_id:
+        paper_id = _extract_arxiv_id(body)
+        if not paper_id:
             continue
-        index[arxiv_id] = {
+        index[paper_id] = {
             "number": issue.number,
             "updated_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
         }
@@ -75,7 +78,7 @@ def lookup_issue(repo, index: dict[str, dict], arxiv_id: str):
 
 
 def update_index_from_issue(index: dict[str, dict], arxiv_id: str, issue) -> bool:
-    """Update index entry for an arxiv_id. Returns True if index changed."""
+    """Update index entry for a source-agnostic paper ID."""
     if not arxiv_id:
         return False
     index[arxiv_id] = {

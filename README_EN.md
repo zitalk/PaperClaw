@@ -7,12 +7,12 @@
   <p>Broad visual search · Local rule recall · LLM filtering · GitHub Issue knowledge cards</p>
 
   <p>
-    <a href="https://zitalk.github.io/PaperClaw/"><img src="https://img.shields.io/badge/Research_Portal-Live-0D6B66?style=flat-square" alt="Research portal" /></a>
+    <a href="https://papers.zitalk.cn/"><img src="https://img.shields.io/badge/Research_Portal-Live-0D6B66?style=flat-square" alt="Research portal" /></a>
     <a href="https://github.com/zitalk/PaperClaw/issues"><img src="https://img.shields.io/badge/Paper_Cards-GitHub_Issues-24292F?style=flat-square&logo=github" alt="GitHub Issues" /></a>
     <img src="https://img.shields.io/badge/Python-3.10%2B-3776AB?style=flat-square&logo=python&logoColor=white" alt="Python 3.10+" />
   </p>
 
-  <p><a href="./README.md">中文</a> · <a href="https://zitalk.github.io/PaperClaw/">Portal</a> · <a href="./daily_reports/">Daily reports</a> · <a href="https://github.com/zitalk/PaperClaw/issues">Paper library</a></p>
+  <p><a href="./README.md">中文</a> · <a href="https://papers.zitalk.cn/">Portal</a> · <a href="./daily_reports/">Daily reports</a> · <a href="https://github.com/zitalk/PaperClaw/issues">Paper library</a></p>
 </div>
 
 ---
@@ -21,18 +21,18 @@
 
 ## What it does
 
-PaperClaw searches broad arXiv vision categories, supplements them with cross-category synonyms, applies high-recall visual-context rules, and asks an LLM to make the final research-relevance decision in batches.
+PaperClaw searches arXiv, OpenAlex, Crossref, Semantic Scholar, Springer Nature, IEEE Xplore, and Elsevier Scopus, merges duplicate records, applies high-recall visual-context rules, and asks an LLM to make the final research-relevance decision in batches.
 
 Each selected paper becomes a structured GitHub Issue. Daily results are published as a digest, a Markdown archive, and a searchable GitHub Pages portal.
 
 | Stage | Behavior |
 |---|---|
-| Discovery | Searches `cs.CV`, `eess.IV`, `cs.RO`, `cs.MM`, and `eess.SP` plus keyword supplements |
+| Discovery | Searches broad arXiv vision categories plus six academic metadata sources |
 | Recall | Expands synonyms and applies local visual-context rules |
 | Precision | Uses batched LLM filtering against the personal research profile |
 | Reading | Creates one structured GitHub Issue per paper |
 | Delivery | Builds a daily digest, Markdown archive, and web portal |
-| Storage | Treats PDFs and arXiv sources as transient analysis inputs and removes them by default |
+| Storage | Cleans transient arXiv downloads; metadata-only sources never download full text |
 
 ## Research radar
 
@@ -46,8 +46,8 @@ Each selected paper becomes a structured GitHub Issue. Daily results are publish
 
 ```mermaid
 flowchart LR
-    A[Broad arXiv vision search] --> B[Synonym expansion]
-    B --> C[Local context rules]
+    A[arXiv plus six metadata sources] --> B[DOI, arXiv ID and title deduplication]
+    B --> C[Synonyms and local context rules]
     C --> D[Batched LLM filtering]
     D --> E[Per-paper GitHub Issue]
     E --> F[Daily digest and archive]
@@ -76,7 +76,9 @@ Do not commit `.env`. Downloads are cleaned after processing unless `RS_KEEP_DOW
 
 ## Automation
 
-GitHub Actions runs the paper search remotely from Monday to Friday, so it does not depend on a personal computer staying online. At **03:00 Asia/Shanghai**, Monday scans the previous Friday, Saturday, and Sunday in order, while Tuesday through Friday scan the previous day. Retries run at **09:30, 12:30, and 15:30** for delayed arXiv publication. No job starts during the weekend, completed dates are skipped automatically, and the Pages workflow republishes the site after a daily report update.
+GitHub Actions runs the paper search remotely from Monday to Friday, so it does not depend on a personal computer staying online. At **03:00 Asia/Shanghai**, Monday scans the previous Friday, Saturday, and Sunday in order, while Tuesday through Friday scan the previous day. Retries run at **09:30, 12:30, and 15:30** for delayed indexing. No job starts during the weekend, completed dates are skipped automatically, and zero-result runs stop before creating an empty digest.
+
+Semantic Scholar calls are serialized at no more than one request per second (1.1 seconds between requests). Elsevier uses only `ELSEVIER_API_KEY` with the Scopus `BASIC` metadata endpoint; no Institutional Token or ScienceDirect full-text entitlement is required. Each provider fails independently so one unavailable API does not block the daily run.
 
 ## Acknowledgements
 

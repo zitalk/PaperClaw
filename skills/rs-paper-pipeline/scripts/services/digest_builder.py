@@ -98,7 +98,7 @@ def build_digest_with_llm(date: str, papers: list, stats: dict | None = None, fa
             "## 🔎 观察",
             "",
             "- 当日无成功纳入论文，建议优先检查候选筛选结果与失败原因。",
-            "- 若连续出现空日报，应复核 arXiv 日期窗口、关键词配置与 LLM 筛选输出。",
+            "- 若连续出现空日报，应复核各来源日期窗口、关键词配置与 LLM 筛选输出。",
             "",
             "---",
             "",
@@ -185,14 +185,15 @@ def append_failed_items(lines: list[str], failed_items: list[dict] | None) -> No
         return
 
     lines += ["", "## ⚠️ 未纳入日报的匹配论文", ""]
-    lines.append("以下论文通过关键词/LLM 筛选，但在处理过程中失败未纳入日报。点击 arXiv 链接可查看原文。")
+    lines.append("以下论文通过关键词/LLM 筛选，但在处理过程中失败未纳入日报。可通过来源链接查看原文。")
     lines.append("")
-    lines.append("| 标题 | arXiv | 失败原因 |")
+    lines.append("| 标题 | 来源 | 失败原因 |")
     lines.append("|------|-------|----------|")
     for item in failed_items:
         title = item.get("title", "Unknown")
-        aid = item.get("arxiv_id", "")
+        aid = item.get("paper_id") or item.get("arxiv_id", "")
         error = item.get("error") or item.get("reason") or "未知"
-        arxiv_link = f"[{aid}](https://arxiv.org/abs/{aid})" if aid else "-"
-        lines.append(f"| {title} | {arxiv_link} | {error} |")
+        source_url = item.get("url") or ""
+        source_link = f"[{aid}]({source_url})" if aid and source_url else (aid or "-")
+        lines.append(f"| {title} | {source_link} | {error} |")
     lines.append("")

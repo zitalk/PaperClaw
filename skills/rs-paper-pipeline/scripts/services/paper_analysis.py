@@ -84,7 +84,13 @@ def format_answer_md(text: str) -> str:
     return stripped
 
 
-def quality_gate(info: dict, analysis: dict, abstract_zh: str, uploaded_images: int) -> tuple[bool, list[str]]:
+def quality_gate(
+    info: dict,
+    analysis: dict,
+    abstract_zh: str,
+    uploaded_images: int,
+    require_images: bool = True,
+) -> tuple[bool, list[str]]:
     errors: list[str] = []
     if not info.get("title") or has_bad_placeholder(info.get("title")):
         errors.append("标题为空或无效")
@@ -96,7 +102,7 @@ def quality_gate(info: dict, analysis: dict, abstract_zh: str, uploaded_images: 
         errors.append("日期为空")
     if not abstract_zh or len(abstract_zh.strip()) < 20:
         errors.append("摘要为空或无效")
-    if uploaded_images < 1:
+    if require_images and uploaded_images < 1:
         errors.append("图片数量不足（至少1张）")
     for i in range(1, 11):
         answer = analysis.get(f"q{i}", "")
