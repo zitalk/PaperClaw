@@ -94,6 +94,10 @@ class MultiSourceDiscoveryTest(unittest.TestCase):
         elsevier_checks = [check for check in checks if check.name.startswith("Elsevier")]
         self.assertEqual([check.name for check in elsevier_checks], ["Elsevier Scopus"])
         self.assertNotIn("X-ELS-Insttoken", elsevier_checks[0].headers)
+        self.assertEqual(
+            check_source_api_keys._safe_http_detail(400, "Elsevier Scopus"),
+            "authentication_or_api_key_configuration_rejected",
+        )
 
 
 if __name__ == "__main__":

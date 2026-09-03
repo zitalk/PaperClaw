@@ -135,12 +135,14 @@ def build_checks() -> list[Check]:
     ]
 
 
-def _safe_http_detail(status: int) -> str:
+def _safe_http_detail(status: int, source: str = "") -> str:
     if status in (401, 403):
         return "authentication_or_entitlement_rejected"
     if status == 429:
         return "rate_limited"
     if status == 400:
+        if source.startswith("Elsevier"):
+            return "authentication_or_api_key_configuration_rejected"
         return "request_rejected"
     if 500 <= status <= 599:
         return "provider_server_error"
@@ -168,7 +170,7 @@ def run_check(check: Check) -> Result:
             if retryable and attempt < MAX_ATTEMPTS:
                 time.sleep(2 * attempt)
                 continue
-            return Result(check.name, "FAIL", status, _safe_http_detail(status))
+            return Result(check.name, "FAIL", status, _safe_http_detail(status, check.name))
         except (urllib.error.URLError, TimeoutError):
             if attempt < MAX_ATTEMPTS:
                 time.sleep(2 * attempt)
