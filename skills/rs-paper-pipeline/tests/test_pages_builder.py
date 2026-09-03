@@ -10,6 +10,7 @@ sys.path.insert(0, str(REPO_ROOT / "scripts"))
 
 from build_pages_site import (
     _classify_paper,
+    _ccf_grade,
     _display_authors,
     _display_institutions,
     _source_label,
@@ -89,6 +90,13 @@ class PagesBuilderTest(unittest.TestCase):
             _source_label("", "", "doi:10.1088/2631-8695/aea1db"),
             "Eng Res Express",
         )
+
+    def test_ccf_badge_uses_exact_venue_abbreviation(self):
+        self.assertEqual(_ccf_grade("CVPR"), "A")
+        self.assertEqual(_ccf_grade("TMM"), "B")
+        self.assertEqual(_ccf_grade("IROS"), "C")
+        self.assertEqual(_ccf_grade("arXiv"), "")
+        self.assertEqual(_ccf_grade("Scientific Reports"), "")
 
     def test_card_institutions_rejoin_broken_affiliation_fragments(self):
         raw = (

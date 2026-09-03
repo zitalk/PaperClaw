@@ -13,6 +13,7 @@ on:
           - run_notify
           - reconcile
           - paper_batch
+          - rebuild_index
           - doctor
       date:
         description: "Optional target date in YYYYMMDD"
@@ -133,6 +134,9 @@ jobs:
                 fi
                 python3 scripts/cli.py paper "${arxiv_id}"
               done
+              python3 scripts/cli.py rebuild-index
+              ;;
+            rebuild_index)
               python3 scripts/cli.py rebuild-index
               ;;
             run_notify)

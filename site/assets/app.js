@@ -116,6 +116,12 @@ function createPaperCard(paper) {
   source.textContent = `来源 · ${paper.source_label || "来源"} ↗`;
   if (paper.source_url || paper.arxiv_url) source.href = paper.source_url || paper.arxiv_url;
   else source.remove();
+  const ccf = fragment.querySelector(".ccf-badge");
+  if (paper.ccf_grade) ccf.textContent = `CCF ${paper.ccf_grade}`;
+  else ccf.remove();
+  const code = fragment.querySelector(".code-link");
+  if (paper.code_url) code.href = paper.code_url;
+  else code.remove();
   return fragment;
 }
 

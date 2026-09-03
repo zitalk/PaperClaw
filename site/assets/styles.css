@@ -105,6 +105,8 @@ kbd { position: absolute; right: 12px; top: 12px; padding: 4px 7px; border: 1px 
 .paper-links a { color: var(--teal); font-size: 13px; font-weight: 700; text-decoration: none; }
 .paper-links a:hover { text-decoration: underline; text-underline-offset: 4px; }
 .paper-links .source-link { padding: 3px 9px; border: 1px solid rgba(24,123,120,.2); border-radius: 999px; background: rgba(24,123,120,.07); font-size: 11px; letter-spacing: .02em; }
+.paper-links .ccf-badge { padding: 3px 9px; border: 1px solid rgba(224,101,74,.28); border-radius: 999px; color: #b84f38; background: rgba(224,101,74,.08); font-size: 11px; font-weight: 800; letter-spacing: .04em; }
+.paper-links .code-link { padding: 3px 9px; border: 1px solid rgba(13,47,51,.18); border-radius: 999px; color: var(--deep); background: rgba(13,47,51,.06); font-size: 11px; }
 .load-wrap { margin-top: 28px; display: flex; justify-content: center; }
 .empty { grid-column: 1/-1; padding: 60px 20px; text-align: center; color: var(--muted); border: 1px dashed var(--line); border-radius: 20px; }
 .footer { min-height: 100px; display: flex; align-items: center; justify-content: space-between; gap: 20px; border-top: 1px solid var(--line); color: var(--muted); font-size: 13px; }

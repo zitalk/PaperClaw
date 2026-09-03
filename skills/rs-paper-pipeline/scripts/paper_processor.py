@@ -32,6 +32,11 @@ from services.paper_analysis import (
 
 CONFIG = load_config()
 FIGURES_DIR = CONFIG.figures_dir
+_CODE_REPOSITORY_RE = re.compile(
+    r"https?://(?:www\.)?(?:github\.com|gitlab\.com|codeberg\.org)/"
+    r"[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+",
+    re.IGNORECASE,
+)
 
 # ============ 工具函数 ============
 
@@ -44,6 +49,19 @@ def log_step(step: str, status: str, reason: str = ""):
 
 def _institution_count(text: str) -> int:
     return len([chunk for chunk in re.split(r"[；;]", text or "") if chunk.strip()])
+
+
+def _extract_code_url(*values: str) -> str:
+    """Return a repository root URL only when a concrete code host link exists."""
+    for value in values:
+        match = _CODE_REPOSITORY_RE.search(value or "")
+        if match:
+            return match.group(0).rstrip(".,;:)]}")
+    return ""
+
+
+def _code_table_value(code_url: str) -> str:
+    return f"[开源仓库]({code_url})" if code_url else "暂无"
 
 def handle_figures(arxiv_id: str, pdf_path: Path, repo=None) -> list:
     """将 PDF 前三页转 JPG 并上传，返回已上传页码列表"""
@@ -212,6 +230,7 @@ def _process_paper(arxiv_id: str, issue_number: int | None = None, dry_run: bool
 
     # Markdown 可读性优化
     qa_md = {f"q{i}": format_answer_md(analysis.get(f"q{i}", "")) for i in range(1, 11)}
+    code_url = _extract_code_url(info.get("abstract_en", ""), pdf_text, analysis.get("q8", ""))
 
     report = f"""# [{title_date}] {info['title']}
 
@@ -224,6 +243,7 @@ def _process_paper(arxiv_id: str, issue_number: int | None = None, dry_run: bool
 | **单位** | {info['institutions']} |
 | **日期** | {date_str} |
 | **arXiv** | [abs](https://arxiv.org/abs/{arxiv_id}) \\| [pdf](https://arxiv.org/pdf/{arxiv_id}) |
+| **代码** | {_code_table_value(code_url)} |
 | **TL;DR** | {tldr} |
 | **摘要** | {abstract_short} |
 | **标签** | {', '.join([title_date] + tags)} |
@@ -289,6 +309,7 @@ Powered by OpenClaw🦞
             "authors": info["authors"],
             "institutions": info["institutions"],
             "date": title_date,
+            "code_url": code_url,
             "labels": [title_date] + tags,
             "body": report,
             "html_url": f"https://github.com/{CONFIG.github_repo}/issues/{issue_number}" if issue_number else "",
@@ -435,6 +456,7 @@ def _process_metadata_candidate(
     tldr = generate_tldr(info["title"], info["abstract_en"])
     abstract_short = abstract_zh[:400] + "..." if len(abstract_zh) > 400 else abstract_zh
     qa_md = {f"q{i}": format_answer_md(analysis.get(f"q{i}", "")) for i in range(1, 11)}
+    code_url = _extract_code_url(info["abstract_en"], analysis.get("q8", ""))
     report = f"""# [{title_date}] {info['title']}
 
 ## 📋 基础信息
@@ -448,6 +470,7 @@ def _process_metadata_candidate(
 | **来源** | {sources} |
 | **出版物** | {venue} |
 | **链接** | {_generic_source_links(candidate)} |
+| **代码** | {_code_table_value(code_url)} |
 | **PaperClaw ID** | `{paper_id}` |
 | **分析层级** | 摘要级（未下载或保存全文） |
 | **TL;DR** | {tldr} |
@@ -517,6 +540,7 @@ Powered by OpenClaw🦞
             "authors": info["authors"],
             "institutions": info["institutions"],
             "date": title_date,
+            "code_url": code_url,
             "labels": [title_date] + tags,
             "body": report,
             "number": issue_number or 0,

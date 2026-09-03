@@ -36,6 +36,9 @@ _VENUE_ABBREVIATIONS = (
     (re.compile(r"IEEE Transactions on Circuits and Systems for Video Technology", re.IGNORECASE), "TCSVT"),
     (re.compile(r"IEEE Transactions on Geoscience and Remote Sensing", re.IGNORECASE), "TGRS"),
     (re.compile(r"IEEE Transactions on Neural Networks and Learning Systems", re.IGNORECASE), "TNNLS"),
+    (re.compile(r"^International Journal of Computer Vision$", re.IGNORECASE), "IJCV"),
+    (re.compile(r"^Computer Vision and Image Understanding$", re.IGNORECASE), "CVIU"),
+    (re.compile(r"^Pattern Recognition$", re.IGNORECASE), "PR"),
     (re.compile(r"Computer Vision and Pattern Recognition", re.IGNORECASE), "CVPR"),
     (re.compile(r"International Conference on Computer Vision", re.IGNORECASE), "ICCV"),
     (re.compile(r"European Conference on Computer Vision", re.IGNORECASE), "ECCV"),
@@ -46,6 +49,8 @@ _VENUE_ABBREVIATIONS = (
     (re.compile(r"Neural Information Processing Systems", re.IGNORECASE), "NeurIPS"),
     (re.compile(r"International Conference on Machine Learning", re.IGNORECASE), "ICML"),
     (re.compile(r"International Conference on Learning Representations", re.IGNORECASE), "ICLR"),
+    (re.compile(r"AAAI Conference on Artificial Intelligence", re.IGNORECASE), "AAAI"),
+    (re.compile(r"International Joint Conference on Artificial Intelligence", re.IGNORECASE), "IJCAI"),
     (re.compile(r"Scientific Reports", re.IGNORECASE), "Sci Rep"),
     (re.compile(r"Engineering Research Express", re.IGNORECASE), "Eng Res Express"),
 )
@@ -53,6 +58,26 @@ _DOI_VENUE_PREFIXES = (
     ("doi:10.1038/s41598-", "Sci Rep"),
     ("doi:10.1088/2631-8695/", "Eng Res Express"),
 )
+_CCF_GRADES = {
+    # CCF 第七版目录：人工智能、计算机图形学与多媒体相关条目。
+    "TPAMI": "A",
+    "TIP": "A",
+    "CVPR": "A",
+    "ICCV": "A",
+    "NEURIPS": "A",
+    "ICML": "A",
+    "AAAI": "A",
+    "IJCAI": "A",
+    "ACM MM": "A",
+    "TMM": "B",
+    "TCSVT": "B",
+    "TNNLS": "B",
+    "CVIU": "B",
+    "PR": "B",
+    "ECCV": "B",
+    "ICRA": "B",
+    "IROS": "C",
+}
 
 
 def _extract_section(markdown: str, heading: str) -> str:
@@ -212,6 +237,10 @@ def _source_label(venue: str, source: str, paper_id: str) -> str:
     return source or "来源"
 
 
+def _ccf_grade(source_label: str) -> str:
+    return _CCF_GRADES.get(re.sub(r"\s+", " ", source_label or "").strip().upper(), "")
+
+
 def _load_paper_metadata_by_issue() -> dict[int, dict[str, str]]:
     if not ISSUE_INDEX_PATH.exists():
         return {}
@@ -222,16 +251,20 @@ def _load_paper_metadata_by_issue() -> dict[int, dict[str, str]]:
             source = str(metadata.get("source") or "")
             venue = str(metadata.get("venue") or "")
             url = str(metadata.get("url") or "")
+            code_url = str(metadata.get("code_url") or "")
             arxiv_id = paper_id if _ARXIV_ID_RE.fullmatch(paper_id) else ""
             if not url and arxiv_id:
                 url = f"https://arxiv.org/abs/{arxiv_id}"
             elif not url and paper_id.startswith("doi:"):
                 url = f"https://doi.org/{paper_id[4:]}"
+            source_label = _source_label(venue, source, paper_id)
             result[metadata["number"]] = {
                 "paper_id": paper_id,
                 "arxiv_id": arxiv_id,
-                "source_label": _source_label(venue, source, paper_id),
+                "source_label": source_label,
                 "source_url": url,
+                "ccf_grade": _ccf_grade(source_label),
+                "code_url": code_url,
             }
     return result
 
@@ -305,6 +338,8 @@ def parse_report(path: Path, metadata_by_issue: dict[int, dict[str, str]] | None
                 "arxiv_url": f"https://arxiv.org/abs/{arxiv_id}" if arxiv_id else "",
                 "source_label": source_metadata.get("source_label", "arXiv" if arxiv_id else "DOI"),
                 "source_url": source_metadata.get("source_url", ""),
+                "ccf_grade": source_metadata.get("ccf_grade", ""),
+                "code_url": source_metadata.get("code_url", ""),
                 "category": _classify_paper(title, cells[3]),
             }
         )

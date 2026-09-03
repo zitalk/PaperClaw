@@ -14,6 +14,11 @@ from datetime import datetime, timezone
 from clients.github_ops import upsert_repo_file
 
 INDEX_PATH = "papers/issue_index.json"
+_CODE_REPOSITORY_RE = re.compile(
+    r"https?://(?:www\.)?(?:github\.com|gitlab\.com|codeberg\.org)/"
+    r"[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+",
+    re.IGNORECASE,
+)
 
 
 def _extract_arxiv_id(body: str) -> str | None:
@@ -29,19 +34,26 @@ def _extract_table_value(body: str, label: str) -> str:
     return match.group(1).strip() if match else ""
 
 
+def _extract_code_url(body: str) -> str:
+    code_row = _extract_table_value(body, "代码")
+    match = _CODE_REPOSITORY_RE.search(code_row or body or "")
+    return match.group(0).rstrip(".,;:)]}") if match else ""
+
+
 def _source_metadata(body: str, paper_id: str) -> dict[str, str]:
     source = _extract_table_value(body, "来源")
     venue = _extract_table_value(body, "出版物")
     link_text = _extract_table_value(body, "链接") or _extract_table_value(body, "arXiv")
     link_match = re.search(r"\[[^\]]+\]\((https?://[^)]+)\)", link_text)
     url = link_match.group(1) if link_match else ""
+    code_url = _extract_code_url(body)
 
     if re.fullmatch(r"\d{4}\.\d{4,5}(?:v\d+)?", paper_id or ""):
         source = source or "arXiv"
         venue = venue or "arXiv"
         url = url or f"https://arxiv.org/abs/{paper_id}"
 
-    metadata = {"source": source, "venue": venue, "url": url}
+    metadata = {"source": source, "venue": venue, "url": url, "code_url": code_url}
     return {key: value for key, value in metadata.items() if value and value not in {"暂无", "未提供"}}
 
 
