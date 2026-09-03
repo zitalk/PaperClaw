@@ -2,6 +2,50 @@
 
 最近三天日报（最新在前）：
 
+# [20260903](./202609/20260903.md)
+## 📌 今日概况
+
+今日共检索候选论文 57 篇；关键词+LLM 智能匹配研究方向论文 7 篇；最终纳入日报 5 篇。
+
+今日研究聚焦无人机与遥感场景下的小目标检测与跟踪难题，多篇工作针对低能见度、跨尺度、表征脆弱性等挑战提出改进方案。方法上延续DETR与YOLO系列架构，引入可变形特征关联、动态多尺度序列融合、细节增强卷积等模块，并探索GRU与卡尔曼滤波的混合跟踪策略。同时，面向海上搜索任务的无人机快速可靠框架也受到关注，整体呈现从检测精度向任务级可靠性与效率延伸的趋势。
+
+## ✨ 今日亮点
+
+- SRS-DETR针对遥感小目标，提出可变形特征关联与动态多尺度序列融合。
+- DEO-NET面向雾天低能见度场景，结合YOLO11与细节增强卷积提升检测。
+- 星增强跨尺度对齐方法缓解无人机检测中的表征脆弱性问题。
+
+## 🗂 今日文章列表
+
+| 标题 | 作者 | 单位 | 一句话概括 | Issue |
+|---|---|---|---|---|
+| [20260903] Разработка гибридного модуля сопровождения воздушных объектов на основе GRU и фильтра Калмана | Е. Ю. Фелагерева, Н. Р. Рудоман, А. Д. Новиков | 暂无 | 提出GRU与卡尔曼滤波混合模块，用于空中目标跟踪与轨迹预测。 | [#43](https://github.com/zitalk/PaperClaw/issues/43) |
+| [20260903] SRS-DETR: DETR for small object detection in remote sensing images | Li Shaoli, huang tongtong, Jiang Changhong, Li Dejian | 暂无 | SRS-DETR通过可变形特征关联和动态多尺度序列融合改进遥感小目标检测。 | [#44](https://github.com/zitalk/PaperClaw/issues/44) |
+| [20260903] DEO-NET: A Small Object Detection Method for Foggy Low-Visibility Scenarios | Wang Yuqian, wang junyan, Yuan Baoxi, Li Hongyan, Wang Miaomiao, wu yue | 暂无 | DEO-NET针对雾天低能见度场景，利用细节增强卷积提升小目标检测性能。 | [#45](https://github.com/zitalk/PaperClaw/issues/45) |
+| [20260903] Seeing the unseen: overcoming representational fragility in UAV detection with star-enhanced cross-scale alignment | Cai Hao, Xu Jingxuan, Zhang Jinhong, Ouyang Zhong, Liu Jiafu, Zhang Yi, Yang Qin | 暂无 | 提出星增强跨尺度对齐方法，缓解无人机小目标检测中的表征脆弱性问题。 | [#46](https://github.com/zitalk/PaperClaw/issues/46) |
+| [20260903] A Framework for Fast and Reliable UAV Maritime Search Missions | Anastasiou Andreas, Papaioannou Savvas, Kolios Panayiotis, Christos G. Panayiotou | 暂无 | 构建结合模型预测控制与CNN目标检测的无人机海上搜索快速可靠框架。 | [#47](https://github.com/zitalk/PaperClaw/issues/47) |
+
+## ⚠️ 未纳入日报的匹配论文
+
+以下论文通过关键词/LLM 筛选，但在处理过程中失败未纳入日报。可通过来源链接查看原文。
+
+| 标题 | 来源 | 失败原因 |
+|------|-------|----------|
+| LSO-YOLO: a lightweight real-time object detection network for UAV small-object detection | [doi:10.1007/s11554-026-01977-y](https://doi.org/10.1007/s11554-026-01977-y) | 质检未通过: 摘要为空或无效 |
+| Precise small unmanned aerial vehicle target detection model ATU-Net | [doi:10.1007/s11554-026-01976-z](https://doi.org/10.1007/s11554-026-01976-z) | 质检未通过: 摘要为空或无效 |
+
+
+## 🔎 观察
+
+- 小目标检测研究正从通用场景向遥感、雾天、无人机等特定复杂条件细化，针对性模块设计成为主流。
+- 跟踪与检测方法出现融合趋势，如GRU与卡尔曼滤波结合，反映对时序一致性和预测稳定性的重视。
+
+---
+
+Powered by OpenClaw🦞
+
+---
+
 # [20260902](./202609/20260902.md)
 ## 📌 今日概况
 
