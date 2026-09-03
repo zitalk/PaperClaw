@@ -290,5 +290,40 @@
     "source": "arXiv",
     "venue": "arXiv",
     "url": "https://arxiv.org/abs/2609.01420v1"
+  },
+  "doi:10.25729/esi.2026.43.3.014": {
+    "number": 43,
+    "updated_at": "2026-09-03T21:35:36+00:00",
+    "source": "Semantic Scholar",
+    "venue": "Информационные и математические технологии в науке и управлении",
+    "url": "https://www.semanticscholar.org/paper/6169aa645cca4b01a96d430c97ff7f09fb183263"
+  },
+  "doi:10.1088/2631-8695/aea1f4": {
+    "number": 44,
+    "updated_at": "2026-09-03T21:36:26+00:00",
+    "source": "Crossref",
+    "venue": "Engineering Research Express",
+    "url": "https://doi.org/10.1088/2631-8695/aea1f4"
+  },
+  "doi:10.1088/2631-8695/aea1f3": {
+    "number": 45,
+    "updated_at": "2026-09-03T21:37:27+00:00",
+    "source": "Crossref",
+    "venue": "Engineering Research Express",
+    "url": "https://doi.org/10.1088/2631-8695/aea1f3"
+  },
+  "doi:10.1088/1361-6501/ae9333": {
+    "number": 46,
+    "updated_at": "2026-09-03T21:38:25+00:00",
+    "source": "Crossref",
+    "venue": "Measurement Science and Technology",
+    "url": "https://doi.org/10.1088/1361-6501/ae9333"
+  },
+  "doi:10.1007/s10846-026-02448-z": {
+    "number": 47,
+    "updated_at": "2026-09-03T21:42:29+00:00",
+    "source": "Crossref",
+    "venue": "Journal of Intelligent & Robotic Systems",
+    "url": "https://doi.org/10.1007/s10846-026-02448-z"
   }
 }
