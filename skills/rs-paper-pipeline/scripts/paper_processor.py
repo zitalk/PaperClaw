@@ -63,6 +63,14 @@ def _extract_code_url(*values: str) -> str:
 def _code_table_value(code_url: str) -> str:
     return f"[开源仓库]({code_url})" if code_url else "暂无"
 
+
+def _publication_metadata(candidate: dict | None) -> tuple[str, str]:
+    candidate = candidate or {}
+    sources = ", ".join(candidate.get("sources") or [candidate.get("primary_source") or "arXiv"])
+    venue = str(candidate.get("venue") or "").strip() or "arXiv"
+    return sources, venue
+
+
 def handle_figures(arxiv_id: str, pdf_path: Path, repo=None) -> list:
     """将 PDF 前三页转 JPG 并上传，返回已上传页码列表"""
     arxiv_dir = FIGURES_DIR / arxiv_id
@@ -101,7 +109,14 @@ def handle_figures(arxiv_id: str, pdf_path: Path, repo=None) -> list:
 
 # ============ 主流程 ============
 
-def _process_paper(arxiv_id: str, issue_number: int | None = None, dry_run: bool = False, output_dir: str | None = None, target_date: str | None = None):
+def _process_paper(
+    arxiv_id: str,
+    issue_number: int | None = None,
+    dry_run: bool = False,
+    output_dir: str | None = None,
+    target_date: str | None = None,
+    candidate_metadata: dict | None = None,
+):
     print(f"\n{'='*60}")
     print(f"处理论文: {arxiv_id}")
     print(f"{'='*60}")
@@ -231,6 +246,7 @@ def _process_paper(arxiv_id: str, issue_number: int | None = None, dry_run: bool
     # Markdown 可读性优化
     qa_md = {f"q{i}": format_answer_md(analysis.get(f"q{i}", "")) for i in range(1, 11)}
     code_url = _extract_code_url(info.get("abstract_en", ""), pdf_text, analysis.get("q8", ""))
+    sources, venue = _publication_metadata(candidate_metadata)
 
     report = f"""# [{title_date}] {info['title']}
 
@@ -243,6 +259,8 @@ def _process_paper(arxiv_id: str, issue_number: int | None = None, dry_run: bool
 | **单位** | {info['institutions']} |
 | **日期** | {date_str} |
 | **arXiv** | [abs](https://arxiv.org/abs/{arxiv_id}) \\| [pdf](https://arxiv.org/pdf/{arxiv_id}) |
+| **来源** | {sources} |
+| **出版物** | {venue} |
 | **代码** | {_code_table_value(code_url)} |
 | **TL;DR** | {tldr} |
 | **摘要** | {abstract_short} |
@@ -386,9 +404,16 @@ def cleanup_downloads(arxiv_id: str, temp_dir: Path | None = None, keep_download
     return removed
 
 
-def process_paper(arxiv_id: str, issue_number: int | None = None, dry_run: bool = False, output_dir: str | None = None, target_date: str | None = None):
+def process_paper(
+    arxiv_id: str,
+    issue_number: int | None = None,
+    dry_run: bool = False,
+    output_dir: str | None = None,
+    target_date: str | None = None,
+    candidate_metadata: dict | None = None,
+):
     try:
-        return _process_paper(arxiv_id, issue_number, dry_run, output_dir, target_date)
+        return _process_paper(arxiv_id, issue_number, dry_run, output_dir, target_date, candidate_metadata)
     finally:
         removed = cleanup_downloads(arxiv_id)
         if removed:
@@ -583,7 +608,7 @@ def process_candidate(
 ):
     arxiv_id = _real_arxiv_id(candidate)
     if arxiv_id:
-        return process_paper(arxiv_id, issue_number, dry_run, output_dir, target_date)
+        return process_paper(arxiv_id, issue_number, dry_run, output_dir, target_date, candidate)
     return _process_metadata_candidate(candidate, issue_number, dry_run, output_dir, target_date)
 
 if __name__ == "__main__":

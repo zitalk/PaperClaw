@@ -11,6 +11,7 @@ sys.path.insert(0, str(ROOT / "scripts"))
 
 from clients import github_ops, multisource_client
 import check_source_api_keys
+import paper_processor
 from services import issue_index
 
 
@@ -123,6 +124,16 @@ class MultiSourceDiscoveryTest(unittest.TestCase):
     def test_issue_index_does_not_infer_code_without_repository_url(self):
         body = "### Q8: 代码开源？\n作者表示代码之后会公开。"
         self.assertNotIn("code_url", issue_index._source_metadata(body, "doi:10.1000/example"))
+
+    def test_arxiv_processing_keeps_merged_publication_metadata(self):
+        sources, venue = paper_processor._publication_metadata(
+            {
+                "sources": ["arXiv", "OpenAlex"],
+                "venue": "IEEE Transactions on Multimedia",
+            }
+        )
+        self.assertEqual(sources, "arXiv, OpenAlex")
+        self.assertEqual(venue, "IEEE Transactions on Multimedia")
 
     def test_healthcheck_does_not_require_insttoken_or_sciencedirect(self):
         with patch.dict(
