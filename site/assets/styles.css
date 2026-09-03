@@ -98,8 +98,8 @@ kbd { position: absolute; right: 12px; top: 12px; padding: 4px 7px; border: 1px 
 .paper-credits { margin: auto 0 18px; padding: 13px 15px; display: grid; gap: 9px; border: 1px solid rgba(24,123,120,.12); border-radius: 13px; background: linear-gradient(135deg, rgba(24,123,120,.065), rgba(142,214,197,.035)); }
 .paper-credits p { margin: 0; min-width: 0; display: grid; grid-template-columns: 36px minmax(0,1fr); gap: 10px; align-items: start; font-size: 12.5px; line-height: 1.5; }
 .paper-field-label { padding-top: 1px; color: var(--teal); font: 700 10px/1.5 ui-monospace, SFMono-Regular, Consolas, monospace; letter-spacing: .08em; }
-.paper-institution-value, .paper-authors-value { min-width: 0; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
-.paper-institution-value { color: var(--deep); font-weight: 650; }
+.paper-authors-value { min-width: 0; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+.paper-institution-value { min-width: 0; color: var(--deep); font-weight: 650; overflow-wrap: anywhere; }
 .paper-authors-value { color: var(--muted); }
 .paper-links { display: flex; gap: 18px; }
 .paper-links a { color: var(--teal); font-size: 13px; font-weight: 700; text-decoration: none; }

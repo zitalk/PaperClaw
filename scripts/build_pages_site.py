@@ -62,6 +62,62 @@ def _organization_score(value: str) -> int:
     return max((score for pattern, score in _ORGANIZATION_SCORES if pattern.search(value)), default=-1)
 
 
+def _join_broken_institution_chunks(value: str) -> list[str]:
+    """Rejoin affiliation fragments split after connectors such as 'and' or 'of'."""
+    chunks: list[str] = []
+    pending = ""
+    for raw_chunk in re.split(r"[；;]", value):
+        chunk = re.sub(r"\s+", " ", raw_chunk).strip(" ,")
+        if not chunk:
+            continue
+        pending = f"{pending} {chunk}".strip() if pending else chunk
+        if re.search(r"\b(?:and|of|for|the)\s*$", pending, re.IGNORECASE):
+            continue
+        chunks.append(pending)
+        pending = ""
+    if pending:
+        chunks.append(pending)
+    return chunks
+
+
+def _normalize_institution_name(value: str) -> str:
+    institution = re.sub(r"\s+", " ", value).strip(" ,;；")
+    institution = re.sub(
+        r"^(?:the\s+)?authors?\s+(?:are|is)\s+with\s+",
+        "",
+        institution,
+        flags=re.IGNORECASE,
+    )
+    if re.match(r"^(?:the\s+)?(?:school|department|faculty|college)\b", institution, re.IGNORECASE):
+        embedded_university = re.search(
+            r"\b(?:the\s+)?((?:[A-Z][\w&.'()/-]*\s+)*University\b.*)$",
+            institution,
+        )
+        if embedded_university:
+            institution = embedded_university.group(1)
+    institution = re.sub(
+        r"^China University of Chinese Academy of Sciences\b",
+        "University of Chinese Academy of Sciences",
+        institution,
+        flags=re.IGNORECASE,
+    )
+    if re.search(r"\b(?:and|of|for|the)\s*$", institution, re.IGNORECASE):
+        return ""
+    return institution
+
+
+def _is_secondary_unit(value: str) -> bool:
+    return bool(
+        re.match(
+            r"^(?:the\s+)?(?:school|department|faculty|college|chair|"
+            r"(?:state|national|provincial|province)?\s*key laboratory|"
+            r"(?:centre|center) for)\b",
+            value,
+            re.IGNORECASE,
+        )
+    )
+
+
 def _top_level_institution(value: str) -> str:
     cleaned = re.sub(r"^[\s*∗†‡\d.(]+", "", value).strip(" ,;；")
     if not cleaned or len(cleaned) > 240:
@@ -72,7 +128,9 @@ def _top_level_institution(value: str) -> str:
     if not ranked:
         return ""
     _, _, institution = max(ranked, key=lambda item: (item[0], item[1]))
-    institution = re.sub(r"\s+", " ", institution).strip()
+    institution = _normalize_institution_name(institution)
+    if not institution:
+        return ""
     institution = re.sub(
         rf"^(.+?\bUniversity)\s+(?:[A-Z][\w.'-]*\s+){{0,3}}(?:{_COUNTRIES})$",
         r"\1",
@@ -85,7 +143,7 @@ def _top_level_institution(value: str) -> str:
 def _display_institutions(value: str, limit: int = 3) -> str:
     institutions: list[str] = []
     seen: set[str] = set()
-    for chunk in re.split(r"[；;]", value):
+    for chunk in _join_broken_institution_chunks(value):
         institution = _top_level_institution(chunk)
         key = institution.casefold()
         if not institution or key in seen:
@@ -94,8 +152,11 @@ def _display_institutions(value: str, limit: int = 3) -> str:
         seen.add(key)
     if not institutions:
         return "未公开"
+    top_level = [institution for institution in institutions if not _is_secondary_unit(institution)]
+    if top_level:
+        institutions = top_level
     shown = institutions[:limit]
-    return " · ".join(shown) + (" · et al." if len(institutions) > limit else "")
+    return ", ".join(shown) + (", et al." if len(institutions) > limit else "")
 
 
 def _load_arxiv_by_issue() -> dict[int, str]:

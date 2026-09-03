@@ -52,20 +52,61 @@ class PagesBuilderTest(unittest.TestCase):
         )
         self.assertEqual(
             _display_institutions(raw),
-            "Southeast University · Technical University of Munich",
+            "Southeast University, Technical University of Munich",
         )
 
     def test_card_institutions_are_limited_to_three(self):
         raw = "A University；B University；C University；D University"
         self.assertEqual(
             _display_institutions(raw),
-            "A University · B University · C University · et al.",
+            "A University, B University, C University, et al.",
         )
+
+    def test_card_institutions_rejoin_broken_affiliation_fragments(self):
+        raw = (
+            "School of Computer Science and Technology, Wuhan University of Science and；"
+            "Hubei Province Key Laboratory of Intelligent Information Processing and；"
+            "Real-Time Industrial System, Wuhan University of Science and Technology, Wuhan；"
+            "State Key Laboratory of Robotics and Intelligent Systems, Shenyang Institute of；"
+            "Automation, Chinese Academy of Sciences, Shenyang 110016, China；"
+            "China University of Chinese Academy of Sciences, Beijing 100049, China"
+        )
+        self.assertEqual(
+            _display_institutions(raw),
+            "Wuhan University of Science and Technology, Chinese Academy of Sciences, "
+            "University of Chinese Academy of Sciences",
+        )
+        self.assertNotIn("Science and,", _display_institutions(raw))
 
     def test_card_institution_removes_city_and_country_suffix(self):
         self.assertEqual(
             _display_institutions("Shandong University Jinan China"),
             "Shandong University",
+        )
+
+    def test_card_institutions_drop_secondary_units_when_parent_exists(self):
+        self.assertEqual(
+            _display_institutions(
+                "School of Computing；State University of New York at Binghamton"
+            ),
+            "State University of New York at Binghamton",
+        )
+
+    def test_card_institution_removes_author_prose_prefix(self):
+        self.assertEqual(
+            _display_institutions(
+                "Centre for Robotics (CAOR)；The authors are with Paris-Saclay University"
+            ),
+            "Paris-Saclay University",
+        )
+
+    def test_card_institution_extracts_university_from_embedded_school(self):
+        self.assertEqual(
+            _display_institutions(
+                "School of Automation Engineering of the University of Electronic Science "
+                "and Technology of China (UESTC)"
+            ),
+            "University of Electronic Science and Technology of China (UESTC)",
         )
 
     def test_card_institutions_ignore_non_affiliation_prose(self):
