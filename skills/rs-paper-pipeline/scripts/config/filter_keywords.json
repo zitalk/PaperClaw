@@ -7,6 +7,13 @@
     "eess.SP"
   ],
   "rs_query_terms": [
+    "camouflaged object detection",
+    "camouflage object detection",
+    "concealed object detection",
+    "camouflaged object segmentation",
+    "multimodal camouflaged object detection",
+    "RGB-D camouflaged object detection",
+    "RGB-T camouflaged object detection",
     "salient object detection",
     "saliency detection",
     "visual saliency",
@@ -89,6 +96,9 @@
     "open-vocabulary UAV segmentation"
   ],
   "rs_signal_patterns": [
+    "(?i)\\bcamouflaged? object (?:detection|segmentation)\\b",
+    "(?i)\\bconcealed object (?:detection|segmentation)\\b",
+    "(?:伪装|隐蔽)目标(?:检测|分割)",
     "(?i)\\bsalient object detection\\b",
     "(?i)\\bsalien(?:cy|t) (?:object )?(?:detection|prediction|segmentation|ranking)\\b",
     "(?i)\\bvisual saliency\\b",
@@ -141,6 +151,8 @@
     "(?i)\\b(?:large language model|LLM) agents?\\b"
   ],
   "ai_signal_patterns": [
+    "(?i)\\b(?:camouflaged?|concealed) object (?:detection|segmentation)\\b",
+    "(?:伪装|隐蔽)目标(?:检测|分割)",
     "(?i)\\bcomputer vision\\b",
     "(?i)\\bdeep learning\\b",
     "(?i)\\bneural network(s)?\\b",

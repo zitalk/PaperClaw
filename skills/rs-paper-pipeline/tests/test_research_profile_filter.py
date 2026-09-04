@@ -41,6 +41,10 @@ class ResearchProfileFilterTest(unittest.TestCase):
             "Training-Free Open-Vocabulary Semantic Segmentation with Frozen CLIP",
             "Annotation-Free Open-Set Segmentation for Remote Sensing Images",
             "Zero-Shot Open-World Segmentation in UAV Aerial Imagery",
+            "RGB-D Camouflaged Object Detection with Cross-Modal Fusion",
+            "Camouflaged Object Segmentation in Images",
+            "Concealed Object Detection",
+            "伪装目标检测",
         ]
         for text in examples:
             with self.subTest(text=text):
@@ -53,6 +57,7 @@ class ResearchProfileFilterTest(unittest.TestCase):
             "Energy-Efficient Routing for UAV Communication Networks",
             "Land Cover Classification from Satellite Images",
             "Large Language Model Agents for Recommendation Systems",
+            "Chemical oxygen demand COD removal in wastewater treatment",
         ]
         for text in examples:
             with self.subTest(text=text):

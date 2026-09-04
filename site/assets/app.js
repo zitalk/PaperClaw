@@ -1,7 +1,6 @@
-const state = { papers: [], reports: [], visible: 12, query: "", category: "", date: "" };
+const state = { papers: [], reports: [], directions: [], visible: 12, query: "", category: "", topic: "", date: "" };
 const el = (id) => document.getElementById(id);
 const researchDirections = [
-  "多模态显著目标检测",
   "多模态视觉学习",
   "多视角与多目标感知",
   "无人机视觉",
@@ -92,19 +91,69 @@ function renderLatest() {
 }
 
 function filteredPapers() {
-  const query = state.query.trim().toLowerCase();
-  return state.papers.filter((paper) => {
-    if (state.category && paper.category !== state.category) return false;
-    if (state.date && paper.date !== state.date) return false;
-    if (!query) return true;
-    return [paper.title, paper.authors, paper.institution, paper.summary, paper.arxiv_id, paper.source_label]
-      .join(" ").toLowerCase().includes(query);
+  return PaperClawFilters.filter(state.papers, state);
+}
+
+function updateTopicOptions() {
+  const select = el("topic-filter");
+  select.replaceChildren(new Option("全部子方向", ""));
+  PaperClawFilters.topics(state.directions, state.category).forEach((topic) => {
+    select.appendChild(new Option(state.category ? topic.name : `${topic.category} · ${topic.name}`, topic.id));
   });
+  select.value = state.topic;
+}
+
+function selectCategory(category, topic = "") {
+  state.category = category;
+  state.topic = topic;
+  state.visible = 12;
+  el("category-filter").value = category;
+  updateTopicOptions();
+  renderPapers();
 }
 
 function createPaperCard(paper) {
   const fragment = el("paper-template").content.cloneNode(true);
-  fragment.querySelector(".paper-category").textContent = paper.category;
+  const categories = PaperClawFilters.categories(paper);
+  const labels = fragment.querySelector(".paper-categories");
+  categories.forEach((category) => {
+    const tag = document.createElement("button");
+    tag.type = "button";
+    tag.className = "paper-category";
+    tag.textContent = category;
+    tag.addEventListener("click", () => selectCategory(category));
+    labels.appendChild(tag);
+  });
+  if (!categories.length) {
+    const pending = document.createElement("span");
+    pending.className = "paper-category pending";
+    pending.textContent = "待归类";
+    labels.appendChild(pending);
+  }
+  const topicLabels = fragment.querySelector(".paper-topics");
+  const topics = paper.topics || [];
+  const makeTopic = (topic) => {
+    const tag = document.createElement("button");
+    tag.type = "button";
+    tag.className = "paper-topic";
+    tag.textContent = topic.name;
+    tag.title = topic.category;
+    tag.addEventListener("click", () => selectCategory(topic.category, topic.id));
+    return tag;
+  };
+  topics.slice(0, 3).forEach((topic) => topicLabels.appendChild(makeTopic(topic)));
+  if (topics.length > 3) {
+    const more = document.createElement("details");
+    more.className = "paper-topic-more";
+    const summary = document.createElement("summary");
+    summary.textContent = `+${topics.length - 3} 个子方向`;
+    more.appendChild(summary);
+    const rest = document.createElement("div");
+    topics.slice(3).forEach((topic) => rest.appendChild(makeTopic(topic)));
+    more.appendChild(rest);
+    topicLabels.appendChild(more);
+  }
+  topicLabels.hidden = !topics.length;
   fragment.querySelector("time").textContent = formatDate(paper.date);
   fragment.querySelector("time").dateTime = formatDate(paper.date);
   renderInlineMath(fragment.querySelector("h3"), paper.title);
@@ -148,7 +197,10 @@ function bindEvents() {
     renderPapers();
   });
   el("category-filter").addEventListener("change", (event) => {
-    state.category = event.target.value;
+    selectCategory(event.target.value);
+  });
+  el("topic-filter").addEventListener("change", (event) => {
+    state.topic = event.target.value;
     state.visible = 12;
     renderPapers();
   });
@@ -172,13 +224,18 @@ function bindEvents() {
 async function initialize() {
   try {
     const [paperResponse, reportResponse] = await Promise.all([
-      fetch("data/papers.json"), fetch("data/reports.json")
+      fetch("data/papers.json", { cache: "no-cache" }), fetch("data/reports.json", { cache: "no-cache" })
     ]);
     if (!paperResponse.ok || !reportResponse.ok) throw new Error("数据文件不可用");
-    state.papers = (await paperResponse.json()).papers || [];
+    const paperData = await paperResponse.json();
+    state.directions = paperData.directions || researchDirections.map((name) => ({name, topics: []}));
+    const keywords = new Map(PaperClawFilters.topics(state.directions).map((t) => [t.id, t.keywords || []]));
+    state.papers = (paperData.papers || []).map((paper) => ({...paper,
+      search_keywords: (paper.topics || []).flatMap((t) => keywords.get(t.id) || [])}));
     state.reports = (await reportResponse.json()).reports || [];
     const dates = [...new Set(state.papers.map((paper) => paper.date))].sort().reverse();
-    setOptions(el("category-filter"), researchDirections);
+    setOptions(el("category-filter"), state.directions.map((d) => d.name));
+    updateTopicOptions();
     dates.forEach((date) => {
       const option = document.createElement("option");
       option.value = date;
@@ -190,7 +247,10 @@ async function initialize() {
     bindEvents();
   } catch (error) {
     el("result-count").textContent = "数据载入失败";
-    el("paper-grid").innerHTML = `<p class="empty">${error.message}</p>`;
+    const message = document.createElement("p");
+    message.className = "empty";
+    message.textContent = error.message;
+    el("paper-grid").replaceChildren(message);
   }
 }
 

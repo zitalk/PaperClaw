@@ -1,0 +1,281 @@
+{
+  "version": "2026-09-04",
+  "classification_note": "规则基于标题、摘要和日报概括生成可重叠标签，不代表逐篇质量评分。显著/伪装目标检测属于任务分组，不能据此推断输入必为多模态。",
+  "directions": [
+    {
+      "id": "multimodal",
+      "name": "多模态视觉学习",
+      "all_of": [
+        "(?:\\b(?:multimodal|multi-modal|cross-modal|cross-spectral|multi-sensor|multisensor|vision[- ]language|visual[- ]language|VLMs?|MLLMs?|text[- ](?:image|guided)|RGB[-+ ](?:TIR|T|D|NIR|IR|X|thermal|depth|event)|RGB[- ]to[- ]IR|audio[- ]visual|salient object detection|camouflaged? object (?:detection|segmentation)|concealed object detection)\\b|多模态|跨模态|跨光谱|多传感器|视觉语言|文本引导|显著目标检测|伪装目标|隐蔽目标|(?:camera.{0,15}(?:LiDAR|radar)|(?:LiDAR|radar).{0,15}camera))|\\binstruction[- ]driven image editing\\b|文本指令",
+        "(?:\\b(?:visual|vision|image|imagery|video|camera|detection|tracking|segmentation|perception|SLAM|reconstruction|localization|navigation)\\b|视觉|图像|影像|检测|跟踪|分割|感知|定位|建图|重建)"
+      ],
+      "topics": [
+        {
+          "id": "mm-sod",
+          "name": "显著目标检测（SOD）",
+          "keywords": [
+            "multimodal saliency",
+            "RGB-T / RGB-D SOD",
+            "audio-visual saliency"
+          ],
+          "pattern": "salient object|saliency detection|显著目标|显著性检测"
+        },
+        {
+          "id": "mm-cod",
+          "name": "伪装目标检测（COD）",
+          "keywords": [
+            "camouflaged object detection",
+            "concealed object detection",
+            "RGB-D COD"
+          ],
+          "pattern": "camouflaged? object|concealed object|伪装目标|隐蔽目标"
+        },
+        {
+          "id": "mm-fusion",
+          "name": "融合与跨模态表征",
+          "keywords": [
+            "multimodal fusion",
+            "cross-modal learning",
+            "sensor fusion"
+          ],
+          "pattern": "fusion|cross-modal|融合|跨模态表征"
+        },
+        {
+          "id": "mm-alignment",
+          "name": "对齐与非对齐建模",
+          "keywords": [
+            "alignment",
+            "unaligned / misaligned",
+            "asynchronous"
+          ],
+          "pattern": "align(?:ment|ed)?|registration|asynchronous|对齐|配准|异步"
+        },
+        {
+          "id": "mm-robust",
+          "name": "缺失模态与鲁棒学习",
+          "keywords": [
+            "missing modality",
+            "modality completion",
+            "uncertainty / robust fusion"
+          ],
+          "pattern": "missing modalit|incomplete modalit|modality (?:dropout|completion|uncertainty)|robust|uncertainty|缺失模态|模态缺失|鲁棒|不确定"
+        },
+        {
+          "id": "mm-perception",
+          "name": "多模态检测、分割与跟踪",
+          "keywords": [
+            "multimodal detection",
+            "multimodal segmentation",
+            "multimodal tracking"
+          ],
+          "pattern": "(?:\\b(?:multimodal|multi-modal|cross-modal|RGB[-+ ](?:TIR|T|D|IR|NIR|thermal|depth|event))\\b.{0,100}\\b(?:detection|segmentation|tracking)\\b|(?:多模态|跨模态).{0,40}(?:检测|分割|跟踪))"
+        },
+        {
+          "id": "mm-vlm",
+          "name": "视觉语言模型与高效适配",
+          "keywords": [
+            "VLM / MLLM",
+            "visual grounding",
+            "parameter-efficient adaptation / visual token pruning"
+          ],
+          "pattern": "vision[- ]language|visual[- ]language|\\b(?:VLMs?|MLLMs?|CLIP)\\b|visual (?:grounding|token)|视觉语言|视觉定位|token剪枝|高效适配"
+        }
+      ]
+    },
+    {
+      "id": "multiview",
+      "name": "多视角与多目标感知",
+      "all_of": [
+        "(?:\\b(?:multi[- ]view|multiview|multi[- ]camera|cross[- ]camera|cross[- ]view|multi[- ]object tracking|multiple object tracking|multi[- ]target tracking|re[- ]identification|ReID|MTMC|MOT)\\b|多视角|多视图|多相机|跨相机|跨视角|多目标跟踪|重识别|再识别)|\\bstereo\\b|\\bmulti[- ]fisheye\\b|双目",
+        "(?:\\b(?:visual|vision|image|imagery|video|camera|detection|tracking|segmentation|perception|SLAM|reconstruction|localization|navigation)\\b|视觉|图像|影像|检测|跟踪|分割|感知|定位|建图|重建)"
+      ],
+      "topics": [
+        {
+          "id": "mv-mot",
+          "name": "多目标跟踪",
+          "keywords": [
+            "MOT",
+            "multi-object tracking",
+            "multi-target tracking"
+          ],
+          "pattern": "multi[- ](?:object|target) tracking|multiple object tracking|\\bMOT\\b|多目标跟踪"
+        },
+        {
+          "id": "mv-mtmc",
+          "name": "多相机与跨相机跟踪",
+          "keywords": [
+            "MTMC",
+            "multi-camera tracking",
+            "cross-camera association"
+          ],
+          "pattern": "multi[- ]camera|cross[- ]camera|\\bMTMC\\b|多相机|跨相机"
+        },
+        {
+          "id": "mv-reid",
+          "name": "跨视角匹配与重识别",
+          "keywords": [
+            "cross-view matching",
+            "ReID",
+            "person / vehicle re-identification"
+          ],
+          "pattern": "cross[- ]view|re[- ]identification|\\bReID\\b|跨视角|重识别|再识别"
+        },
+        {
+          "id": "mv-geometry",
+          "name": "多视角几何与三维感知",
+          "keywords": [
+            "multi-view reconstruction",
+            "multi-view stereo",
+            "point cloud registration"
+          ],
+          "pattern": "reconstruction|stereo|point cloud|3D|重建|点云|三维|立体"
+        },
+        {
+          "id": "mv-temporal",
+          "name": "时空关联与鲁棒感知",
+          "keywords": [
+            "data association",
+            "occlusion",
+            "identity / temporal consistency"
+          ],
+          "pattern": "association|occlusion|consistency|temporal|robust|关联|遮挡|时空|一致性|鲁棒"
+        }
+      ]
+    },
+    {
+      "id": "uav",
+      "name": "无人机视觉",
+      "all_of": [
+        "(?:\\b(?:UAVs?|UAS|drones?|unmanned aerial vehicles?|aerial|low[- ]altitude)\\b|无人机|航拍|低空|多机协同)",
+        "(?:\\b(?:visual|vision|image|imagery|video|camera|detection|tracking|segmentation|perception|SLAM|reconstruction|localization|navigation)\\b|视觉|图像|影像|检测|跟踪|分割|感知|定位|建图|重建)"
+      ],
+      "topics": [
+        {
+          "id": "uav-detection",
+          "name": "航拍目标检测",
+          "keywords": [
+            "UAV / aerial detection",
+            "small / tiny object",
+            "oriented detection"
+          ],
+          "pattern": "detect(?:ion)?|检测"
+        },
+        {
+          "id": "uav-segmentation",
+          "name": "航拍分割与场景理解",
+          "keywords": [
+            "aerial segmentation",
+            "UAV scene understanding"
+          ],
+          "pattern": "segment|scene understanding|分割|场景理解"
+        },
+        {
+          "id": "uav-tracking",
+          "name": "跟踪与跨视角检索",
+          "keywords": [
+            "UAV tracking",
+            "drone ReID",
+            "drone-ground matching"
+          ],
+          "pattern": "track|ReID|re-identification|cross-view|跟踪|重识别|跨视角|检索"
+        },
+        {
+          "id": "uav-navigation",
+          "name": "视觉定位、导航与建图",
+          "keywords": [
+            "visual localization / navigation",
+            "SLAM",
+            "3D reconstruction"
+          ],
+          "pattern": "localization|navigation|SLAM|mapping|reconstruction|定位|导航|建图|重建"
+        },
+        {
+          "id": "uav-cooperative",
+          "name": "多机协同感知",
+          "keywords": [
+            "multi-UAV perception",
+            "cooperative perception"
+          ],
+          "pattern": "multi[- ](?:UAV|drone)|cooperat|swarm|formation|多机|多无人机|协同|编队"
+        },
+        {
+          "id": "uav-robust",
+          "name": "多模态与复杂环境感知",
+          "keywords": [
+            "RGB-thermal UAV",
+            "low-light / fog",
+            "cross-domain adaptation"
+          ],
+          "pattern": "multimodal|RGB[- ]|thermal|infrared|fog|low-light|domain|多模态|红外|低照|雾|跨域|域偏移"
+        }
+      ]
+    },
+    {
+      "id": "training-free",
+      "name": "免训练开放集分割",
+      "all_of": [
+        "(?:\\btraining[- ]free\\b|\\b(?:without|no) (?:any )?(?:re[- ]training|fine[- ]tuning|downstream training)\\b|\\b(?:do not|don't) retrain\\b|免训练|无需(?:重新)?训练|无需微调|无需重训练|不需要(?:下游)?训练)",
+        "(?:\\b(?:open[- ](?:vocabulary|set|world)|zero[- ]shot)\\b|开放词汇|开放集|开放世界|零样本)",
+        "(?:\\bsegment(?:ation|er|ing)?\\b|分割)"
+      ],
+      "topics": [
+        {
+          "id": "tf-vocabulary",
+          "name": "免训练开放词汇分割",
+          "keywords": [
+            "training-free open-vocabulary segmentation"
+          ],
+          "pattern": "open[- ]vocabulary|开放词汇"
+        },
+        {
+          "id": "tf-openset",
+          "name": "免训练开放集／开放世界分割",
+          "keywords": [
+            "training-free open-set segmentation",
+            "training-free open-world segmentation"
+          ],
+          "pattern": "open[- ](?:set|world)|开放集|开放世界"
+        },
+        {
+          "id": "tf-foundation",
+          "name": "冻结基础模型的分割推理",
+          "keywords": [
+            "frozen CLIP / DINO / SAM",
+            "training-free inference"
+          ],
+          "pattern": "\\b(?:CLIP|DINOv?\\d*|SAM|frozen|foundation)\\b|基础模型|冻结"
+        },
+        {
+          "id": "tf-boundary",
+          "name": "空间与边界细化",
+          "keywords": [
+            "dense features",
+            "attention refinement",
+            "boundary refinement"
+          ],
+          "pattern": "dense|spatial|boundary|attention|空间|边界|细化|稠密|注意力"
+        },
+        {
+          "id": "tf-context",
+          "name": "上下文、原型与类别校准",
+          "keywords": [
+            "context reasoning",
+            "prototype",
+            "class calibration"
+          ],
+          "pattern": "context|prototype|calibration|上下文|原型|校准"
+        },
+        {
+          "id": "tf-domain",
+          "name": "跨域与遥感扩展",
+          "keywords": [
+            "remote sensing",
+            "aerial / UAV",
+            "cross-domain segmentation"
+          ],
+          "pattern": "remote sensing|aerial|UAV|domain|遥感|航拍|无人机|跨域"
+        }
+      ]
+    }
+  ]
+}

@@ -53,7 +53,8 @@ def _source_metadata(body: str, paper_id: str) -> dict[str, str]:
         venue = venue or "arXiv"
         url = url or f"https://arxiv.org/abs/{paper_id}"
 
-    metadata = {"source": source, "venue": venue, "url": url, "code_url": code_url}
+    metadata = {"source": source, "venue": venue, "url": url, "code_url": code_url,
+                "abstract": _extract_table_value(body, "摘要")}
     return {key: value for key, value in metadata.items() if value and value not in {"暂无", "未提供"}}
 
 

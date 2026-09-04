@@ -27,6 +27,8 @@ install_urllib_proxy()
 
 QUERY_BUNDLES = (
     "salient object detection multimodal saliency",
+    "camouflaged object detection",
+    "concealed object detection",
     "multimodal vision sensor fusion missing modality",
     "multi-view multi-camera multi-object tracking",
     "UAV drone aerial visual perception",

@@ -10,6 +10,8 @@ on:
       - "scripts/build_pages_site.py"
       - "skills/rs-paper-pipeline/scripts/config/venue_policy.json"
       - "skills/rs-paper-pipeline/scripts/services/venue_policy.py"
+      - "skills/rs-paper-pipeline/scripts/config/research_taxonomy.json"
+      - "skills/rs-paper-pipeline/scripts/services/research_taxonomy.py"
       - ".github/workflows/pages.yml"
   workflow_dispatch:
 

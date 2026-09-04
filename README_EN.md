@@ -4,7 +4,7 @@
   <h1>PaperClaw</h1>
 
   <p><strong>A personal paper radar for multimodal vision and UAV research</strong></p>
-  <p>Broad visual search · Local rule recall · LLM filtering · GitHub Issue knowledge cards</p>
+  <p>Four research directions · Overlapping tags · Daily paper cards</p>
 
   <p>
     <a href="https://papers.zitalk.cn/"><img src="https://img.shields.io/badge/Research_Portal-Live-0D6B66?style=flat-square" alt="Research portal" /></a>
@@ -17,69 +17,32 @@
 
 ---
 
-> PaperClaw turns the daily stream of new papers into searchable research leads instead of a local pile of PDFs.
-
-## What it does
-
-PaperClaw searches arXiv, OpenAlex, Crossref, Semantic Scholar, Springer Nature, IEEE Xplore, and Elsevier Scopus, merges duplicate records, applies high-recall visual-context rules, and asks an LLM to make the final research-relevance decision in batches.
-
-Each selected paper becomes a structured GitHub Issue. Daily results are published as a digest, a Markdown archive, and a searchable GitHub Pages portal.
-
-| Stage | Behavior |
-|---|---|
-| Discovery | Searches broad arXiv vision categories plus six academic metadata sources |
-| Recall | Expands synonyms and applies local visual-context rules |
-| Precision | Uses batched LLM filtering against the personal research profile |
-| Reading | Creates one structured GitHub Issue per paper |
-| Delivery | Builds a daily digest, Markdown archive, and web portal |
-| Storage | Cleans transient arXiv downloads; metadata-only sources never download full text |
+PaperClaw tracks new papers across four overlapping research directions. Each paper appears once in the library, with multiple direction and subtopic tags where appropriate.
 
 ## Research radar
 
-- Multimodal perception: RGB-T, RGB-D, RGB-NIR, RGB-Event, hyperspectral and audio-visual learning
-- Salient and small targets: multimodal saliency, infrared small targets, text-guided detection and segmentation
-- Tracking and multi-view vision: MOT, ReID, cross-camera association and 3D perception
-- UAV vision: detection, tracking, segmentation, navigation, reconstruction and multi-UAV cooperation
-- Training-free open-set segmentation: open-vocabulary, zero-shot and annotation-free dense prediction with frozen foundation models
+| Main direction | Subtopics |
+|---|---|
+| Multimodal visual learning | Salient object detection (SOD); camouflaged object detection (COD); fusion and cross-modal representation; alignment and misalignment; missing-modality robustness; multimodal detection/segmentation/tracking; vision-language models and efficient adaptation |
+| Multi-view and multi-object perception | Multi-object tracking; multi-camera tracking; cross-view matching and ReID; multi-view geometry and 3D perception; spatiotemporal association and robustness |
+| UAV vision | Aerial object detection; segmentation and scene understanding; tracking and cross-view retrieval; visual localization/navigation/mapping; cooperative perception; multimodal and adverse-condition perception |
+| Training-free open-set segmentation | Training-free open-vocabulary segmentation; open-set/open-world segmentation; frozen foundation-model inference; spatial and boundary refinement; context/prototypes/calibration; cross-domain and remote-sensing extensions |
 
-## Pipeline
+See the [complete subtopic and keyword tables](./README.md#研究雷达) and the [shared taxonomy](./skills/rs-paper-pipeline/scripts/config/research_taxonomy.json).
 
-```mermaid
-flowchart LR
-    A[arXiv plus six metadata sources] --> B[DOI, arXiv ID and title deduplication]
-    B --> C[Synonyms and local context rules]
-    C --> D[Batched LLM filtering]
-    D --> E[Per-paper GitHub Issue]
-    E --> F[Daily digest and archive]
-    F --> G[Research portal]
-```
+SOD and COD are task groups within the multimodal research direction; related single-modality work is not thereby claimed to be multimodal. Zero-shot or annotation-free does not automatically mean training-free. Satellite imagery is not automatically UAV vision. Papers without clear classification evidence remain unclassified rather than defaulting to multimodal learning.
 
-The research profile lives in [`filter_keywords.json`](./skills/rs-paper-pipeline/scripts/config/filter_keywords.json), while the final relevance rubric lives in [`filter_cross_prompt.md`](./skills/rs-paper-pipeline/scripts/prompts/filter_cross_prompt.md).
+## Collection policy
 
-## Run locally
+- arXiv papers bypass the venue gate; other sources must match the [explicit venue allowlist](./docs/venue-policy.md). No journal blacklist is used. Date, relevance and deduplication checks still apply.
+- Sources: arXiv, OpenAlex, Crossref, Semantic Scholar, IEEE Xplore, Elsevier Scopus and Springer Nature.
+- GitHub Actions runs remotely on weekdays. Monday covers the previous Friday through Sunday; other weekdays cover the preceding day. A personal computer does not need to stay online.
+- Papers are saved as GitHub Issues and daily reports. Transient arXiv downloads are cleaned after analysis; metadata sources do not download full text.
 
-```powershell
-Set-Location skills/rs-paper-pipeline
-.\bootstrap.ps1
-Copy-Item .env.example .env
-```
+## Use and configuration
 
-Set `GITHUB_TOKEN`, `LLM_API_KEY`, and `RS_GITHUB_REPO=zitalk/PaperClaw` in `.env`, then run:
-
-```powershell
-.\.venv\Scripts\python.exe scripts\cli.py doctor
-.\.venv\Scripts\python.exe scripts\cli.py filter --dry-run --date YYYYMMDD
-.\.venv\Scripts\python.exe scripts\cli.py run --date YYYYMMDD --no-notify
-```
-
-Do not commit `.env`. Downloads are cleaned after processing unless `RS_KEEP_DOWNLOADS=true` is set explicitly.
-
-## Automation
-
-GitHub Actions runs the paper search remotely from Monday to Friday, so it does not depend on a personal computer staying online. At **03:00 Asia/Shanghai**, Monday scans the previous Friday, Saturday, and Sunday in order, while Tuesday through Friday scan the previous day. Retries run at **09:30, 12:30, and 15:30** for delayed indexing. No job starts during the weekend, completed dates are skipped automatically, and zero-result runs stop before creating an empty digest.
-
-Semantic Scholar calls are serialized at no more than one request per second (1.1 seconds between requests). Elsevier uses only `ELSEVIER_API_KEY` with the default Scopus `STANDARD` metadata view; no Institutional Token or ScienceDirect full-text entitlement is required. Each provider fails independently so one unavailable API does not block the daily run.
+[Portal](https://papers.zitalk.cn/) · [Paper cards](https://github.com/zitalk/PaperClaw/issues) · [Daily reports](./daily_reports/) · [Configuration and maintenance](./docs/operations.md)
 
 ## Acknowledgements
 
-PaperClaw originated from the Issue-driven tracking idea in [thinson/RS-PaperClaw](https://github.com/thinson/RS-PaperClaw) and has been independently rebuilt around a personal multimodal-vision, saliency, and UAV research profile.
+PaperClaw originated from the Issue-driven tracking idea in [thinson/RS-PaperClaw](https://github.com/thinson/RS-PaperClaw) and has been independently rebuilt around a personal vision research profile.

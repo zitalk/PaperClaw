@@ -13,6 +13,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "skills" / "rs-paper-pipeline" / "scripts"))
 from services.venue_policy import NON_MAIN, allowed_venue, load_policy
+from services.research_taxonomy import classify_research, public_directions
 REPORTS_DIR = ROOT / "daily_reports"
 ISSUE_INDEX_PATH = ROOT / "papers" / "issue_index.json"
 SITE_SOURCE_DIR = ROOT / "site"
@@ -254,30 +255,15 @@ def _load_paper_metadata_by_issue() -> dict[int, dict[str, str]]:
                 "source_url": url,
                 "ccf_grade": _ccf_grade(source_label),
                 "code_url": code_url,
+                "abstract": metadata.get("abstract", ""),
             }
     return result
 
 
 def _classify_paper(title: str, summary: str) -> str:
-    text = f"{title} {summary}".lower()
-    if (
-        re.search(r"\b(?:training[- ]free|annotation[- ]free|zero[- ]shot|inference[- ]time|test[- ]time)\b", text)
-        and re.search(r"\b(?:open[- ](?:vocabulary|set|world)|zero[- ]shot)\b", text)
-        and re.search(r"\bsegment(?:ation|er|ing)?\b", text)
-    ) or re.search(r"(?:免训练|零样本|开放词汇|开放集|开放世界).{0,24}分割", text):
-        return "免训练开放集分割"
-    if re.search(r"salien(?:cy|t)|显著(?:目标)?", text):
-        return "多模态显著目标检测"
-    if re.search(r"\b(?:uav|drone|aerial|low-altitude)\b", text):
-        return "无人机视觉"
-    if re.search(
-        r"\b(?:tracking|multi-object|multi-target|multi-view|multiview|multi-camera|cross-camera|cross-view|re-identification)\b",
-        text,
-    ):
-        return "多视角与多目标感知"
-    if re.search(r"\b(?:multimodal|multi-modal|fusion|rgb-|infrared|thermal|hyperspectral|cross-modal)\b", text):
-        return "多模态视觉学习"
-    return "多模态视觉学习"
+    """Compatibility field only; category filtering uses the complete categories list."""
+    categories = classify_research(title, summary)["categories"]
+    return categories[0] if categories else "待归类"
 
 
 def parse_report(path: Path, metadata_by_issue: dict[int, dict[str, str]] | None = None) -> dict:
@@ -312,6 +298,7 @@ def parse_report(path: Path, metadata_by_issue: dict[int, dict[str, str]] | None
         title = re.sub(r"^\[\d{8}\]\s*", "", cells[0]).strip()
         source_metadata = metadata_by_issue.get(issue_number, {})
         arxiv_id = source_metadata.get("arxiv_id", "")
+        classification = classify_research(title, cells[3], source_metadata.get("abstract", ""))
         papers.append(
             {
                 "date": date,
@@ -329,7 +316,8 @@ def parse_report(path: Path, metadata_by_issue: dict[int, dict[str, str]] | None
                 "source_url": source_metadata.get("source_url", ""),
                 "ccf_grade": source_metadata.get("ccf_grade", ""),
                 "code_url": source_metadata.get("code_url", ""),
-                "category": _classify_paper(title, cells[3]),
+                "category": classification["categories"][0] if classification["categories"] else "待归类",
+                **classification,
             }
         )
 
@@ -370,7 +358,7 @@ def build_site(output_dir: Path) -> tuple[int, int]:
     reports, papers = collect_site_data()
     generated_at = datetime.now(timezone.utc).isoformat(timespec="seconds")
     (data_dir / "papers.json").write_text(
-        json.dumps({"generated_at": generated_at, "papers": papers}, ensure_ascii=False, indent=2),
+        json.dumps({"generated_at": generated_at, "directions": public_directions(), "papers": papers}, ensure_ascii=False, indent=2),
         encoding="utf-8",
     )
     (data_dir / "reports.json").write_text(

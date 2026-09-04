@@ -17,13 +17,14 @@ from build_pages_site import (
     build_site,
     parse_report,
 )
+from services.research_taxonomy import classify_research, public_directions
 
 
 class PagesBuilderTest(unittest.TestCase):
     def test_page_categories_match_research_directions(self):
         examples = {
-            "RGB-T Salient Object Detection with Cross-Modal Guidance": "多模态显著目标检测",
-            "Robust Multimodal Fusion under Missing Modalities": "多模态视觉学习",
+            "RGB-T Salient Object Detection with Cross-Modal Guidance": "多模态视觉学习",
+            "Robust Multimodal Visual Fusion under Missing Modalities": "多模态视觉学习",
             "Cross-Camera Multi-Object Tracking and Re-Identification": "多视角与多目标感知",
             "Small Object Detection in UAV Aerial Imagery": "无人机视觉",
             "Training-Free Open-Vocabulary Semantic Segmentation": "免训练开放集分割",
@@ -33,13 +34,64 @@ class PagesBuilderTest(unittest.TestCase):
                 self.assertEqual(_classify_paper(title, ""), expected)
 
     def test_training_free_aerial_segmentation_uses_specific_direction(self):
-        self.assertEqual(
-            _classify_paper(
+        self.assertIn(
+            "免训练开放集分割",
+            classify_research(
                 "Restrict, Don't Retrain: Inference-Time VLM Guidance for Zero-Shot Aerial Segmentation",
                 "无需重训练即可提升航拍图像零样本分割精度。",
-            ),
-            "免训练开放集分割",
+            )["categories"],
         )
+
+    def test_four_public_directions_and_cod_topic(self):
+        directions = public_directions()
+        self.assertEqual(len(directions), 4)
+        self.assertNotIn("多模态显著目标检测", [d["name"] for d in directions])
+        self.assertIn("mm-cod", [t["id"] for t in directions[0]["topics"]])
+
+    def test_cross_direction_labels_are_not_exclusive(self):
+        result = classify_research("Training-Free Open-Vocabulary Aerial Segmentation with Vision-Language Models")
+        self.assertEqual(set(result["categories"]), {"免训练开放集分割", "多模态视觉学习", "无人机视觉"})
+        result = classify_research("UAV Cross-Camera Multi-Object Tracking")
+        self.assertEqual(set(result["categories"]), {"无人机视觉", "多视角与多目标感知"})
+
+    def test_cod_is_a_multimodal_group_subtopic(self):
+        for title in ["RGB-D Camouflaged Object Detection", "Concealed Object Detection in Images", "伪装目标检测与分割"]:
+            result = classify_research(title)
+            self.assertEqual(result["categories"], ["多模态视觉学习"])
+            self.assertIn("mm-cod", [t["id"] for t in result["topics"]])
+
+    def test_zero_shot_and_annotation_free_are_not_training_free_proof(self):
+        for title in ["Zero-Shot Open-Vocabulary Segmentation with CLIP", "Annotation-Free Open-Set Segmentation", "SAM for Open-World Segmentation"]:
+            self.assertNotIn("免训练开放集分割", classify_research(title)["categories"])
+        self.assertNotIn("免训练开放集分割", classify_research("Open-Set Segmentation", "Our method is not training-free.")["categories"])
+
+    def test_no_forced_multimodal_or_aerial_category(self):
+        for title in ["COD removal in wastewater", "Satellite Image Classification", "Single Object Tracking", "Medical Image Segmentation", "Infrared Image Classification"]:
+            result = classify_research(title)
+            self.assertEqual(result["categories"], [])
+            self.assertEqual(result["classification_status"], "pending")
+
+    def test_abstract_is_used_as_classification_evidence(self):
+        result = classify_research("New Visual Model", abstract="We propose camera-LiDAR fusion for UAV detection.")
+        self.assertEqual(set(result["categories"]), {"多模态视觉学习", "无人机视觉"})
+
+    def test_stereo_and_multi_fisheye_are_multiview(self):
+        self.assertIn("多视角与多目标感知", classify_research("Stereo 4D Radar for 3D Object Detection")["categories"])
+        self.assertEqual(set(classify_research("Multi-Fisheye Perception for UAVs")["categories"]), {"多视角与多目标感知", "无人机视觉"})
+
+    def test_single_modality_cod_does_not_claim_multimodal_input(self):
+        topic_ids = [t["id"] for t in classify_research("Camouflaged Object Detection")["topics"]]
+        self.assertIn("mm-cod", topic_ids)
+        self.assertNotIn("mm-perception", topic_ids)
+
+    def test_readme_lists_all_subtopics_and_has_no_workflow_diagram(self):
+        readme = (REPO_ROOT / "README.md").read_text(encoding="utf-8")
+        for direction in public_directions():
+            self.assertIn(direction["name"], readme)
+            for topic in direction["topics"]:
+                self.assertIn(topic["name"], readme)
+        self.assertNotIn("```mermaid", readme)
+        self.assertNotIn("## 工作流", readme)
 
     def test_card_authors_are_limited_to_three(self):
         self.assertEqual(
@@ -176,6 +228,8 @@ class PagesBuilderTest(unittest.TestCase):
             self.assertTrue((output / "index.html").exists())
             payload = (output / "data" / "papers.json").read_text(encoding="utf-8")
             data = json.loads(payload)
+            self.assertEqual(len(data["directions"]), 4)
+            self.assertTrue(all("categories" in p and "topics" in p for p in data["papers"]))
             self.assertGreaterEqual(len(data["papers"]), 17)
             self.assertNotIn("GITHUB_TOKEN", payload)
             self.assertNotIn("LLM_API_KEY", payload)
