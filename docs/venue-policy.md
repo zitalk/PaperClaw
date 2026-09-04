@@ -82,3 +82,9 @@ CCF 等级参考 [CCF 第七版目录（2026 年）](https://www.ccf.org.cn/Acad
 - 同步清理 3 条白名单外期刊的失败候选引用（Paddy and Water Environment 1 条、Journal of Real-Time Image Processing 2 条）。
 - 20260903 日报保留 0 篇及清理说明；20260901、20260902 的已保留论文不变。
 - 此清理记录不是黑名单。后续仍按现行白名单与 arXiv 豁免执行，不对预印本额外施加刊会限制。
+
+### 手动历史专题清理（2026-09-04）
+
+按用户要求，另行删除此前手动补收的 6 篇历史专题论文（原卡片编号 19–24）及索引记录：ProxyCLIP、SCLIP、Training-Free Open-Vocabulary Segmentation with Offline Diffusion-Augmented Prototype Generation、Standalone DINOv3、ConInfer、SegEarth-OV。这次删除基于历史专题范围，不是刊会或质量判定，也不构成黑名单。
+
+清理后保留 31 张每日日报论文卡片，与网页展示的 31 篇一致；已备份删除前卡片内容，原 Issue 编号不可恢复。每日日报内容与后续远端检索规则不变。

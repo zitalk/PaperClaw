@@ -103,51 +103,6 @@
     "venue": "arXiv",
     "url": "https://arxiv.org/abs/2609.02830v1"
   },
-  "2408.04883": {
-    "number": 24,
-    "updated_at": "2026-09-03T11:33:21+00:00",
-    "source": "arXiv",
-    "venue": "arXiv",
-    "url": "https://arxiv.org/abs/2408.04883",
-    "code_url": "https://github.com/mc-lan/ProxyCLIP"
-  },
-  "2312.01597": {
-    "number": 23,
-    "updated_at": "2026-09-03T11:33:21+00:00",
-    "source": "arXiv",
-    "venue": "arXiv",
-    "url": "https://arxiv.org/abs/2312.01597",
-    "code_url": "https://github.com/wangf3014/SCLIP"
-  },
-  "2404.06542": {
-    "number": 22,
-    "updated_at": "2026-09-03T11:33:21+00:00",
-    "source": "arXiv",
-    "venue": "arXiv",
-    "url": "https://arxiv.org/abs/2404.06542"
-  },
-  "2608.03023": {
-    "number": 21,
-    "updated_at": "2026-09-03T11:33:21+00:00",
-    "source": "arXiv",
-    "venue": "arXiv",
-    "url": "https://arxiv.org/abs/2608.03023"
-  },
-  "2603.29271": {
-    "number": 20,
-    "updated_at": "2026-09-03T11:33:21+00:00",
-    "source": "arXiv",
-    "venue": "arXiv",
-    "url": "https://arxiv.org/abs/2603.29271",
-    "code_url": "https://github.com/Dog-Yang/ConInfer"
-  },
-  "2410.01768": {
-    "number": 19,
-    "updated_at": "2026-09-03T11:33:21+00:00",
-    "source": "arXiv",
-    "venue": "arXiv",
-    "url": "https://arxiv.org/abs/2410.01768"
-  },
   "2609.00628v1": {
     "number": 17,
     "updated_at": "2026-09-03T11:33:21+00:00",
