@@ -73,3 +73,12 @@ CCF 等级参考 [CCF 第七版目录（2026 年）](https://www.ccf.org.cn/Acad
 2026-09-04 按当时的用户要求删除 5 张卡片（Engineering Research Express 4 篇、Scientific Reports 1 篇），同步清理索引、日报条目、相关亮点与失败候选引用。其余历史论文保留。随后按用户新要求取消黑名单、改用白名单；不主动恢复已删除卡片，未来检索按上述当前规则执行。
 
 原始候选 / LLM 匹配数保留，最终纳入数反映清理后的列表。Git 历史提交不改写；删除前的 Issue JSON 与日报快照只备份在本机，不发布到网站。GitHub Issue 删除后不能恢复原编号。
+
+### 全量历史白名单复查（2026-09-04）
+
+用户确认将当前规则应用到全部历史卡片。逐条核对剩余 40 张卡片：37 张具有 arXiv 标识，按规则保留；3 张正式发表论文不在白名单内，且当前记录及补查未发现对应 arXiv 版本，因此移除。
+
+- 移除刊物：Measurement Science and Technology、Journal of Intelligent & Robotic Systems、Информационные и математические технологии в науке и управлении，各 1 篇。
+- 同步清理 3 条白名单外期刊的失败候选引用（Paddy and Water Environment 1 条、Journal of Real-Time Image Processing 2 条）。
+- 20260903 日报保留 0 篇及清理说明；20260901、20260902 的已保留论文不变。
+- 此清理记录不是黑名单。后续仍按现行白名单与 arXiv 豁免执行，不对预印本额外施加刊会限制。
