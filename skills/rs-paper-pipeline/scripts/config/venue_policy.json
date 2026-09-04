@@ -2,13 +2,6 @@
   "version": "2026-09-04",
   "ccf_reference": "https://www.ccf.org.cn/Academic_Evaluation/By_category/",
   "scope": "Personal vision/AI/robotics shortlist, not the entire CCF catalogue. No quartile-based or IEEE Transactions wildcard admission.",
-  "deny": [
-    {"name": "Scientific Reports", "aliases": ["Sci Rep", "Sci. Rep."], "doi_prefixes": ["10.1038/s41598-"]},
-    {"name": "Engineering Research Express", "aliases": ["Eng Res Express", "Eng. Res. Express"], "doi_prefixes": ["10.1088/2631-8695/"]},
-    {"name": "IEEE Access", "aliases": [], "doi_prefixes": ["10.1109/access."]},
-    {"name": "Sensors", "aliases": ["Sensors (Basel)", "Sensors (Basel, Switzerland)"], "doi_prefixes": ["10.3390/s"]},
-    {"name": "Applied Sciences", "aliases": ["Applied Sciences (Basel)", "Applied Sciences-Basel"], "doi_prefixes": ["10.3390/app"]}
-  ],
   "allow": [
     {"name": "IEEE Transactions on Pattern Analysis and Machine Intelligence", "abbr": "TPAMI", "ccf": "A"},
     {"name": "International Journal of Computer Vision", "abbr": "IJCV", "ccf": "A"},
@@ -19,6 +12,8 @@
     {"name": "IEEE Transactions on Circuits and Systems for Video Technology", "abbr": "TCSVT", "ccf": "B"},
     {"name": "IEEE Transactions on Neural Networks and Learning Systems", "abbr": "TNNLS", "ccf": "B"},
     {"name": "IEEE Transactions on Cybernetics", "abbr": "TCYB", "ccf": "B"},
+    {"name": "IEEE Transactions on Systems, Man, and Cybernetics: Systems", "abbr": "TSMC", "aliases": ["TSMC-S", "IEEE Transactions on Systems, Man and Cybernetics: Systems"]},
+    {"name": "IEEE Internet of Things Journal", "abbr": "IoTJ", "aliases": ["IEEE IoT Journal", "IEEE IoTJ", "IoT Journal", "IOT", "JIOT"]},
     {"name": "Pattern Recognition", "abbr": "PR", "ccf": "B", "doi_prefixes": ["10.1016/j.patcog."]},
     {"name": "Computer Vision and Image Understanding", "abbr": "CVIU", "ccf": "B"},
     {"name": "ACM Transactions on Multimedia Computing, Communications, and Applications", "abbr": "TOMM", "ccf": "B"},

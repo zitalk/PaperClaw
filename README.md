@@ -52,7 +52,7 @@ PaperClaw 是一个面向个人研究方向的自动化文献发现系统。它�
 flowchart LR
     A[arXiv + 六个元数据源广搜] --> B[统一 DOI/arXiv/标题去重]
     B --> C[同义词与视觉语境硬过滤]
-    C --> V[刊会准入：明确排除优先 / arXiv 豁免 / 正式刊会白名单]
+    C --> V[刊会准入：arXiv 直接放行 / 其他来源仅白名单]
     V --> D[LLM 分批精筛]
     D --> E[单篇 Issue 论文卡片]
     E --> F[每日 Digest 与归档]

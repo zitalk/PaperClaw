@@ -43,37 +43,17 @@ def _dois(candidate: dict) -> list[str]:
     return [re.sub(r"^(?:doi:|https?://(?:dx\.)?doi\.org/)", "", str(v).strip().lower()) for v in values if v]
 
 
-def _doi_matches(doi: str, prefix: str) -> bool:
-    # MDPI Sensors is s + digits, not every MDPI journal starting with s.
-    if prefix in {"10.3390/s", "10.3390/app"}:
-        return bool(re.match(re.escape(prefix) + r"\d", doi))
-    return doi.startswith(prefix)
-
-
-def denied_venue(candidate: dict) -> str:
-    venues = [candidate.get("venue", ""), *(candidate.get("venues") or [])]
-    dois = _dois(candidate)
-    for entry in load_policy()["deny"]:
-        if any(_matches(v, entry) for v in venues if v) or any(
-            _doi_matches(doi, prefix) for doi in dois for prefix in entry.get("doi_prefixes", [])
-        ):
-            return entry["name"]
-    return ""
-
-
 def allowed_venue(venue: str, dois: list[str] | None = None) -> dict | None:
     for entry in load_policy()["allow"]:
         if _matches(venue, entry) or any(
-            _doi_matches(doi, prefix) for doi in (dois or []) for prefix in entry.get("doi_prefixes", [])
+            doi.startswith(prefix) for doi in (dois or []) for prefix in entry.get("doi_prefixes", [])
         ):
             return entry
     return None
 
 
 def venue_decision(candidate: dict) -> tuple[bool, str]:
-    denied = denied_venue(candidate)
-    if denied:
-        return False, f"excluded_venue: {denied}"
+    # arXiv always bypasses the venue gate, including merged published versions.
     # Database provider names or the word 'arXiv' in a title are not proof.
     if any(ARXIV_ID.fullmatch(str(candidate.get(k) or "")) for k in ("arxiv_id", "paper_id")):
         return True, "arxiv_exempt"

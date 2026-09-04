@@ -4,12 +4,13 @@
 
 ## 规则
 
-1. Scientific Reports、Engineering Research Express、IEEE Access、Sensors（MDPI）、Applied Sciences（MDPI）明确排除。匹配正式刊名、别名及期刊专属 DOI，不扫描摘要中的普通单词；不误删 IEEE Sensors Journal 或 Sensors and Actuators。
-2. 真实 arXiv ID/链接免于刊会白名单，但已确认发表在上述排除期刊的同一论文仍排除。日期、方向相关性与去重不豁免。
+1. 仅维护放行白名单，不设期刊黑名单。正式刊名、别名及白名单期刊专属 DOI 用于匹配，不扫描摘要中的普通单词。
+2. 真实 arXiv ID/链接直接通过刊会门槛，包括多源合并后已发表在白名单外刊会的版本。日期、方向相关性与去重不豁免。
 3. 其他正式发表论文需命中下表。未知刊会、未列入刊会暂不纳入；不会凭数据库名称、关键词或 LLM 猜测放行。
 4. 会议 Workshop、Demo、Companion、摘要集不继承主会准入。普通主会正式论文（含 poster）不因展示形式被排除。
 5. 刊会门槛在 LLM 前执行；运行日志及统计 JSON 记录每篇排除原因，日报显示准入 / 排除计数。无准入候选不调用筛选 LLM。
 6. 不自动放行所有“一区”或所有 IEEE Transactions。KBS、ESWA、PR 明确纳入；ESWA 是 Expert Systems with Applications，不是另一本 Expert Systems。
+7. TSMC 指 IEEE Transactions on Systems, Man, and Cybernetics: Systems；IoTJ 指 IEEE Internet of Things Journal，不是名为 Internet of Things 的其他期刊。TCYB 已在名单中。新增两刊的 CCF 等级暂不标注，准入不受影响。
 
 ## 名单
 
@@ -26,6 +27,8 @@ CCF 等级参考 [CCF 第七版目录（2026 年）](https://www.ccf.org.cn/Acad
 | TCSVT | IEEE Transactions on Circuits and Systems for Video Technology | B |
 | TNNLS | IEEE Transactions on Neural Networks and Learning Systems | B |
 | TCYB | IEEE Transactions on Cybernetics | B |
+| TSMC | IEEE Transactions on Systems, Man, and Cybernetics: Systems | — |
+| IoTJ | IEEE Internet of Things Journal | — |
 | PR | Pattern Recognition | B |
 | CVIU | Computer Vision and Image Understanding | B |
 | TOMM | ACM Transactions on Multimedia Computing, Communications, and Applications | B |
@@ -67,6 +70,6 @@ CCF 等级参考 [CCF 第七版目录（2026 年）](https://www.ccf.org.cn/Acad
 
 ## 历史清理范围
 
-2026-09-04 仅追溯移除上述五个指定期刊：删除 5 张卡片（Engineering Research Express 4 篇、Scientific Reports 1 篇），同步清理索引、日报条目、相关亮点与失败候选引用。其他三刊未发现已收录卡片；其余历史论文保留，新白名单用于后续检索。
+2026-09-04 按当时的用户要求删除 5 张卡片（Engineering Research Express 4 篇、Scientific Reports 1 篇），同步清理索引、日报条目、相关亮点与失败候选引用。其余历史论文保留。随后按用户新要求取消黑名单、改用白名单；不主动恢复已删除卡片，未来检索按上述当前规则执行。
 
 原始候选 / LLM 匹配数保留，最终纳入数反映清理后的列表。Git 历史提交不改写；删除前的 Issue JSON 与日报快照只备份在本机，不发布到网站。GitHub Issue 删除后不能恢复原编号。
