@@ -6,7 +6,7 @@ import re
 
 from clients.llm_client import call_llm
 from services.paper_analysis import is_valid_institution_text
-from services.report_status import daily_encouragement, run_marker, run_status, status_details, status_heading
+from services.report_status import REPORT_MARKER, daily_encouragement, run_marker, run_status, status_details, status_heading
 
 
 def extract_author(body: str) -> str:
@@ -96,6 +96,8 @@ def build_digest_with_llm(date: str, papers: list, stats: dict | None = None, fa
             f"关键词+LLM 智能匹配研究方向论文 {llm_selected_count} 篇；"
             "最终纳入日报 0 篇。"
         )
+        if (stats or {}).get("incremental"):
+            overview_text = f"{status_heading(health)}\n\n{incremental_statistics(stats, 0)}"
         if failed_items:
             overview_text += "当日筛中论文均未通过处理或质检，未纳入日报。"
         elif llm_selected_count:
@@ -166,6 +168,11 @@ def build_digest_with_llm(date: str, papers: list, stats: dict | None = None, fa
         f"关键词+LLM 智能匹配研究方向论文 {llm_selected_count} 篇；"
         f"最终纳入日报 {included_count} 篇。\n\n{' '.join(status_details(health))} {overview_text}"
     )
+    if (stats or {}).get("incremental"):
+        overview_text = (
+            f"{status_heading(health)}\n{incremental_statistics(stats, included_count)}\n\n"
+            f"{' '.join(status_details(health))} {data.get('overview') or '本日报汇总目标日期内累计收录的论文。'}"
+        )
 
     lines = [f"# 日报 {date}", "", run_marker(health), "", "## 📌 今日概况", "", overview_text, ""]
 
@@ -197,6 +204,36 @@ def build_digest_with_llm(date: str, papers: list, stats: dict | None = None, fa
 
     lines += ["", "---", "", "Powered by OpenClaw🦞"]
     return "\n".join(lines)
+
+
+def incremental_statistics(stats: dict, included_count: int) -> str:
+    reused = stats.get("reused_selection_count", 0)
+    newly_selected = stats.get("new_llm_selected_count", stats.get("llm_selected_count", 0))
+    return (
+        f"本轮检索候选论文 {stats.get('candidate_count', 0)} 篇；{_venue_stats_text(stats)}"
+        f"本轮 LLM 新筛中 {newly_selected} 篇，复用已收录匹配 {reused} 篇；"
+        f"本轮新增入报 {stats.get('new_included_count', 0)} 篇；目标日累计收录 {included_count} 篇。"
+    )
+
+
+def refresh_digest_status(body: str, stats: dict, included_count: int) -> str | None:
+    """Refresh a no-addition round without rewriting existing paper summaries."""
+    pattern = r"(^##[^\n]*今日概况[^\n]*\n).*?(?=^## |\Z)"
+    if not re.search(pattern, body, re.M | re.S):
+        return None
+    health = run_status(stats)
+    overview = (f"{status_heading(health)}\n{incremental_statistics(stats, included_count)}\n\n"
+                + " ".join(status_details(health)) + " 本轮没有新增入报论文，保留此前收录的论文与概括。\n\n")
+    body = re.sub(pattern, lambda m: m[1] + "\n" + overview, body, count=1, flags=re.M | re.S)
+    body = body.replace(REPORT_MARKER, "")
+    body = re.sub(r"<!-- paperclaw-run: [^\n]* -->", "", body)
+    # Failure details describe this round, not already resolved historical errors.
+    body = re.sub(r"^##[^\n]*未纳入日报的匹配论文[^\n]*\n.*?(?=^## |^---$|\Z)", "", body, flags=re.M | re.S)
+    failures = []
+    append_failed_items(failures, stats.get("failed_items"))
+    if failures:
+        body += "\n" + "\n".join(failures)
+    return body.rstrip() + "\n\n" + run_marker(health) + "\n"
 
 
 def _venue_stats_text(stats: dict | None) -> str:

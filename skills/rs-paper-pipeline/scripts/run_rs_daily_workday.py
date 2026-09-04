@@ -437,8 +437,8 @@ def resolve_target_dates(today: datetime | None = None) -> list[str]:
     return [target.strftime("%Y%m%d")]
 
 
-def _process_date(date_str: str, notify: bool, force: bool = False):
-    if not force:
+def _process_date(date_str: str, notify: bool, force: bool = False, incremental: bool = False):
+    if not force and not incremental:
         already_done, reason = _date_already_completed(date_str)
         if already_done:
             print(f"SKIP {date_str} | {reason}")
@@ -458,7 +458,8 @@ def _process_date(date_str: str, notify: bool, force: bool = False):
     _run_step(
         date_str,
         "filter",
-        [PYTHON_BIN, "scripts/daily_arxiv_cross_filter.py", "--date", date_str, "--stats-out", stats_path],
+        [PYTHON_BIN, "scripts/daily_arxiv_cross_filter.py", "--date", date_str, "--stats-out", stats_path]
+        + (["--incremental"] if incremental else []),
         ok_extra={"stats_path": stats_path},
         running_extra={"notify": notify},
     )
@@ -474,7 +475,8 @@ def _process_date(date_str: str, notify: bool, force: bool = False):
     _run_step(
         date_str,
         "digest",
-        [PYTHON_BIN, "scripts/daily_digest_llm_upgrade.py", "--date", date_str, "--stats-json", stats_path],
+        [PYTHON_BIN, "scripts/daily_digest_llm_upgrade.py", "--date", date_str, "--stats-json", stats_path]
+        + (["--incremental"] if incremental else []),
     )
 
     _write_state(date_str, "sync", "running")
@@ -531,7 +533,7 @@ def _process_date(date_str: str, notify: bool, force: bool = False):
     _write_state(date_str, "done", "ok")
 
 
-def main(target_date: str | None = None, notify: bool | None = None, force: bool = False):
+def main(target_date: str | None = None, notify: bool | None = None, force: bool = False, incremental: bool = False):
     if not CONFIG.github_token:
         raise RuntimeError("Missing required environment variable: GITHUB_TOKEN")
     if not CONFIG.llm_api_key:
@@ -558,7 +560,7 @@ def main(target_date: str | None = None, notify: bool | None = None, force: bool
                 )
             raise RuntimeError("GitHub 连通性检查失败，请切换代理节点后重试")
         for date_str in target_dates:
-            _process_date(date_str, notify, force=force)
+            _process_date(date_str, notify, force=force, incremental=incremental)
 
 
 if __name__ == "__main__":
@@ -568,6 +570,7 @@ if __name__ == "__main__":
     parser.add_argument("--notify", action="store_true", help="强制发送通知")
     parser.add_argument("--no-notify", action="store_true", help="禁止发送Feishu通知")
     parser.add_argument("--force", action="store_true", help="即使当天已成功也强制重跑")
+    parser.add_argument("--incremental", action="store_true", help="补扫并追加到已有日报")
     args = parser.parse_args()
 
     notify = None
@@ -579,4 +582,4 @@ if __name__ == "__main__":
     if notify and not has_available_notify_channel():
         raise RuntimeError("No available notify channel. Configure DINGTALK_WEBHOOK or FEISHU_TARGET with a working openclaw binary.")
 
-    main(target_date=args.date, notify=notify, force=args.force)
+    main(target_date=args.date, notify=notify, force=args.force, incremental=args.incremental)

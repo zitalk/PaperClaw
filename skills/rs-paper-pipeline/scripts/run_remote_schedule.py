@@ -11,11 +11,6 @@ def main() -> int:
     processed = 0
 
     for date_str in target_dates:
-        already_done, reason = run_rs_daily_workday._date_already_completed(date_str)
-        if already_done:
-            print(f"REMOTE_SKIP date={date_str} reason=already_completed detail={reason}")
-            continue
-
         # Discovery happens exactly once inside the workday pipeline.  The
         # filter writes counts to its stats JSON, including zero-result runs.
         # The same date's digest is updated on retries, never duplicated.
@@ -25,6 +20,7 @@ def main() -> int:
             target_date=date_str,
             notify=False,
             force=False,
+            incremental=True,
         )
         processed += 1
 

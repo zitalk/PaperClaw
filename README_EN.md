@@ -39,7 +39,7 @@ SOD and COD are task groups within the multimodal research direction; related si
 
 - arXiv papers bypass the venue gate; other sources must match the [explicit venue allowlist](./docs/venue-policy.md). No journal blacklist is used. Date, relevance and deduplication checks still apply.
 - Sources: arXiv, OpenAlex, Crossref, Semantic Scholar, IEEE Xplore, Elsevier Scopus and Springer Nature.
-- GitHub Actions runs remotely on weekdays. Monday covers the previous Friday through Sunday; other weekdays cover the preceding day. A personal computer does not need to stay online.
+- GitHub Actions runs remotely on weekdays at 03:00, 09:30, 12:30, 15:30, 18:30, 21:30 and 23:30 Beijing time. Monday covers the previous Friday through Sunday; other weekdays cover the preceding day. Later rounds append to the same digest even after a successful run, retaining existing cards without duplicate counts. A personal computer does not need to stay online.
 - Papers are saved as GitHub Issues and daily reports. Transient arXiv downloads are cleaned after analysis; metadata sources do not download full text.
 
 ## Use and configuration

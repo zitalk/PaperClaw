@@ -144,7 +144,7 @@ def load_existing_issue_map(repo, index: dict[str, dict], arxiv_ids: list[str]) 
     return issue_map
 
 
-def main(dry_run=False, days_back=2, stats_out: str | None = None, target_date: str | None = None):
+def main(dry_run=False, days_back=2, stats_out: str | None = None, target_date: str | None = None, incremental: bool = False):
     if not CONFIG.github_token:
         raise RuntimeError("Missing required environment variable: GITHUB_TOKEN")
     if not CONFIG.llm_api_key:
@@ -169,7 +169,15 @@ def main(dry_run=False, days_back=2, stats_out: str | None = None, target_date: 
         print(f"  [刊会排除] {candidate_id(item)} | {item['venue_policy_reason']}")
 
     print("[2/5] LLM 交叉筛选...")
-    selected = llm_cross_filter(admitted, warnings=filter_warnings)
+    # Already accepted, open cards need no repeated LLM relevance decision.
+    cached_issues = load_existing_issue_map(repo, index, [candidate_id(x) for x in admitted]) if incremental else {}
+    reused = [x for x in admitted if candidate_id(x) in cached_issues
+              and getattr(cached_issues[candidate_id(x)], "state", "open") == "open"
+              and issue_has_valid_metadata(cached_issues[candidate_id(x)])]
+    reused_ids = {candidate_id(x) for x in reused}
+    to_filter = [x for x in admitted if candidate_id(x) not in reused_ids]
+    newly_selected = llm_cross_filter(to_filter, warnings=filter_warnings)
+    selected = reused + newly_selected
     selected_count = len(selected)
     print(f"  入选数: {selected_count}")
 
@@ -206,6 +214,9 @@ def main(dry_run=False, days_back=2, stats_out: str | None = None, target_date: 
             {**compact_item(x), "reason": x["venue_policy_reason"]} for x in venue_excluded
         ],
         "llm_selected_count": selected_count,
+        "reused_selection_count": len(reused),
+        "new_llm_selected_count": len(newly_selected),
+        "incremental": incremental,
         "existing_count": existing_count,
         "refresh_count": refresh_count,
         "todo_count": todo_count,
@@ -282,6 +293,7 @@ if __name__ == "__main__":
     parser.add_argument("--days", type=int, default=2, help="抓取最近 N 天的论文（默认2天）")
     parser.add_argument("--date", dest="date", help="抓取指定日期（YYYYMMDD）")
     parser.add_argument("--stats-out", dest="stats_out", help="输出统计 JSON 文件路径")
+    parser.add_argument("--incremental", action="store_true", help="复用已收录论文的筛选结果")
     args = parser.parse_args()
 
-    main(dry_run=args.dry_run, days_back=args.days, stats_out=args.stats_out, target_date=args.date)
+    main(dry_run=args.dry_run, days_back=args.days, stats_out=args.stats_out, target_date=args.date, incremental=args.incremental)

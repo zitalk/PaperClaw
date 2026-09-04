@@ -7,8 +7,9 @@ from collections import defaultdict
 from pathlib import Path
 
 from pipeline_config import get_repo, load_config
-from services.digest_builder import build_digest_with_llm, extract_paper_date, validate_papers_for_digest
-from services.issue_index import ensure_index, lookup_issue
+from services.digest_builder import build_digest_with_llm, extract_paper_date, validate_papers_for_digest, refresh_digest_status
+from services.issue_index import ensure_index, lookup_issue, _extract_arxiv_id, _source_metadata
+from services.venue_policy import venue_decision
 
 CONFIG = load_config()
 
@@ -100,7 +101,46 @@ def _augment_papers_from_stats(repo, papers: list[dict], stats: dict | None) -> 
     return selected_papers
 
 
-def main(target_date: str | None = None, stats_json: str | None = None):
+def published_paper_numbers(body: str, repo_name: str) -> set[int]:
+    """Only the approved paper table counts, never arbitrary links or failures."""
+    section = re.search(r"^##[^\n]*今日文章列表[^\n]*\n(.*?)(?=^## |\Z)", body or "", re.M | re.S)
+    if not section:
+        return set()
+    numbers = set()
+    for line in section.group(1).splitlines():
+        cells = [c.strip() for c in line.strip().strip("|").split("|")]
+        if not line.startswith("|") or len(cells) < 5:
+            continue
+        match = re.fullmatch(r"\[#(\d+)\]\(https://github\.com/" + re.escape(repo_name) + r"/issues/(\d+)\)", cells[4])
+        if match and match[1] == match[2]:
+            numbers.add(int(match[1]))
+    return numbers
+
+
+def retain_previous_papers(repo, issues, body: str, date: str, repo_name: str) -> list[dict]:
+    available = {_paper_key(issue_data(i)): issue_data(i) for i in issues}
+    retained = []
+    for number in sorted(published_paper_numbers(body, repo_name)):
+        raw = available.get(number)
+        if raw is None:
+            try:
+                raw = issue_data(repo.get_issue(number))
+            except Exception as exc:
+                if getattr(exc, "status", None) in (404, 410):
+                    continue  # Deleted cards must never be resurrected.
+                raise  # A transient API failure must not silently shrink the digest.
+        if raw.get("state", "open") != "open" or "pull_request" in raw:
+            continue
+        if extract_paper_date(raw) != date:
+            continue
+        paper_id = _extract_arxiv_id(raw.get("body") or "") or ""
+        metadata = {**_source_metadata(raw.get("body") or "", paper_id), "paper_id": paper_id}
+        if venue_decision(metadata)[0]:
+            _merge_paper(retained, raw)
+    return retained
+
+
+def main(target_date: str | None = None, stats_json: str | None = None, incremental: bool = False):
     if not CONFIG.github_token:
         raise RuntimeError("Missing required environment variable: GITHUB_TOKEN")
     if not CONFIG.llm_api_key:
@@ -126,9 +166,21 @@ def main(target_date: str | None = None, stats_json: str | None = None):
 
     for date in dates:
         # Open issue list is eventually consistent right after paper creation.
-        # When run stats exist, build the digest strictly from this run's
-        # successful selection so stale date-labeled issues cannot inflate it.
-        papers = _augment_papers_from_stats(repo, paper_by_date.get(date, []), stats_map.get(date))
+        # Current successes plus previously published, still-admitted cards.
+        # Date labels alone must not reintroduce old, removed or unrelated cards.
+        stats = stats_map.get(date)
+        papers = _augment_papers_from_stats(repo, paper_by_date.get(date, []), stats)
+        previous_issue = digest_issue_by_date.get(date)
+        previous_body = (getattr(previous_issue, "body", None) or issue_data(previous_issue).get("body", "")) if previous_issue else ""
+        repo_name = getattr(CONFIG, "github_repo", "zitalk/PaperClaw")
+        previous = retain_previous_papers(repo, issues, previous_body, date, repo_name) if incremental else []
+        previous_ids = {_paper_key(p) for p in previous}
+        new_count = len({_paper_key(p) for p in papers} - previous_ids)
+        for paper in previous:
+            _merge_paper(papers, paper)
+        if incremental and stats is not None:
+            stats = {**stats, "incremental": True, "new_included_count": new_count,
+                     "cumulative_included_count": len(papers)}
         papers = sorted(papers, key=lambda x: x["number"])
         if not papers and date not in stats_map:
             print(f"NO_PAPERS date={date}")
@@ -138,12 +190,15 @@ def main(target_date: str | None = None, stats_json: str | None = None):
             raise RuntimeError(
                 f"digest paper validation failed for {date}: " + " | ".join(validation_errors[:8])
             )
-        md = build_digest_with_llm(
-            date,
-            papers,
-            stats=stats_map.get(date),
-            failed_items=(stats_map.get(date) or {}).get("failed_items"),
-        )
+        md = None
+        # Nothing new: retain paper summaries, update counts and health without LLM.
+        if (incremental and stats and papers and not new_count
+                and not stats.get("refresh_count")
+                and {_paper_key(p) for p in papers} == published_paper_numbers(previous_body, repo_name)):
+            md = refresh_digest_status(previous_body, stats, len(papers))
+        if md is None:
+            md = build_digest_with_llm(date, papers, stats=stats,
+                                      failed_items=(stats or {}).get("failed_items"))
         (out_dir / f"{date}.md").write_text(md, encoding="utf-8")
 
         title = f"日报 {date}"
@@ -162,6 +217,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--date", dest="date", help="仅生成指定日期日报，格式 YYYYMMDD")
     parser.add_argument("--stats-json", dest="stats_json", help="筛选统计 JSON 文件路径")
+    parser.add_argument("--incremental", action="store_true", help="保留已纳入日报的论文并追加新论文")
     args = parser.parse_args()
 
-    main(target_date=args.date, stats_json=args.stats_json)
+    main(target_date=args.date, stats_json=args.stats_json, incremental=args.incremental)

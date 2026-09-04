@@ -52,10 +52,10 @@ class RemoteScheduleTest(unittest.TestCase):
             self.assertEqual(run_remote_schedule.main(), 0)
 
         self.assertEqual(pipeline_main.call_count, 2)
-        pipeline_main.assert_any_call(target_date="20260901", notify=False, force=False)
-        pipeline_main.assert_any_call(target_date="20260902", notify=False, force=False)
+        pipeline_main.assert_any_call(target_date="20260901", notify=False, force=False, incremental=True)
+        pipeline_main.assert_any_call(target_date="20260902", notify=False, force=False, incremental=True)
 
-    def test_completed_date_skips_pipeline(self):
+    def test_completed_date_still_runs_incremental_discovery(self):
         with (
             patch.object(
                 run_remote_schedule.run_rs_daily_workday,
@@ -71,7 +71,22 @@ class RemoteScheduleTest(unittest.TestCase):
         ):
             self.assertEqual(run_remote_schedule.main(), 0)
 
-        pipeline_main.assert_not_called()
+        pipeline_main.assert_called_once_with(target_date="20260901", notify=False, force=False, incremental=True)
+
+    def test_incremental_mode_bypasses_completion_guard_and_reaches_both_steps(self):
+        workday = run_remote_schedule.run_rs_daily_workday
+        with (
+            patch.object(workday, "_date_already_completed", return_value=(True, "done")) as completion,
+            patch.object(workday, "_run_step") as step,
+            patch.object(workday, "_load_stats", return_value={"date": "20260903"}),
+            patch.object(workday, "_write_state"), patch.object(workday, "run"),
+            patch.object(workday, "_get_repo"),
+            patch.object(workday, "daily_report_file_exists", return_value=True),
+        ):
+            workday._process_date("20260903", notify=False, incremental=True)
+        completion.assert_not_called()
+        self.assertEqual(step.call_count, 2)
+        self.assertTrue(all("--incremental" in call.args[2] for call in step.call_args_list))
 
     def test_empty_filter_still_publishes_and_syncs_digest(self):
         workday = run_remote_schedule.run_rs_daily_workday
