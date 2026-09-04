@@ -503,9 +503,13 @@ def fetch_recent_candidates(
     max_results: int = 1200,
     days_back: int = 2,
     target_date: str | None = None,
+    source_status: list[dict[str, Any]] | None = None,
 ) -> list[dict[str, Any]]:
+    health = source_status if source_status is not None else []
+    health.clear()
     valid_days = _date_window(target_date, days_back)
     arxiv_items = fetch_arxiv_candidates(max_results=max_results, days_back=days_back, target_date=target_date)
+    health.append({"name": "arXiv", "status": "ok"})
     normalized: list[dict[str, Any]] = []
     for item in arxiv_items:
         normalized_item = _candidate(
@@ -532,7 +536,17 @@ def fetch_recent_candidates(
         ("IEEE Xplore", fetch_ieee),
         ("Elsevier Scopus", fetch_elsevier_scopus),
     )
+    required_keys = {
+        "OpenAlex": CONFIG.openalex_api_key,
+        "Semantic Scholar": CONFIG.semantic_scholar_api_key,
+        "Springer Nature": CONFIG.springer_nature_api_key,
+        "IEEE Xplore": CONFIG.ieee_api_key,
+        "Elsevier Scopus": CONFIG.elsevier_api_key,
+    }
     for name, provider in providers:
+        if name in required_keys and not required_keys[name]:
+            health.append({"name": name, "status": "not_configured"})
+            continue
         try:
             found: list[dict[str, Any]] = []
             for day in sorted(valid_days):
@@ -540,10 +554,13 @@ def fetch_recent_candidates(
             found = [item for item in found if item.get("published") in valid_days]
             found = [item for item in found if has_remote_sensing_signal(f"{item.get('title', '')}\n{item.get('abstract', '')}")]
             normalized.extend(found)
+            health.append({"name": name, "status": "ok"})
             print(f"  [{name}] 日期内研究方向候选 {len(found)}")
         except ProviderUnavailable as exc:
+            health.append({"name": name, "status": "unavailable"})
             print(f"  [{name}] 跳过：{exc}")
         except Exception as exc:
+            health.append({"name": name, "status": "unavailable"})
             print(f"  [{name}] 跳过：{type(exc).__name__}")
 
     merged = _merge_items(normalized)

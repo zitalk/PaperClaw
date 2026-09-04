@@ -6,6 +6,7 @@ import re
 
 from clients.llm_client import call_llm
 from services.paper_analysis import is_valid_institution_text
+from services.report_status import daily_encouragement, run_marker, run_status, status_details, status_heading
 
 
 def extract_author(body: str) -> str:
@@ -66,6 +67,10 @@ def extract_paper_date(issue: dict) -> str | None:
 
 
 def build_digest_with_llm(date: str, papers: list, stats: dict | None = None, failed_items: list[dict] | None = None) -> str:
+    failed_items = failed_items or (stats or {}).get("failed_items") or []
+    health = run_status(stats, failed_items)
+    if not papers and (stats or {}).get("llm_selected_count", 0):
+        health["status"] = "degraded"
     items = []
     for i, paper in enumerate(papers, 1):
         labels = [label["name"] for label in paper.get("labels", []) if label["name"] not in [date, "日报"]]
@@ -85,23 +90,32 @@ def build_digest_with_llm(date: str, papers: list, stats: dict | None = None, fa
         candidate_count = (stats or {}).get("candidate_count", 0)
         llm_selected_count = (stats or {}).get("llm_selected_count", len(failed_items or []))
         overview_text = (
+            f"{status_heading(health)}\n\n"
             f"今日共检索候选论文 {candidate_count} 篇；"
             f"{_venue_stats_text(stats)}"
             f"关键词+LLM 智能匹配研究方向论文 {llm_selected_count} 篇；"
-            "最终纳入日报 0 篇。\n\n"
+            "最终纳入日报 0 篇。"
         )
-        if llm_selected_count:
+        if failed_items:
             overview_text += "当日筛中论文均未通过处理或质检，未纳入日报。"
+        elif llm_selected_count:
+            overview_text += "存在匹配论文，但没有成功归档记录，需要核查，不能视为正常零结果。"
         else:
             overview_text += "当日未检索到符合条件并纳入日报的论文。"
+        overview_text += " " + " ".join(status_details(health))
 
-        lines = [f"# 日报 {date}", "", "## 📌 今日概况", "", overview_text, ""]
+        lines = [f"# 日报 {date}", "", run_marker(health), "", "## 📌 今日概况", "", overview_text, ""]
         append_failed_items(lines, failed_items)
         lines += [
-            "## 🔎 观察",
+            "## ✨ 今日亮点",
             "",
-            "- 当日无成功纳入论文，建议优先检查候选筛选结果与失败原因。",
-            "- 若连续出现空日报，应复核各来源日期窗口、关键词配置与 LLM 筛选输出。",
+            "- " + (daily_encouragement(date) if health["status"] != "degraded" else "本次有异常，请查看来源状态及失败明细；不能将部分结果当作完整检索结果。"),
+            "",
+            "## 🔎 检索说明",
+            "",
+            "- 日报日期是论文检索目标日期；最近检查时间是任务实际执行时间。",
+            "- 零结果不代表所有来源当天没有新论文，只表示本次未纳入符合条件的论文。",
+            "- 同一日期后续补扫会更新这份日报，不重复创建日报 Issue。",
             "",
             "---",
             "",
@@ -146,13 +160,14 @@ def build_digest_with_llm(date: str, papers: list, stats: dict | None = None, fa
         llm_selected_count = included_count
 
     overview_text = (
+        f"{status_heading(health)}\n"
         f"今日共检索候选论文 {candidate_count} 篇；"
         f"{_venue_stats_text(stats)}"
         f"关键词+LLM 智能匹配研究方向论文 {llm_selected_count} 篇；"
-        f"最终纳入日报 {included_count} 篇。\n\n{overview_text}"
+        f"最终纳入日报 {included_count} 篇。\n\n{' '.join(status_details(health))} {overview_text}"
     )
 
-    lines = [f"# 日报 {date}", "", "## 📌 今日概况", "", overview_text, ""]
+    lines = [f"# 日报 {date}", "", run_marker(health), "", "## 📌 今日概况", "", overview_text, ""]
 
     highlights = data.get("highlights") or []
     if highlights:

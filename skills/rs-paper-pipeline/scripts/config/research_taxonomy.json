@@ -6,7 +6,7 @@
       "id": "multimodal",
       "name": "多模态视觉学习",
       "all_of": [
-        "(?:\\b(?:multimodal|multi-modal|cross-modal|cross-spectral|multi-sensor|multisensor|vision[- ]language|visual[- ]language|VLMs?|MLLMs?|text[- ](?:image|guided)|RGB[-+ ](?:TIR|T|D|NIR|IR|X|thermal|depth|event)|RGB[- ]to[- ]IR|audio[- ]visual|salient object detection|camouflaged? object (?:detection|segmentation)|concealed object detection)\\b|多模态|跨模态|跨光谱|多传感器|视觉语言|文本引导|显著目标检测|伪装目标|隐蔽目标|(?:camera.{0,15}(?:LiDAR|radar)|(?:LiDAR|radar).{0,15}camera))|\\binstruction[- ]driven image editing\\b|文本指令",
+        "(?:\\b(?:multimodal|multi-modal|cross-modal|cross-spectral|multi-sensor|multisensor|vision[- ]language|visual[- ]language|VLMs?|MLLMs?|text[- ](?:image|guided)|RGB[-+ ](?:TIR|T|D|NIR|IR|X|thermal|depth|event)|RGB[- ]to[- ]IR|audio[- ]visual|salient object detection|camouflaged? object (?:detection|segmentation)|concealed object detection)\\b|多模态|跨模态|跨光谱|多传感器|视觉语言|文本引导|显著目标检测|伪装目标|隐蔽目标|伪装.{0,6}(?:车辆|物体).{0,3}(?:检测|分割)|camouflaged? (?:vehicle|military vehicle) (?:detection|segmentation)|(?:camera.{0,15}(?:LiDAR|radar)|(?:LiDAR|radar).{0,15}camera))|\\binstruction[- ]driven image editing\\b|文本指令",
         "(?:\\b(?:visual|vision|image|imagery|video|camera|detection|tracking|segmentation|perception|SLAM|reconstruction|localization|navigation)\\b|视觉|图像|影像|检测|跟踪|分割|感知|定位|建图|重建)"
       ],
       "topics": [
@@ -28,7 +28,7 @@
             "concealed object detection",
             "RGB-D COD"
           ],
-          "pattern": "camouflaged? object|concealed object|伪装目标|隐蔽目标"
+          "pattern": "camouflaged? object|concealed object|伪装目标|隐蔽目标|伪装.{0,6}(?:车辆|物体).{0,3}(?:检测|分割)|camouflaged? (?:vehicle|military vehicle) (?:detection|segmentation)"
         },
         {
           "id": "mm-fusion",

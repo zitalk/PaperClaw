@@ -58,7 +58,7 @@ def _match_id(cid: str, keep_set: set[str]) -> bool:
     return False
 
 
-def _llm_cross_filter_batch(candidates, batch_number: int, batch_total: int):
+def _llm_cross_filter_batch(candidates, batch_number: int, batch_total: int, warnings: list | None = None):
     payload = []
     for i, c in enumerate(candidates, 1):
         payload.append(f"[{i}] id={candidate_id(c)} | title={c['title']} | abstract={c['abstract'][:700]}")
@@ -84,6 +84,8 @@ def _llm_cross_filter_batch(candidates, batch_number: int, batch_total: int):
         return result
 
     # 两次都失败，降级到关键词交叉筛选
+    if warnings is not None:
+        warnings.append("llm_parse_fallback")
     print("  [LLM 解析] 两次均失败，降级为关键词交叉筛选")
     out_items = []
     for c in candidates:
@@ -94,7 +96,7 @@ def _llm_cross_filter_batch(candidates, batch_number: int, batch_total: int):
     return out_items
 
 
-def llm_cross_filter(candidates):
+def llm_cross_filter(candidates, warnings: list | None = None):
     if not candidates:
         return []
 
@@ -104,7 +106,7 @@ def llm_cross_filter(candidates):
     ]
     selected = []
     for batch_number, batch in enumerate(batches, 1):
-        selected.extend(_llm_cross_filter_batch(batch, batch_number, len(batches)))
+        selected.extend(_llm_cross_filter_batch(batch, batch_number, len(batches), warnings))
     return selected
 
 
@@ -150,13 +152,15 @@ def main(dry_run=False, days_back=2, stats_out: str | None = None, target_date: 
 
     repo = get_repo(CONFIG)
     index = ensure_index(repo)
+    source_status: list[dict] = []
+    filter_warnings: list[str] = []
 
     if target_date:
         print(f"[1/5] 拉取指定日期 {target_date} 候选...")
-        cands = fetch_recent_candidates(max_results=1200, days_back=days_back, target_date=target_date)
+        cands = fetch_recent_candidates(max_results=1200, days_back=days_back, target_date=target_date, source_status=source_status)
     else:
         print(f"[1/5] 拉取最近 {days_back} 天候选...")
-        cands = fetch_recent_candidates(max_results=1200, days_back=days_back)
+        cands = fetch_recent_candidates(max_results=1200, days_back=days_back, source_status=source_status)
     cand_count = len(cands)
     print(f"  候选数: {cand_count}")
     admitted, venue_excluded = filter_venues(cands)
@@ -165,7 +169,7 @@ def main(dry_run=False, days_back=2, stats_out: str | None = None, target_date: 
         print(f"  [刊会排除] {candidate_id(item)} | {item['venue_policy_reason']}")
 
     print("[2/5] LLM 交叉筛选...")
-    selected = llm_cross_filter(admitted)
+    selected = llm_cross_filter(admitted, warnings=filter_warnings)
     selected_count = len(selected)
     print(f"  入选数: {selected_count}")
 
@@ -194,6 +198,8 @@ def main(dry_run=False, days_back=2, stats_out: str | None = None, target_date: 
     stats = {
         "date": target_date or datetime.now().strftime("%Y%m%d"),
         "candidate_count": cand_count,
+        "source_status": source_status,
+        "filter_warnings": filter_warnings,
         "venue_admitted_count": len(admitted),
         "venue_excluded_count": len(venue_excluded),
         "venue_excluded_items": [

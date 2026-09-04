@@ -2,6 +2,7 @@ import json
 import sys
 import tempfile
 import unittest
+from unittest.mock import patch
 from pathlib import Path
 
 
@@ -15,9 +16,11 @@ from build_pages_site import (
     _display_institutions,
     _source_label,
     build_site,
+    collect_site_data,
     parse_report,
 )
 from services.research_taxonomy import classify_research, public_directions
+from services.report_status import REPORT_MARKER
 
 
 class PagesBuilderTest(unittest.TestCase):
@@ -83,6 +86,25 @@ class PagesBuilderTest(unittest.TestCase):
         topic_ids = [t["id"] for t in classify_research("Camouflaged Object Detection")["topics"]]
         self.assertIn("mm-cod", topic_ids)
         self.assertNotIn("mm-perception", topic_ids)
+
+    def test_camouflaged_vehicle_cod_synonym(self):
+        result = classify_research("Domain shift-robust object detection with GenAI image editing", abstract="我们以伪装军用车辆检测作为具有挑战性的域偏移场景进行研究。")
+        self.assertEqual(result["categories"], ["多模态视觉学习"])
+        self.assertIn("mm-cod", [t["id"] for t in result["topics"]])
+        self.assertNotIn("mm-perception", [t["id"] for t in result["topics"]])
+
+    def test_zero_reports_visible_only_with_own_provenance(self):
+        with tempfile.TemporaryDirectory() as folder:
+            root = Path(folder)
+            month = root / "202609"
+            month.mkdir()
+            (month / "20260904.md").write_text("# 日报 20260904\n" + REPORT_MARKER + "\n## 📌 今日概况\n\n检索完成，0 篇。", encoding="utf-8")
+            (month / "20260903.md").write_text("# 日报 20260903\n旧项目的空日报", encoding="utf-8")
+            with patch("build_pages_site.REPORTS_DIR", root):
+                reports, papers = collect_site_data()
+        self.assertEqual([r["date"] for r in reports], ["20260904"])
+        self.assertEqual(reports[0]["paper_count"], 0)
+        self.assertEqual(papers, [])
 
     def test_readme_lists_all_subtopics_and_has_no_workflow_diagram(self):
         readme = (REPO_ROOT / "README.md").read_text(encoding="utf-8")

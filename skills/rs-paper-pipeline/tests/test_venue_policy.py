@@ -97,7 +97,7 @@ class VenuePolicyTest(unittest.TestCase):
             patch.object(daily_arxiv_cross_filter, "compact_item", side_effect=lambda x: x),
         ):
             daily_arxiv_cross_filter.main(dry_run=True, target_date="20260904")
-        llm.assert_called_once_with([items[1]])
+        llm.assert_called_once_with([items[1]], warnings=[])
 
     def test_empty_admission_does_not_call_llm_api(self):
         with patch.object(daily_arxiv_cross_filter, "call_llm") as api:

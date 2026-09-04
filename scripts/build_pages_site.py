@@ -14,6 +14,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "skills" / "rs-paper-pipeline" / "scripts"))
 from services.venue_policy import NON_MAIN, allowed_venue, load_policy
 from services.research_taxonomy import classify_research, public_directions
+from services.report_status import REPORT_MARKER, daily_encouragement, read_run_status
 REPORTS_DIR = ROOT / "daily_reports"
 ISSUE_INDEX_PATH = ROOT / "papers" / "issue_index.json"
 SITE_SOURCE_DIR = ROOT / "site"
@@ -323,8 +324,12 @@ def parse_report(path: Path, metadata_by_issue: dict[int, dict[str, str]] | None
 
     return {
         "date": date,
+        "owned_report": REPORT_MARKER in markdown or bool(papers),
+        "run_status": read_run_status(markdown),
         "overview": _extract_overview(markdown),
-        "highlights": _extract_highlights(markdown),
+        "highlights": _extract_highlights(markdown) or (
+            [daily_encouragement(date)] if not papers and REPORT_MARKER in markdown else []
+        ),
         "paper_count": len(papers),
         "github_url": f"{REPO_URL}/blob/main/daily_reports/{date[:6]}/{date}.md",
         "papers": papers,
@@ -343,7 +348,8 @@ def collect_site_data() -> tuple[list[dict], list[dict]]:
         parse_report(path, metadata_by_issue)
         for path in sorted(report_paths, reverse=True)
     ]
-    reports = [report for report in reports if report["papers"]]
+    # Retain our zero-paper heartbeats, not empty/foreign upstream archives.
+    reports = [report for report in reports if report["owned_report"]]
     papers = [paper for report in reports for paper in report["papers"]]
     papers.sort(key=lambda item: (item["date"], item["issue_number"]), reverse=True)
     return reports, papers

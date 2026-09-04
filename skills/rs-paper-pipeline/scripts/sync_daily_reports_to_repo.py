@@ -9,9 +9,17 @@ import re
 
 from clients.github_ops import cleanup_legacy_daily_reports, upsert_repo_file
 from pipeline_config import get_repo, load_config
+from services.report_status import REPORT_MARKER
 
 CONFIG = load_config()
 BASE_DIR = "daily_reports"
+
+
+def report_body(issue) -> str:
+    body = (issue.body or "").strip()
+    if REPORT_MARKER not in body:
+        body += "\n\n" + REPORT_MARKER
+    return body
 
 
 def main():
@@ -32,7 +40,7 @@ def main():
     for date, issue in digest_issues:
         ym = date[:6]
         path = f"{BASE_DIR}/{ym}/{date}.md"
-        body = (issue.body or "").strip() + "\n"
+        body = report_body(issue) + "\n"
         upsert_repo_file(repo, path, body, f"sync daily report {date}")
 
     # 根目录 README 仅展示最近三天（最新在前）
@@ -40,7 +48,7 @@ def main():
     lines = ["# Daily Reports", "", "最近三天日报（最新在前）：", ""]
     for date, issue in top3:
         ym = date[:6]
-        body = (issue.body or "").strip()
+        body = report_body(issue)
         body = re.sub(
             rf"^#\s*日报\s*{date}\s*$",
             f"# [{date}](./{ym}/{date}.md)",

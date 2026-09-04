@@ -74,7 +74,7 @@ class ResearchProfileFilterTest(unittest.TestCase):
         ]
         batch_sizes = []
 
-        def fake_batch(batch, batch_number, batch_total):
+        def fake_batch(batch, batch_number, batch_total, warnings=None):
             batch_sizes.append((len(batch), batch_number, batch_total))
             return batch[:1]
 

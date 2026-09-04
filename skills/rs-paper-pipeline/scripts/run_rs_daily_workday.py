@@ -464,26 +464,12 @@ def _process_date(date_str: str, notify: bool, force: bool = False):
     )
 
     stats = _load_stats(stats_path)
-    candidate_count = int(stats.get("candidate_count") or 0)
-    selected_count = int(stats.get("llm_selected_count") or 0)
-    if candidate_count == 0 or selected_count == 0:
-        skip_reason = "no_candidates" if candidate_count == 0 else "no_llm_selected_papers"
-        print(
-            f"SKIP {date_str} | reason={skip_reason} "
-            f"candidates={candidate_count} selected={selected_count}"
-        )
-        _write_state(
-            date_str,
-            "done",
-            "skipped",
-            {
-                "skip_reason": skip_reason,
-                "candidate_count": candidate_count,
-                "selected_count": selected_count,
-                "notify": notify,
-            },
-        )
-        return
+    if not stats or stats.get("date") != date_str:
+        _write_state(date_str, "filter", "failed", {"reason": "Missing or mismatched run stats"})
+        raise RuntimeError("Missing or mismatched run stats; refusing to publish an empty success report")
+
+    # A successful zero-result search still publishes a heartbeat. Empty
+    # reports have no paper links, so later scheduled retries remain eligible.
 
     _run_step(
         date_str,

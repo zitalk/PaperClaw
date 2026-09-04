@@ -17,8 +17,8 @@ def main() -> int:
             continue
 
         # Discovery happens exactly once inside the workday pipeline.  The
-        # filter writes counts to its stats JSON, and the pipeline stops before
-        # digest/sync/notify when no candidate (or no LLM-selected paper) exists.
+        # filter writes counts to its stats JSON, including zero-result runs.
+        # The same date's digest is updated on retries, never duplicated.
         # This is especially important for Semantic Scholar's cumulative 1 RPS
         # quota: a separate preflight would immediately repeat every request.
         run_rs_daily_workday.main(

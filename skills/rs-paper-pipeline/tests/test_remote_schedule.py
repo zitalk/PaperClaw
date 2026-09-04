@@ -73,22 +73,47 @@ class RemoteScheduleTest(unittest.TestCase):
 
         pipeline_main.assert_not_called()
 
-    def test_empty_filter_stops_before_digest(self):
+    def test_empty_filter_still_publishes_and_syncs_digest(self):
         workday = run_remote_schedule.run_rs_daily_workday
         with (
             patch.object(workday, "_run_step") as run_step,
             patch.object(
                 workday,
                 "_load_stats",
-                return_value={"candidate_count": 0, "llm_selected_count": 0},
+                return_value={"date": "20260901", "candidate_count": 0, "llm_selected_count": 0},
             ),
             patch.object(workday, "_write_state") as write_state,
+            patch.object(workday, "run") as run,
+            patch.object(workday, "_get_repo"),
+            patch.object(workday, "daily_report_file_exists", return_value=True),
         ):
             workday._process_date("20260901", notify=False, force=True)
 
+        self.assertEqual(run_step.call_count, 2)
+        self.assertEqual(run_step.call_args.args[1], "digest")
+        self.assertEqual(write_state.call_args.args[1:3], ("done", "ok"))
+        self.assertIn("scripts/sync_daily_reports_to_repo.py", run.call_args.args[0])
+
+    def test_missing_stats_never_publishes_healthy_empty_report(self):
+        workday = run_remote_schedule.run_rs_daily_workday
+        with (
+            patch.object(workday, "_run_step") as run_step,
+            patch.object(workday, "_load_stats", return_value={}),
+            patch.object(workday, "_write_state"),
+        ):
+            with self.assertRaises(RuntimeError):
+                workday._process_date("20260901", notify=False, force=True)
         self.assertEqual(run_step.call_count, 1)
-        self.assertEqual(run_step.call_args.args[1], "filter")
-        self.assertEqual(write_state.call_args.args[1:3], ("done", "skipped"))
+
+    def test_empty_report_remains_eligible_for_later_retries(self):
+        from types import SimpleNamespace
+        workday = run_remote_schedule.run_rs_daily_workday
+        with (
+            patch.object(workday, "_get_repo"),
+            patch.object(workday, "get_today_digest_issue", return_value=SimpleNamespace(number=99, body="日报：0 篇")),
+            patch.object(workday, "daily_report_file_exists", return_value=True),
+        ):
+            self.assertFalse(workday._date_already_completed("20260901")[0])
 
 
 if __name__ == "__main__":

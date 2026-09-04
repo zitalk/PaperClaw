@@ -12,6 +12,7 @@ on:
       - "skills/rs-paper-pipeline/scripts/services/venue_policy.py"
       - "skills/rs-paper-pipeline/scripts/config/research_taxonomy.json"
       - "skills/rs-paper-pipeline/scripts/services/research_taxonomy.py"
+      - "skills/rs-paper-pipeline/scripts/services/report_status.py"
       - ".github/workflows/pages.yml"
   workflow_dispatch:
 
