@@ -4,7 +4,7 @@
   <h1>PaperClaw</h1>
 
   <p><strong>A personal paper radar for multimodal vision and UAV research</strong></p>
-  <p>Four research directions · Overlapping tags · Daily paper cards</p>
+  <p>Four core directions + Extended reading · Overlapping tags · Daily paper cards</p>
 
   <p>
     <a href="https://papers.zitalk.cn/"><img src="https://img.shields.io/badge/Research_Portal-Live-0D6B66?style=flat-square" alt="Research portal" /></a>
@@ -17,7 +17,7 @@
 
 ---
 
-PaperClaw tracks new papers across four overlapping research directions. Each paper appears once in the library, with multiple direction and subtopic tags where appropriate.
+PaperClaw tracks four overlapping core research directions plus an Extended reading category for adjacent methods. Each paper appears once in the library, with multiple core direction and subtopic tags where appropriate.
 
 ## Research radar
 
@@ -27,8 +27,11 @@ PaperClaw tracks new papers across four overlapping research directions. Each pa
 | Multi-view and multi-object perception | Multi-object tracking; multi-camera tracking; cross-view matching and ReID; multi-view geometry and 3D perception; spatiotemporal association and robustness |
 | UAV vision | Aerial object detection; segmentation and scene understanding; tracking and cross-view retrieval; visual localization/navigation/mapping; cooperative perception; multimodal and adverse-condition perception |
 | Training-free open-set segmentation | Training-free open-vocabulary segmentation; open-set/open-world segmentation; frozen foundation-model inference; spatial and boundary refinement; context/prototypes/calibration; cross-domain and remote-sensing extensions |
+| Extended reading | Single-sensor and 3D perception; robustness and transfer methods; transferable remote-sensing vision methods; spatial modeling and world models |
 
 See the [complete subtopic and keyword tables](./README.md#研究雷达) and the [shared taxonomy](./skills/rs-paper-pipeline/scripts/config/research_taxonomy.json).
+
+Core matches take precedence over Extended reading. Adjacent papers require identifiable visual or geometric methodological relevance; unclassified papers are not automatically admitted. Extended reading uses existing broad-search candidates and the same date, deduplication and venue gates, without adding unrestricted search queries.
 
 SOD and COD are task groups within the multimodal research direction; related single-modality work is not thereby claimed to be multimodal. Zero-shot or annotation-free does not automatically mean training-free. Satellite imagery is not automatically UAV vision. Papers without clear classification evidence remain unclassified rather than defaulting to multimodal learning.
 

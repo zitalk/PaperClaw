@@ -4,7 +4,7 @@
   <h1>PaperClaw</h1>
 
   <p><strong>面向多模态视觉与无人机研究的个人论文雷达</strong></p>
-  <p>四个研究方向 · 交叉标签 · 每日论文卡片</p>
+  <p>四个核心方向＋拓展阅读 · 交叉标签 · 每日论文卡片</p>
 
   <p>
     <a href="https://papers.zitalk.cn/"><img src="https://img.shields.io/badge/研究门户-在线访问-0D6B66?style=flat-square" alt="研究门户" /></a>
@@ -24,7 +24,7 @@
 
 ## 研究雷达
 
-四个主方向允许交叉，一篇论文可拥有多个方向与子方向标签，但只计为一篇。网页支持主方向、子方向、日期和关键词筛选。
+四个核心方向允许交叉，另设第五个展示方向“拓展阅读”。一篇论文可拥有多个核心方向与子方向标签，但只计为一篇。网页支持方向、子方向、日期和关键词筛选。
 
 ### 1. 多模态视觉学习
 
@@ -78,6 +78,19 @@
 | 上下文、原型与类别校准 | context reasoning · prototype · class calibration |
 | 跨域与遥感扩展 | remote sensing · aerial / UAV · cross-domain segmentation |
 
+### 5. 拓展阅读
+
+与核心方向相关性较弱，但在方法、传感器或应用上具有借鉴价值的论文。优先归入明确命中的核心方向；只有未命中核心方向、且有下列方法联系的论文才进入拓展阅读，不把所有未分类论文自动装入这里。
+
+| 子方向 | 代表关键词 |
+|---|---|
+| 单传感器与三维感知 | LiDAR / radar perception · point cloud detection / segmentation · 3D object detection |
+| 鲁棒性与迁移方法 | domain generalization / adaptation · corruption robustness · synthetic data augmentation |
+| 遥感视觉方法借鉴 | satellite segmentation / detection · multispectral visual perception · remote-sensing method transfer |
+| 空间建模与世界模型 | 3D memory / spatial modeling · world-consistent video generation · geometry-aware world models |
+
+**收录边界：** 摘要应有可借鉴的视觉或几何方法证据，而非仅仅题材相似。使用已有广搜候选进行精筛，不为拓展阅读新增无限泛化的检索词。日期、去重和刊会白名单规则与核心方向相同；不是低质量论文收容区。
+
 ### 交叉标签示例
 
 | 研究内容 | 归属方向 |
@@ -86,7 +99,7 @@
 | 无人机跨相机多目标跟踪 | 多视角与多目标感知＋无人机视觉 |
 | 冻结视觉语言模型的免训练航拍开放词汇分割 | 免训练开放集分割＋无人机视觉＋多模态视觉学习 |
 
-标签由标题、已有摘要和日报概括中的明确证据生成。暂时无法确认的论文标记“待归类”，不强制归入多模态；关键词命中只是辅助，不代表单篇论文质量评价。各方向数量相加可超过论文总数。
+标签由标题、已有摘要和日报概括中的明确证据生成。拓展阅读可拥有多个子标签，但不与核心方向重复挂标。核心方向和拓展阅读都缺少证据的论文仍标记“待归类”，不强制归入任何方向；关键词命中只是辅助，不代表单篇论文质量评价。核心方向存在交叉，因此各方向数量相加可超过论文总数。
 
 ## 收录与更新
 

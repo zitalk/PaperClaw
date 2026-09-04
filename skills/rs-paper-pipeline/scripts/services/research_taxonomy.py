@@ -25,7 +25,11 @@ def public_directions() -> list[dict]:
 def classify_research(title: str, summary: str = "", abstract: str = "") -> dict:
     text = "\n".join((title or "", summary or "", abstract or ""))
     categories, topics = [], []
-    for direction in load_taxonomy()["directions"]:
+    # Core matches take precedence; extended reading never dilutes core tags.
+    directions = sorted(load_taxonomy()["directions"], key=lambda d: bool(d.get("fallback_only")))
+    for direction in directions:
+        if direction.get("fallback_only") and categories:
+            continue
         if direction["id"] == "training-free" and re.search(
             r"\bnot training[- ]free\b|\bwe (?:fine[- ]tune|train)\b|"
             r"(?:本文|本方法)(?:需要|采用).{0,12}(?:训练|微调)", text, re.I,
@@ -33,10 +37,12 @@ def classify_research(title: str, summary: str = "", abstract: str = "") -> dict
             continue
         if not all(re.search(pattern, text, re.I | re.S) for pattern in direction["all_of"]):
             continue
+        matched_topics = [topic for topic in direction["topics"] if re.search(topic["pattern"], text, re.I)]
+        # Merely missing a core label is not evidence of relevant further reading.
+        if direction.get("fallback_only") and not matched_topics:
+            continue
         categories.append(direction["name"])
-        for topic in direction["topics"]:
-            if re.search(topic["pattern"], text, re.I):
-                topics.append({"id": topic["id"], "name": topic["name"], "category": direction["name"]})
+        topics.extend({"id": t["id"], "name": t["name"], "category": direction["name"]} for t in matched_topics)
     return {
         "categories": categories,
         "topics": topics,

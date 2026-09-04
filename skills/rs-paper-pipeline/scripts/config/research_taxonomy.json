@@ -276,6 +276,56 @@
           "pattern": "remote sensing|aerial|UAV|domain|遥感|航拍|无人机|跨域"
         }
       ]
+    },
+    {
+      "id": "extended",
+      "name": "拓展阅读",
+      "fallback_only": true,
+      "all_of": [
+        "(?:\\b(?:visual|vision|image|imagery|video|detection|tracking|segmentation|perception|reconstruction|mapping)\\b|视觉|图像|影像|视频|检测|跟踪|分割|感知|重建|建图)"
+      ],
+      "topics": [
+        {
+          "id": "ext-sensors",
+          "name": "单传感器与三维感知",
+          "keywords": [
+            "LiDAR / radar perception",
+            "point cloud detection / segmentation",
+            "3D object detection"
+          ],
+          "pattern": "\\b(?:LiDAR|radar|point[- ]cloud)\\b|3D (?:object|ship) detection|激光雷达|点云|纯雷达|三维.{0,6}检测"
+        },
+        {
+          "id": "ext-robust",
+          "name": "鲁棒性与迁移方法",
+          "keywords": [
+            "domain generalization / adaptation",
+            "corruption robustness",
+            "synthetic data augmentation"
+          ],
+          "pattern": "domain (?:generalization|adaptation|shift)|corruption|synthetic data augmentation|跨域泛化|域泛化|域偏移|合成数据增强|损坏.{0,15}鲁棒"
+        },
+        {
+          "id": "ext-remote",
+          "name": "遥感视觉方法借鉴",
+          "keywords": [
+            "satellite segmentation / detection",
+            "multispectral visual perception",
+            "remote-sensing method transfer"
+          ],
+          "pattern": "(?:satellite|remote[- ]sensing|multispectral|hyperspectral).{0,80}(?:segmentation|detection)|(?:segmentation|detection).{0,80}(?:satellite|remote[- ]sensing|multispectral|hyperspectral)|(?:卫星|遥感|多光谱|高光谱).{0,60}(?:分割|检测)"
+        },
+        {
+          "id": "ext-world",
+          "name": "空间建模与世界模型",
+          "keywords": [
+            "3D memory / spatial modeling",
+            "world-consistent video generation",
+            "geometry-aware world models"
+          ],
+          "pattern": "(?:3D|spatial|geometr\\w*|world[- ]consistent|octree).{0,70}(?:memory|mapping|world model|video generation)|(?:video generation|world model).{0,70}(?:3D|spatial|geometr\\w*|octree)|(?:三维|3D|空间).{0,30}(?:记忆|世界模型|视频生成)|世界一致"
+        }
+      ]
     }
   ]
 }

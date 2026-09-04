@@ -4,7 +4,8 @@ const researchDirections = [
   "多模态视觉学习",
   "多视角与多目标感知",
   "无人机视觉",
-  "免训练开放集分割"
+  "免训练开放集分割",
+  "拓展阅读"
 ];
 
 const latexSymbols = {

@@ -45,9 +45,10 @@ class PagesBuilderTest(unittest.TestCase):
             )["categories"],
         )
 
-    def test_four_public_directions_and_cod_topic(self):
+    def test_four_core_directions_plus_extended_reading_and_cod_topic(self):
         directions = public_directions()
-        self.assertEqual(len(directions), 4)
+        self.assertEqual(len(directions), 5)
+        self.assertEqual(directions[-1]["name"], "拓展阅读")
         self.assertNotIn("多模态显著目标检测", [d["name"] for d in directions])
         self.assertIn("mm-cod", [t["id"] for t in directions[0]["topics"]])
 
@@ -56,6 +57,31 @@ class PagesBuilderTest(unittest.TestCase):
         self.assertEqual(set(result["categories"]), {"免训练开放集分割", "多模态视觉学习", "无人机视觉"})
         result = classify_research("UAV Cross-Camera Multi-Object Tracking")
         self.assertEqual(set(result["categories"]), {"无人机视觉", "多视角与多目标感知"})
+
+    def test_extended_reading_has_evidence_and_does_not_override_core(self):
+        examples = [
+            "LiDAR Point Cloud Segmentation under Domain Shifts",
+            "Radar Moving-Object Detection",
+            "Active Wildfire Segmentation on Satellite Imagery",
+            "World-Consistent Video Generation with Octree-Based 3D Mapping",
+        ]
+        for title in examples:
+            result = classify_research(title)
+            self.assertEqual(result["categories"], ["拓展阅读"])
+            self.assertTrue(result["topics"])
+        core = classify_research("UAV camera-LiDAR Fusion under Domain Shifts for Object Detection")
+        self.assertNotIn("拓展阅读", core["categories"])
+        self.assertTrue(all(not t["id"].startswith("ext-") for t in core["topics"]))
+
+    def test_unrelated_papers_do_not_use_extended_reading_as_catchall(self):
+        for title in ["Radar Antenna Hardware Design", "Text-Only World Model for Dialogue", "Single Image Classification", "Financial Domain Adaptation"]:
+            self.assertEqual(classify_research(title)["categories"], [])
+
+    def test_existing_boundary_papers_are_extended_reading(self):
+        _, papers = collect_site_data()
+        by_issue = {p["issue_number"]: p for p in papers}
+        for number in [3, 25, 31, 34, 54]:
+            self.assertEqual(by_issue[number]["categories"], ["拓展阅读"])
 
     def test_cod_is_a_multimodal_group_subtopic(self):
         for title in ["RGB-D Camouflaged Object Detection", "Concealed Object Detection in Images", "伪装目标检测与分割"]:
@@ -255,7 +281,7 @@ class PagesBuilderTest(unittest.TestCase):
             self.assertTrue((output / "index.html").exists())
             payload = (output / "data" / "papers.json").read_text(encoding="utf-8")
             data = json.loads(payload)
-            self.assertEqual(len(data["directions"]), 4)
+            self.assertEqual(len(data["directions"]), 5)
             self.assertTrue(all("categories" in p and "topics" in p for p in data["papers"]))
             self.assertGreaterEqual(len(data["papers"]), 17)
             self.assertNotIn("GITHUB_TOKEN", payload)
