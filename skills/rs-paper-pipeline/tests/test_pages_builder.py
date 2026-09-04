@@ -93,6 +93,11 @@ class PagesBuilderTest(unittest.TestCase):
         self.assertIn("mm-cod", [t["id"] for t in result["topics"]])
         self.assertNotIn("mm-perception", [t["id"] for t in result["topics"]])
 
+    def test_multi_reference_pose_reconstruction_is_multiview_geometry(self):
+        result = classify_research("Scal3R: Learning Efficient Multi-Relative Pose Query for Scalable Online 3D Reconstruction")
+        self.assertEqual(result["categories"], ["多视角与多目标感知"])
+        self.assertIn("mv-geometry", [t["id"] for t in result["topics"]])
+
     def test_zero_reports_visible_only_with_own_provenance(self):
         with tempfile.TemporaryDirectory() as folder:
             root = Path(folder)

@@ -86,7 +86,7 @@
       "id": "multiview",
       "name": "多视角与多目标感知",
       "all_of": [
-        "(?:\\b(?:multi[- ]view|multiview|multi[- ]camera|cross[- ]camera|cross[- ]view|multi[- ]object tracking|multiple object tracking|multi[- ]target tracking|re[- ]identification|ReID|MTMC|MOT)\\b|多视角|多视图|多相机|跨相机|跨视角|多目标跟踪|重识别|再识别)|\\bstereo\\b|\\bmulti[- ]fisheye\\b|双目",
+        "(?:\\b(?:multi[- ]view|multiview|multi[- ]camera|cross[- ]camera|cross[- ]view|multi[- ]object tracking|multiple object tracking|multi[- ]target tracking|re[- ]identification|ReID|MTMC|MOT)\\b|多视角|多视图|多相机|跨相机|跨视角|多目标跟踪|重识别|再识别)|\\bstereo\\b|\\bmulti[- ]fisheye\\b|双目|多参考相对位姿|multi[- ]relative pose|多个(?:过去)?关键帧",
         "(?:\\b(?:visual|vision|image|imagery|video|camera|detection|tracking|segmentation|perception|SLAM|reconstruction|localization|navigation)\\b|视觉|图像|影像|检测|跟踪|分割|感知|定位|建图|重建)"
       ],
       "topics": [
