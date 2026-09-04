@@ -32,12 +32,12 @@ test('legacy saliency label migrates while cached metadata loads', () => {
   assert.deepEqual(filters.categories({category:'多模态视觉学习',categories:[]}),[]);
 });
 
-test('extended reading is a separate direction with its own subtopics', () => {
-  const extended = {issue_number: 4, title:'Radar detection', categories:['拓展阅读'], topics:[{id:'ext-sensors',name:'单传感器与三维感知'}], date:'20260903'};
+test('extended reading is a flat direction with no subtopics', () => {
+  const extended = {issue_number: 4, title:'Radar detection', categories:['拓展阅读'], topics:[], date:'20260903'};
   const dataset = [...papers, extended];
   assert.deepEqual(filters.filter(dataset,{category:'拓展阅读'}).map(p=>p.issue_number),[4]);
-  assert.equal(filters.filter(dataset,{category:'拓展阅读',topic:'ext-sensors'}).length,1);
+  assert.equal(filters.filter(dataset,{category:'拓展阅读',topic:'ext-sensors'}).length,0);
   assert.equal(filters.filter(dataset,{category:'拓展阅读',topic:'mm-sod'}).length,0);
-  assert.equal(filters.topics(directions,'拓展阅读').length,4);
+  assert.equal(filters.topics(directions,'拓展阅读').length,0);
   assert.equal(filters.filter(dataset,{}).length,4);
 });

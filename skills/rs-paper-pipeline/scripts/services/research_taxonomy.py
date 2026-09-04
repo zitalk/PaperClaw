@@ -37,10 +37,13 @@ def classify_research(title: str, summary: str = "", abstract: str = "") -> dict
             continue
         if not all(re.search(pattern, text, re.I | re.S) for pattern in direction["all_of"]):
             continue
-        matched_topics = [topic for topic in direction["topics"] if re.search(topic["pattern"], text, re.I)]
-        # Merely missing a core label is not evidence of relevant further reading.
-        if direction.get("fallback_only") and not matched_topics:
+        # Extended reading is flat; relevance rules are not display subtopics.
+        # Fail closed if no evidence rule matches, rather than catching all leftovers.
+        if direction.get("fallback_only") and not any(
+            re.search(pattern, text, re.I) for pattern in direction.get("any_of", [])
+        ):
             continue
+        matched_topics = [topic for topic in direction["topics"] if re.search(topic["pattern"], text, re.I)]
         categories.append(direction["name"])
         topics.extend({"id": t["id"], "name": t["name"], "category": direction["name"]} for t in matched_topics)
     return {

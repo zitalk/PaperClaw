@@ -49,6 +49,7 @@ class PagesBuilderTest(unittest.TestCase):
         directions = public_directions()
         self.assertEqual(len(directions), 5)
         self.assertEqual(directions[-1]["name"], "拓展阅读")
+        self.assertEqual(directions[-1]["topics"], [])
         self.assertNotIn("多模态显著目标检测", [d["name"] for d in directions])
         self.assertIn("mm-cod", [t["id"] for t in directions[0]["topics"]])
 
@@ -68,7 +69,7 @@ class PagesBuilderTest(unittest.TestCase):
         for title in examples:
             result = classify_research(title)
             self.assertEqual(result["categories"], ["拓展阅读"])
-            self.assertTrue(result["topics"])
+            self.assertEqual(result["topics"], [])
         core = classify_research("UAV camera-LiDAR Fusion under Domain Shifts for Object Detection")
         self.assertNotIn("拓展阅读", core["categories"])
         self.assertTrue(all(not t["id"].startswith("ext-") for t in core["topics"]))
@@ -82,6 +83,7 @@ class PagesBuilderTest(unittest.TestCase):
         by_issue = {p["issue_number"]: p for p in papers}
         for number in [3, 25, 31, 34, 54]:
             self.assertEqual(by_issue[number]["categories"], ["拓展阅读"])
+            self.assertEqual(by_issue[number]["topics"], [])
 
     def test_cod_is_a_multimodal_group_subtopic(self):
         for title in ["RGB-D Camouflaged Object Detection", "Concealed Object Detection in Images", "伪装目标检测与分割"]:
