@@ -93,7 +93,12 @@ class PagesBuilderTest(unittest.TestCase):
 
     def test_ccf_badge_uses_exact_venue_abbreviation(self):
         self.assertEqual(_ccf_grade("CVPR"), "A")
-        self.assertEqual(_ccf_grade("TMM"), "B")
+        self.assertEqual(_ccf_grade("TMM"), "A")
+        self.assertEqual(_ccf_grade("IJCAI"), "B")
+        self.assertEqual(_ccf_grade("ICLR"), "A")
+        self.assertEqual(_ccf_grade("KBS"), "C")
+        self.assertEqual(_ccf_grade("ESWA"), "C")
+        self.assertEqual(_ccf_grade("PR"), "B")
         self.assertEqual(_ccf_grade("IROS"), "C")
         self.assertEqual(_ccf_grade("arXiv"), "")
         self.assertEqual(_ccf_grade("Scientific Reports"), "")

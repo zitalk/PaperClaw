@@ -86,6 +86,7 @@ def build_digest_with_llm(date: str, papers: list, stats: dict | None = None, fa
         llm_selected_count = (stats or {}).get("llm_selected_count", len(failed_items or []))
         overview_text = (
             f"今日共检索候选论文 {candidate_count} 篇；"
+            f"{_venue_stats_text(stats)}"
             f"关键词+LLM 智能匹配研究方向论文 {llm_selected_count} 篇；"
             "最终纳入日报 0 篇。\n\n"
         )
@@ -146,6 +147,7 @@ def build_digest_with_llm(date: str, papers: list, stats: dict | None = None, fa
 
     overview_text = (
         f"今日共检索候选论文 {candidate_count} 篇；"
+        f"{_venue_stats_text(stats)}"
         f"关键词+LLM 智能匹配研究方向论文 {llm_selected_count} 篇；"
         f"最终纳入日报 {included_count} 篇。\n\n{overview_text}"
     )
@@ -180,6 +182,15 @@ def build_digest_with_llm(date: str, papers: list, stats: dict | None = None, fa
 
     lines += ["", "---", "", "Powered by OpenClaw🦞"]
     return "\n".join(lines)
+
+
+def _venue_stats_text(stats: dict | None) -> str:
+    if not stats or "venue_excluded_count" not in stats:
+        return ""
+    return (
+        f"刊会准入通过 {stats.get('venue_admitted_count', 0)} 篇"
+        f"（排除 {stats['venue_excluded_count']} 篇）；"
+    )
 
 
 def append_failed_items(lines: list[str], failed_items: list[dict] | None) -> None:

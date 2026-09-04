@@ -8,6 +8,8 @@ on:
       - "daily_reports/**"
       - "papers/issue_index.json"
       - "scripts/build_pages_site.py"
+      - "skills/rs-paper-pipeline/scripts/config/venue_policy.json"
+      - "skills/rs-paper-pipeline/scripts/services/venue_policy.py"
       - ".github/workflows/pages.yml"
   workflow_dispatch:
 

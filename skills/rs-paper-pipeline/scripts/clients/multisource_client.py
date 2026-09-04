@@ -472,6 +472,10 @@ def _merge_items(items: list[dict[str, Any]]) -> list[dict[str, Any]]:
             merged.append(current)
         else:
             current["sources"] = list(dict.fromkeys([*(current.get("sources") or []), *(item.get("sources") or [])]))
+            current["venues"] = list(dict.fromkeys(v for v in [
+                *(current.get("venues") or []), current.get("venue"),
+                *(item.get("venues") or []), item.get("venue"),
+            ] if v))
             for field in ("abstract", "authors", "institutions", "venue", "url", "doi"):
                 old_value = str(current.get(field) or "")
                 new_value = str(item.get(field) or "")

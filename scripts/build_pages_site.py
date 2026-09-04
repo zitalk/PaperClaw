@@ -5,11 +5,14 @@ import argparse
 import json
 import re
 import shutil
+import sys
 from datetime import datetime, timezone
 from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT / "skills" / "rs-paper-pipeline" / "scripts"))
+from services.venue_policy import NON_MAIN, allowed_venue, load_policy
 REPORTS_DIR = ROOT / "daily_reports"
 ISSUE_INDEX_PATH = ROOT / "papers" / "issue_index.json"
 SITE_SOURCE_DIR = ROOT / "site"
@@ -58,26 +61,7 @@ _DOI_VENUE_PREFIXES = (
     ("doi:10.1038/s41598-", "Sci Rep"),
     ("doi:10.1088/2631-8695/", "Eng Res Express"),
 )
-_CCF_GRADES = {
-    # CCF 第七版目录：人工智能、计算机图形学与多媒体相关条目。
-    "TPAMI": "A",
-    "TIP": "A",
-    "CVPR": "A",
-    "ICCV": "A",
-    "NEURIPS": "A",
-    "ICML": "A",
-    "AAAI": "A",
-    "IJCAI": "A",
-    "ACM MM": "A",
-    "TMM": "B",
-    "TCSVT": "B",
-    "TNNLS": "B",
-    "CVIU": "B",
-    "PR": "B",
-    "ECCV": "B",
-    "ICRA": "B",
-    "IROS": "C",
-}
+_CCF_GRADES = {entry["abbr"].upper(): entry.get("ccf", "") for entry in load_policy()["allow"]}
 
 
 def _extract_section(markdown: str, heading: str) -> str:
@@ -212,6 +196,11 @@ def _display_institutions(value: str, limit: int = 3) -> str:
 def _source_label(venue: str, source: str, paper_id: str) -> str:
     venue = re.sub(r"\s+", " ", venue or "").strip()
     source = re.sub(r"\s+", " ", source or "").strip()
+    if NON_MAIN.search(venue):
+        return venue if len(venue) <= 26 else f"{venue[:25].rstrip()}…"
+    entry = allowed_venue(venue)
+    if entry:
+        return entry["abbr"]
     if _ARXIV_ID_RE.fullmatch(paper_id or "") and venue.casefold() in {"", "arxiv", "arxiv preprint"}:
         return "arXiv"
     for prefix, abbreviation in _DOI_VENUE_PREFIXES:

@@ -606,6 +606,11 @@ def process_candidate(
     output_dir: str | None = None,
     target_date: str | None = None,
 ):
+    from services.venue_policy import venue_decision
+
+    allowed, reason = venue_decision(candidate)
+    if not allowed:
+        return None, f"刊会准入未通过: {reason}"
     arxiv_id = _real_arxiv_id(candidate)
     if arxiv_id:
         return process_paper(arxiv_id, issue_number, dry_run, output_dir, target_date, candidate)

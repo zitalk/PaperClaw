@@ -5,14 +5,12 @@
 # [20260903](./202609/20260903.md)
 ## 📌 今日概况
 
-今日共检索候选论文 57 篇；关键词+LLM 智能匹配研究方向论文 7 篇；最终纳入日报 5 篇。
+今日共检索候选论文 57 篇；关键词+LLM 智能匹配研究方向论文 7 篇；最终纳入日报 3 篇（原收录 5 篇，按期刊排除规则移除 2 篇；候选与匹配数保留原运行统计）。
 
-今日研究聚焦无人机与遥感场景下的小目标检测与跟踪难题，多篇工作针对低能见度、跨尺度、表征脆弱性等挑战提出改进方案。方法上延续DETR与YOLO系列架构，引入可变形特征关联、动态多尺度序列融合、细节增强卷积等模块，并探索GRU与卡尔曼滤波的混合跟踪策略。同时，面向海上搜索任务的无人机快速可靠框架也受到关注，整体呈现从检测精度向任务级可靠性与效率延伸的趋势。
+清理后保留的论文涉及空中目标跟踪、无人机检测与海上搜索任务：包括 GRU 与卡尔曼滤波的混合跟踪策略、星增强跨尺度对齐方法，以及结合模型预测控制与 CNN 目标检测的海上搜索框架。
 
 ## ✨ 今日亮点
 
-- SRS-DETR针对遥感小目标，提出可变形特征关联与动态多尺度序列融合。
-- DEO-NET面向雾天低能见度场景，结合YOLO11与细节增强卷积提升检测。
 - 星增强跨尺度对齐方法缓解无人机检测中的表征脆弱性问题。
 
 ## 🗂 今日文章列表
@@ -20,8 +18,6 @@
 | 标题 | 作者 | 单位 | 一句话概括 | Issue |
 |---|---|---|---|---|
 | [20260903] Разработка гибридного модуля сопровождения воздушных объектов на основе GRU и фильтра Калмана | Е. Ю. Фелагерева, Н. Р. Рудоман, А. Д. Новиков | 暂无 | 提出GRU与卡尔曼滤波混合模块，用于空中目标跟踪与轨迹预测。 | [#43](https://github.com/zitalk/PaperClaw/issues/43) |
-| [20260903] SRS-DETR: DETR for small object detection in remote sensing images | Li Shaoli, huang tongtong, Jiang Changhong, Li Dejian | 暂无 | SRS-DETR通过可变形特征关联和动态多尺度序列融合改进遥感小目标检测。 | [#44](https://github.com/zitalk/PaperClaw/issues/44) |
-| [20260903] DEO-NET: A Small Object Detection Method for Foggy Low-Visibility Scenarios | Wang Yuqian, wang junyan, Yuan Baoxi, Li Hongyan, Wang Miaomiao, wu yue | 暂无 | DEO-NET针对雾天低能见度场景，利用细节增强卷积提升小目标检测性能。 | [#45](https://github.com/zitalk/PaperClaw/issues/45) |
 | [20260903] Seeing the unseen: overcoming representational fragility in UAV detection with star-enhanced cross-scale alignment | Cai Hao, Xu Jingxuan, Zhang Jinhong, Ouyang Zhong, Liu Jiafu, Zhang Yi, Yang Qin | 暂无 | 提出星增强跨尺度对齐方法，缓解无人机小目标检测中的表征脆弱性问题。 | [#46](https://github.com/zitalk/PaperClaw/issues/46) |
 | [20260903] A Framework for Fast and Reliable UAV Maritime Search Missions | Anastasiou Andreas, Papaioannou Savvas, Kolios Panayiotis, Christos G. Panayiotou | 暂无 | 构建结合模型预测控制与CNN目标检测的无人机海上搜索快速可靠框架。 | [#47](https://github.com/zitalk/PaperClaw/issues/47) |
 
@@ -37,7 +33,7 @@
 
 ## 🔎 观察
 
-- 小目标检测研究正从通用场景向遥感、雾天、无人机等特定复杂条件细化，针对性模块设计成为主流。
+- 保留论文分别关注无人机检测、目标跟踪与海上搜索；本次整理仅执行指定期刊排除，不对其余历史论文追溯应用新白名单。
 - 跟踪与检测方法出现融合趋势，如GRU与卡尔曼滤波结合，反映对时序一致性和预测稳定性的重视。
 
 ---
@@ -49,7 +45,7 @@ Powered by OpenClaw🦞
 # [20260902](./202609/20260902.md)
 ## 📌 今日概况
 
-今日共检索候选论文 143 篇；关键词+LLM 智能匹配研究方向论文 17 篇；最终纳入日报 17 篇。
+今日共检索候选论文 143 篇；关键词+LLM 智能匹配研究方向论文 17 篇；最终纳入日报 14 篇（原收录 17 篇，按期刊排除规则移除 3 篇；候选与匹配数保留原运行统计）。
 
 今日论文覆盖无人机视觉、多模态理解与鲁棒性评估等方向。研究重点包括：面向真实部署的LiDAR语义分割鲁棒性评估、流式视频理解中的视觉token剪枝、RGB到红外图像转换以提升无人机车辆检测、多鱼眼全景感知平台、以及基于MLLM的指称多目标跟踪。此外，生成式图像编辑用于域偏移鲁棒目标检测、雷达Transformer运动检测、旋转诱导显著性漂移审计、多光谱与SAR图像理解、海事3D船舶检测、缺失模态适应、无人机小目标检测及医学图像分割等方向均有涉及，整体呈现从感知精度向部署鲁棒性与计算效率延伸的趋势。
 
@@ -74,9 +70,6 @@ Powered by OpenClaw🦞
 | [20260902] Lightweight Adaptation of General-Purpose VLMs for Multispectral and SAR Image Understanding | Liu Shanji, Yao Kelu, Xue Junxiao, Lv Chenghui, Miao Xiangyang, Huang Yekai, Chen Yaying, Li Chao | Zhejiang University；Zhejiang Lab | 通过轻量级适配将通用视觉语言模型扩展至多光谱与SAR图像理解任务。 | [#33](https://github.com/zitalk/PaperClaw/issues/33) |
 | [20260902] KSG-Net: Key-Sparse and Global-Context Learning for Maritime 3D Ship Detection | Huai Zhouyuan, Wan Meiqi, Yang Yan, Chen Minshi, Yuan Xin, Wang Wei, Wang Xiao | School of Computer Science and Technology, Wuhan University of Science and；Hubei Province Key Laboratory of Intelligent Information Processing and；Real-Time Industrial System, Wuhan University of Science and Technology, Wuhan；State Key Laboratory of Robotics and Intelligent Systems, Shenyang Institute of；Automation, Chinese Academy of Sciences, Shenyang 110016, China；China University of Chinese Academy of Sciences, Beijing 100049, China | 提出关键稀疏与全局上下文学习网络，提升海事场景LiDAR点云3D船舶检测性能。 | [#34](https://github.com/zitalk/PaperClaw/issues/34) |
 | [20260902] Test-Time Logit Prompting for Source-Free Missing Modality Adaptation | Chen Taixi, Guo Nancy | School of Computing；State University of New York at Binghamton | 在测试时利用logit提示实现无源缺失模态适应，增强视觉语言模型鲁棒性。 | [#35](https://github.com/zitalk/PaperClaw/issues/35) |
-| [20260902] BIDC-YOLO Small target detection in drone aerial photography based on YOLOv8s | Chen Yadong, Wang Chenwei, Yang Zhenjian, Zhang Yunjie, Wang Zehua | 暂无 | 基于YOLOv8s改进特征融合与注意力机制，提升无人机航拍小目标检测精度。 | [#37](https://github.com/zitalk/PaperClaw/issues/37) |
-| [20260902] AMFF-DETR: Anti-Interference and Multi-Scale Feature Fusion DETR for SAR Ship Detection in Complex Backgrounds | Zheng Jikai, Wan Keyi, Zheng Zekang, Mingjia jia Wang | 暂无 | 提出抗干扰多尺度特征融合DETR，用于复杂背景下的SAR船舶检测。 | [#38](https://github.com/zitalk/PaperClaw/issues/38) |
-| [20260902] An improved RT-DETR algorithm for small-object detection in UAV aerial images | Long Qiyu, Liang Zhixun, Chen Peng, Tang Peng | Guangxi Normal University；Hechi University；Guilin University of Electronic Technology | 改进RT-DETR算法，通过多尺度特征增强与可变形注意力提升无人机小目标检测。 | [#39](https://github.com/zitalk/PaperClaw/issues/39) |
 | [20260902] Stereo 4D Radar for 3D Object Detection: Integrating Geometric Alignment and Absolute Velocity Estimation | Song Seung-Hyun, Paek Dong-Hee, Byun Woong-Chan, Kong Seung-Hyun | Graduate School of Mathematics, Nagoya University, Nagoya, Japan；the Faculty of Informatics, Shizuoka University, Hamamatsu, Shizuoka, Japan | 融合几何对齐与绝对速度估计，利用立体4D雷达实现3D目标检测。 | [#40](https://github.com/zitalk/PaperClaw/issues/40) |
 | [20260902] TempoGround: State-Aware Streaming Visual Grounding with Vision-Language Models | Ding Leqian, Qiu Junning, Yang Manwen, Guo Yu, Wang Fei | Xi’an Jiaotong University, Xi’an, China | 提出状态感知的流式视觉定位方法，利用视觉语言模型处理连续视频流中的目标对应。 | [#41](https://github.com/zitalk/PaperClaw/issues/41) |
 | [20260902] InstEditSeg: Instruction-Driven Image Editing for Polyp and Skin Lesion Segmentation | Liu Ziquan, Zhu Zhewei, Shi Xuyang | School of Information and Control Engineering, Southwest University of Science and Technology, Mianyang 621010, China | 通过指令驱动的图像编辑提升息肉与皮肤病变分割性能，结合扩散模型进行数据增强。 | [#42](https://github.com/zitalk/PaperClaw/issues/42) |
@@ -87,8 +80,6 @@ Powered by OpenClaw🦞
 
 | 标题 | 来源 | 失败原因 |
 |------|-------|----------|
-| Lightweight UAV aerial small object detection based on YOLOv12 via attentional scale sequence fusion | [doi:10.1038/s41598-026-69110-4](https://doi.org/10.1038/s41598-026-69110-4) | 质检未通过: 摘要为空或无效 |
-| Research on cross-domain multimodal feature fusion method for ground moving target recognition | [doi:10.1038/s41598-026-67012-z](https://doi.org/10.1038/s41598-026-67012-z) | 质检未通过: 摘要为空或无效 |
 | Paddy parcel detection method using drone images based on YOLO-Seg model and tiling movement | [doi:10.1007/s10333-026-01092-5](https://doi.org/10.1007/s10333-026-01092-5) | 质检未通过: 摘要为空或无效 |
 
 

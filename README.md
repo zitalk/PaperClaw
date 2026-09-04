@@ -29,7 +29,7 @@ PaperClaw 是一个面向个人研究方向的自动化文献发现系统。它�
 | 能力 | PaperClaw 的处理方式 |
 |---|---|
 | 发现 | arXiv 视觉类别广搜，并由六个学术元数据源补充当天新论文 |
-| 筛选 | 同义词扩展与视觉语境硬过滤，再由 LLM 分批精筛 |
+| 筛选 | 同义词与视觉语境召回 → 刊会白名单准入 → LLM 分批精筛 |
 | 阅读 | 每篇论文生成独立 Issue，整理问题、方法、结果、局限与研究启发 |
 | 汇总 | 自动生成每日 Digest 和 Markdown 日报 |
 | 发布 | GitHub Pages 自动构建可搜索、可分类的个人研究门户 |
@@ -52,7 +52,8 @@ PaperClaw 是一个面向个人研究方向的自动化文献发现系统。它�
 flowchart LR
     A[arXiv + 六个元数据源广搜] --> B[统一 DOI/arXiv/标题去重]
     B --> C[同义词与视觉语境硬过滤]
-    C --> D[LLM 分批精筛]
+    C --> V[刊会准入：明确排除优先 / arXiv 豁免 / 正式刊会白名单]
+    V --> D[LLM 分批精筛]
     D --> E[单篇 Issue 论文卡片]
     E --> F[每日 Digest 与归档]
     F --> G[GitHub Pages 研究门户]
@@ -62,6 +63,7 @@ flowchart LR
 
 - [`filter_keywords.json`](./skills/rs-paper-pipeline/scripts/config/filter_keywords.json)：研究主题、同义词和排除规则
 - [`filter_cross_prompt.md`](./skills/rs-paper-pipeline/scripts/prompts/filter_cross_prompt.md)：LLM 相关性精筛提示词
+- [`venue_policy.json`](./skills/rs-paper-pipeline/scripts/config/venue_policy.json)：刊会准入名单、别名与 CCF 等级；规则及完整列表见 [刊会准入说明](./docs/venue-policy.md)
 
 ## 在线使用
 

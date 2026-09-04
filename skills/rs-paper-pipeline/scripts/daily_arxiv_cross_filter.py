@@ -20,6 +20,7 @@ from pipeline_config import get_repo, load_config
 from services.filter_assets import load_ai_signal_patterns, render_filter_prompt
 from services.digest_builder import extract_author, is_invalid_digest_field
 from services.issue_index import ensure_index, lookup_issue, update_index_from_issue, save_index
+from services.venue_policy import filter_venues
 
 CONFIG = load_config()
 AI_MATCH_PATTERNS = load_ai_signal_patterns()
@@ -122,6 +123,7 @@ def compact_item(item: dict[str, str]) -> dict[str, str]:
         "authors": item.get("authors", ""),
         "institutions": item.get("institutions", ""),
         "venue": item.get("venue", ""),
+        "venues": item.get("venues", []),
     }
 
 
@@ -157,9 +159,13 @@ def main(dry_run=False, days_back=2, stats_out: str | None = None, target_date: 
         cands = fetch_recent_candidates(max_results=1200, days_back=days_back)
     cand_count = len(cands)
     print(f"  候选数: {cand_count}")
+    admitted, venue_excluded = filter_venues(cands)
+    print(f"  刊会准入: 通过 {len(admitted)}，排除 {len(venue_excluded)}")
+    for item in venue_excluded:
+        print(f"  [刊会排除] {candidate_id(item)} | {item['venue_policy_reason']}")
 
     print("[2/5] LLM 交叉筛选...")
-    selected = llm_cross_filter(cands)
+    selected = llm_cross_filter(admitted)
     selected_count = len(selected)
     print(f"  入选数: {selected_count}")
 
@@ -188,6 +194,11 @@ def main(dry_run=False, days_back=2, stats_out: str | None = None, target_date: 
     stats = {
         "date": target_date or datetime.now().strftime("%Y%m%d"),
         "candidate_count": cand_count,
+        "venue_admitted_count": len(admitted),
+        "venue_excluded_count": len(venue_excluded),
+        "venue_excluded_items": [
+            {**compact_item(x), "reason": x["venue_policy_reason"]} for x in venue_excluded
+        ],
         "llm_selected_count": selected_count,
         "existing_count": existing_count,
         "refresh_count": refresh_count,
