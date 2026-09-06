@@ -4,13 +4,13 @@
 
 # [20260904](./202609/20260904.md)
 <!-- paperclaw-report: zitalk/PaperClaw -->
-<!-- paperclaw-run: {"status": "degraded", "checked_at": "2026-09-05T00:55:29+08:00", "unavailable_sources": ["Springer Nature", "IEEE Xplore"], "unconfigured_sources": [], "filter_fallback": false, "failed_papers": 0} -->
+<!-- paperclaw-run: {"status": "degraded", "checked_at": "2026-09-07T05:03:30+08:00", "unavailable_sources": ["Semantic Scholar", "Springer Nature", "IEEE Xplore"], "unconfigured_sources": [], "filter_fallback": false, "failed_papers": 0} -->
 
 ## 📌 今日概况
 
-检索完成，但存在异常 · 最近检查：2026-09-05 00:55:29（北京时间）
+检索完成，但存在异常 · 最近检查：2026-09-07 05:03:30（北京时间）
 
-本轮检索候选论文 59 篇；刊会准入通过 0 篇（排除 59 篇）；本轮 LLM 新筛中 0 篇，复用已收录匹配 0 篇；本轮新增入报 0 篇；目标日累计收录 0 篇。当日未检索到符合条件并纳入日报的论文。 部分来源不可用：Springer Nature、IEEE Xplore；本次结果不代表完整覆盖。
+本轮检索候选论文 81 篇；刊会准入通过 0 篇（排除 81 篇）；本轮 LLM 新筛中 0 篇，复用已收录匹配 0 篇；本轮新增入报 0 篇；目标日累计收录 0 篇。当日未检索到符合条件并纳入日报的论文。 部分来源不可用：Semantic Scholar、Springer Nature、IEEE Xplore；本次结果不代表完整覆盖。
 
 ## ✨ 今日亮点
 
