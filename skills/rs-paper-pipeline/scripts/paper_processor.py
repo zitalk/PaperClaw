@@ -71,6 +71,37 @@ def _publication_metadata(candidate: dict | None) -> tuple[str, str]:
     return sources, venue
 
 
+def _candidate_abs_info(candidate: dict | None) -> dict[str, str] | None:
+    """Reuse discovery metadata instead of querying arXiv again per paper.
+
+    The discovery/filter stage already persists the arXiv title, authors,
+    abstract and publication date.  Re-fetching the same Atom entry for every
+    accepted paper is both redundant and particularly expensive when arXiv
+    returns HTTP 429.  PDF extraction below remains the fallback for incomplete
+    cached fields.
+    """
+    candidate = candidate or {}
+    title = str(candidate.get("title") or "").strip()
+    if not title:
+        return None
+
+    authors_value = candidate.get("authors") or ""
+    if isinstance(authors_value, (list, tuple)):
+        authors = ", ".join(str(value).strip() for value in authors_value if str(value).strip())
+    else:
+        authors = str(authors_value).strip()
+
+    published = str(candidate.get("published") or "").strip()
+    date = published[:10] if re.fullmatch(r"\d{4}-\d{2}-\d{2}", published[:10]) else datetime.now().strftime("%Y-%m-%d")
+    return {
+        "title": title,
+        "authors": authors or "待提取",
+        "institutions": str(candidate.get("institutions") or "").strip() or "待提取",
+        "abstract_en": str(candidate.get("abstract") or "").strip(),
+        "date": date,
+    }
+
+
 def handle_figures(arxiv_id: str, pdf_path: Path, repo=None) -> list:
     """将 PDF 前三页转 JPG 并上传，返回已上传页码列表"""
     arxiv_dir = FIGURES_DIR / arxiv_id
@@ -132,7 +163,11 @@ def _process_paper(
         return None, "PDF 下载失败"
 
     # 1.2 提取 abs 信息
-    info = extract_abs_info(arxiv_id)
+    info = _candidate_abs_info(candidate_metadata)
+    if info is not None:
+        log_step("STEP-1", "OK", "metadata=candidate-cache")
+    else:
+        info = extract_abs_info(arxiv_id)
     log_step("STEP-1", "OK", f"title={info['title'][:40]} | authors={info['authors'][:30]}")
 
     first_page_text = ""
