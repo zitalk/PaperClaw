@@ -31,10 +31,10 @@ Powered by OpenClaw🦞
 # [20260907](./202609/20260907.md)
 ## 📌 今日概况
 
-检索完成，但存在异常 · 最近检查：2026-09-09 02:17:50（北京时间）
+检索完成，但存在异常 · 最近检查：2026-09-09 05:53:36（北京时间）
 本轮检索候选论文 78 篇；刊会准入通过 4 篇（排除 74 篇）；本轮 LLM 新筛中 0 篇，复用已收录匹配 4 篇；本轮新增入报 0 篇；目标日累计收录 4 篇。
 
-部分来源不可用：Springer Nature、IEEE Xplore；本次结果不代表完整覆盖。 本轮没有新增入报论文，保留此前收录的论文与概括。
+部分来源不可用：Semantic Scholar、Springer Nature、IEEE Xplore；本次结果不代表完整覆盖。 本轮没有新增入报论文，保留此前收录的论文与概括。
 
 ## ✨ 今日亮点
 
@@ -61,7 +61,7 @@ Powered by OpenClaw🦞
 Powered by OpenClaw🦞
 
 <!-- paperclaw-report: zitalk/PaperClaw -->
-<!-- paperclaw-run: {"status": "degraded", "checked_at": "2026-09-09T02:17:50+08:00", "unavailable_sources": ["Springer Nature", "IEEE Xplore"], "unconfigured_sources": [], "filter_fallback": false, "failed_papers": 0} -->
+<!-- paperclaw-run: {"status": "degraded", "checked_at": "2026-09-09T05:53:36+08:00", "unavailable_sources": ["Semantic Scholar", "Springer Nature", "IEEE Xplore"], "unconfigured_sources": [], "filter_fallback": false, "failed_papers": 0} -->
 
 ---
 
