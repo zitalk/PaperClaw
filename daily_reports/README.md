@@ -4,33 +4,34 @@
 
 # [20260907](./202609/20260907.md)
 <!-- paperclaw-report: zitalk/PaperClaw -->
-<!-- paperclaw-run: {"status": "degraded", "checked_at": "2026-09-08T05:57:11+08:00", "unavailable_sources": ["Semantic Scholar", "Springer Nature", "IEEE Xplore"], "unconfigured_sources": [], "filter_fallback": false, "failed_papers": 0} -->
+<!-- paperclaw-run: {"status": "degraded", "checked_at": "2026-09-08T11:29:00+08:00", "unavailable_sources": ["arXiv", "Semantic Scholar", "Springer Nature", "IEEE Xplore"], "unconfigured_sources": [], "filter_fallback": false, "failed_papers": 0} -->
 
 ## 📌 今日概况
 
-检索完成，但存在异常 · 最近检查：2026-09-08 05:57:11（北京时间）
-本轮检索候选论文 68 篇；刊会准入通过 4 篇（排除 64 篇）；本轮 LLM 新筛中 1 篇，复用已收录匹配 2 篇；本轮新增入报 1 篇；目标日累计收录 3 篇。
+检索完成，但存在异常 · 最近检查：2026-09-08 11:29:00（北京时间）
+本轮检索候选论文 72 篇；刊会准入通过 4 篇（排除 68 篇）；本轮 LLM 新筛中 1 篇，复用已收录匹配 3 篇；本轮新增入报 1 篇；目标日累计收录 4 篇。
 
-部分来源不可用：Semantic Scholar、Springer Nature、IEEE Xplore；本次结果不代表完整覆盖。 今日研究覆盖多视角动作识别、无人机红外-可见光感知与多模态机器翻译三个方向。多视角动作识别关注上下文感知与视角一致性，以提升遮挡鲁棒性；无人机感知引入退化感知的专家混合模型，强化红外与可见光融合；多模态翻译则探索双分支提示与扩散模型，改善跨模态交互与分布对齐。整体呈现从感知鲁棒性到跨模态生成的技术演进。
+部分来源不可用：arXiv、Semantic Scholar、Springer Nature、IEEE Xplore；本次结果不代表完整覆盖。 今日研究聚焦多模态与无人机视觉中的鲁棒性与跨域适应问题。多视角动作识别强调上下文与视角一致性以应对遮挡；无人机红外-可见光感知通过退化感知的专家混合模型提升复杂环境性能；多模态机器翻译与唇语识别则分别探索双分支提示和说话人无关特征，推动跨模态对齐与泛化能力。整体趋势是从单一模态优化转向多源信息融合与不变性学习。
 
 ## ✨ 今日亮点
 
-- 多视角动作识别引入上下文与视角一致性学习，增强遮挡场景鲁棒性。
-- DAFormer采用退化感知专家混合模型，提升无人机红外-可见光融合质量。
-- 双分支提示结合扩散模型，改进多模态机器翻译的跨模态对齐能力。
+- 多视角动作识别引入上下文与视角一致性，增强遮挡鲁棒性。
+- DAFormer利用退化感知专家混合模型提升无人机红外-可见光感知。
+- 唇语识别学习说话人无关视觉特征，改善跨说话人泛化。
 
 ## 🗂 今日文章列表
 
 | 标题 | 作者 | 单位 | 一句话概括 | Issue |
 |---|---|---|---|---|
-| [20260907] Context-aware and View-consistent Learning for Multi-view Action Recognition | Trung Thanh Nguyen, Kawanishi Yasutomo, Komamizu Takahiro, Ide Ichiro | 暂无 | 提出上下文感知与视角一致性学习方法，提升多视角动作识别在遮挡与多传感器条件下的鲁棒性。 | [#108](https://github.com/zitalk/PaperClaw/issues/108) |
-| [20260907] DAFormer: Enhancing Infrared–Visible UAV Perception via Degradation-Aware Mixture-of-Experts Model | Su Weijian, Han Yuqi, Zheng Zhihui, Wang Zhenwei, Zhang Songqian, Huang Yongdong, Zhang Qiang | 暂无 | DAFormer通过退化感知的专家混合模型，增强无人机红外与可见光图像融合及恢复效果。 | [#109](https://github.com/zitalk/PaperClaw/issues/109) |
-| [20260907] Dual-branch Prompting for Multimodal Machine Translation | Wang Jie, Yang Zhendong, Zong Liansong, Zhang Xiaobo, Wang Dexian, Zhang Ji | 暂无 | 利用双分支提示与扩散模型，改善多模态机器翻译中的跨模态交互与分布对齐。 | [#111](https://github.com/zitalk/PaperClaw/issues/111) |
+| [20260907] Context-aware and View-consistent Learning for Multi-view Action Recognition | Trung Thanh Nguyen, Kawanishi Yasutomo, Komamizu Takahiro, Ide Ichiro | 暂无 | 提出上下文感知与视角一致性学习方法，提升多视角动作识别在遮挡下的鲁棒性。 | [#108](https://github.com/zitalk/PaperClaw/issues/108) |
+| [20260907] DAFormer: Enhancing Infrared–Visible UAV Perception via Degradation-Aware Mixture-of-Experts Model | Su Weijian, Han Yuqi, Zheng Zhihui, Wang Zhenwei, Zhang Songqian, Huang Yongdong, Zhang Qiang | 暂无 | DAFormer通过退化感知的专家混合模型增强无人机红外-可见光图像融合与恢复能力。 | [#109](https://github.com/zitalk/PaperClaw/issues/109) |
+| [20260907] Dual-branch Prompting for Multimodal Machine Translation | Wang Jie, Yang Zhendong, Zong Liansong, Zhang Xiaobo, Wang Dexian, Zhang Ji | 暂无 | 双分支提示方法结合扩散模型，改善多模态机器翻译中的跨模态交互与分布对齐。 | [#111](https://github.com/zitalk/PaperClaw/issues/111) |
+| [20260907] Learning Speaker-Invariant Visual Features for Lipreading | Li Yu, Xue Feng, Li Shujie, Zhang Jinrui, Guo Dan, Liu Zhi, Hong Richang | 暂无 | 通过解耦学习说话人无关视觉特征，提高唇语识别模型对不同说话人的泛化性能。 | [#123](https://github.com/zitalk/PaperClaw/issues/123) |
 
 ## 🔎 观察
 
-- 多视角动作识别与无人机感知均强调鲁棒性，反映真实场景中遮挡与退化问题仍是视觉系统核心挑战。
-- 多模态翻译引入扩散模型与提示机制，显示生成式方法正从图像领域向跨模态语言任务渗透。
+- 多视角与多传感器融合成为提升复杂场景感知鲁棒性的主要手段，尤其关注遮挡与退化问题。
+- 跨模态任务普遍采用解耦或提示学习来消除无关变异，如说话人身份或模态差异，以增强特征不变性。
 
 ---
 
