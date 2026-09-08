@@ -26,7 +26,7 @@ python3 scripts/cli.py run
 
 1. `scripts/run_rs_daily_workday.py`
    负责总调度、代理注入、GitHub 连通性检查、锁文件、防重入、状态落盘、可选飞书通知。
-   默认日期策略为：周一跑上周五，周二顺序补跑周六/周日/周一，其他日期跑昨天。
+   默认日期策略为：每轮从昨天起向前滚动补扫 7 个自然日，按从旧到新的顺序处理，以覆盖节假日公告、审核与元数据延迟。
 2. `scripts/daily_arxiv_cross_filter.py`
    从 arXiv API 拉取候选论文，按遥感关键词初筛，再用 LLM 做二次交叉筛选，并跳过已存在于 GitHub Issues 的论文。
 3. `scripts/paper_processor.py`

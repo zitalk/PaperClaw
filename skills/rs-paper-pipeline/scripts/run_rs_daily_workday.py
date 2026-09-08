@@ -420,21 +420,26 @@ def _run_step(date_str: str, step: str, cmd: list[str], ok_extra: dict | None = 
     _write_state(date_str, step, "ok", ok_extra)
 
 
-def resolve_target_dates(today: datetime | None = None) -> list[str]:
+ROLLING_LOOKBACK_DAYS = 7
+
+
+def resolve_target_dates(
+    today: datetime | None = None,
+    lookback_days: int = ROLLING_LOOKBACK_DAYS,
+) -> list[str]:
     now = today or datetime.now(BEIJING_TZ)
+    if lookback_days < 1:
+        raise ValueError("lookback_days must be at least 1")
 
-    # 工作日运行：周一依次补扫上周五、周六、周日；周二至周五
-    # 检索前一天。手动在周末触发时仍回落到最近的周五。
-    if now.weekday() == 0:
-        return [
-            (now - timedelta(days=delta)).strftime("%Y%m%d")
-            for delta in (3, 2, 1)
-        ]
-
-    target = now - timedelta(days=1)
-    while target.weekday() >= 5:
-        target -= timedelta(days=1)
-    return [target.strftime("%Y%m%d")]
+    # Every cloud run reconciles a rolling calendar window.  arXiv moderation,
+    # holidays and publisher metadata deposits can make a paper visible several
+    # days after its nominal publication date.  Oldest-first processing keeps
+    # digest updates deterministic; incremental mode prevents duplicate cards
+    # and repeated analysis of papers already admitted.
+    return [
+        (now - timedelta(days=delta)).strftime("%Y%m%d")
+        for delta in range(lookback_days, 0, -1)
+    ]
 
 
 def _process_date(date_str: str, notify: bool, force: bool = False, incremental: bool = False):

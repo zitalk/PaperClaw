@@ -13,24 +13,41 @@ import run_remote_schedule
 
 
 class RemoteScheduleTest(unittest.TestCase):
-    def test_schedule_targets_previous_day_and_monday_weekend_backfill(self):
+    def test_schedule_targets_previous_seven_calendar_days_oldest_first(self):
         beijing = timezone(timedelta(hours=8))
-        expected_by_day = {
-            1: ["20260831"],
-            2: ["20260901"],
-            3: ["20260902"],
-            4: ["20260903"],
-            5: ["20260904"],
-            6: ["20260904"],
-            7: ["20260904", "20260905", "20260906"],
-        }
-        for day, expected in expected_by_day.items():
-            now = datetime(2026, 9, day, 3, 0, tzinfo=beijing)
-            with self.subTest(day=day):
-                self.assertEqual(
-                    run_remote_schedule.run_rs_daily_workday.resolve_target_dates(now),
-                    expected,
-                )
+        now = datetime(2026, 9, 9, 9, 30, tzinfo=beijing)
+        self.assertEqual(
+            run_remote_schedule.run_rs_daily_workday.resolve_target_dates(now),
+            [
+                "20260902",
+                "20260903",
+                "20260904",
+                "20260905",
+                "20260906",
+                "20260907",
+                "20260908",
+            ],
+        )
+
+    def test_schedule_window_is_calendar_based_even_on_weekends(self):
+        beijing = timezone(timedelta(hours=8))
+        now = datetime(2026, 9, 6, 12, 0, tzinfo=beijing)
+        self.assertEqual(
+            run_remote_schedule.run_rs_daily_workday.resolve_target_dates(now),
+            [
+                "20260830",
+                "20260831",
+                "20260901",
+                "20260902",
+                "20260903",
+                "20260904",
+                "20260905",
+            ],
+        )
+
+    def test_schedule_rejects_empty_lookback_window(self):
+        with self.assertRaises(ValueError):
+            run_remote_schedule.run_rs_daily_workday.resolve_target_dates(lookback_days=0)
 
     def test_each_incomplete_date_runs_discovery_exactly_once_in_pipeline(self):
         with (
