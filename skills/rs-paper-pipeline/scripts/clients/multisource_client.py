@@ -508,8 +508,13 @@ def fetch_recent_candidates(
     health = source_status if source_status is not None else []
     health.clear()
     valid_days = _date_window(target_date, days_back)
-    arxiv_items = fetch_arxiv_candidates(max_results=max_results, days_back=days_back, target_date=target_date)
-    health.append({"name": "arXiv", "status": "ok"})
+    try:
+        arxiv_items = fetch_arxiv_candidates(max_results=max_results, days_back=days_back, target_date=target_date)
+        health.append({"name": "arXiv", "status": "ok"})
+    except Exception as exc:
+        arxiv_items = []
+        health.append({"name": "arXiv", "status": "unavailable"})
+        print(f"  [arXiv] 跳过：{type(exc).__name__}")
     normalized: list[dict[str, Any]] = []
     for item in arxiv_items:
         normalized_item = _candidate(

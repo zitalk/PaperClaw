@@ -57,9 +57,16 @@ def _retry_after_seconds(headers) -> int | None:
     return None
 
 
-def fetch_url_with_retry(url: str, retries: int = 6, timeout: int = 90) -> str:
+def fetch_url_with_retry(
+    url: str,
+    retries: int = 6,
+    timeout: int = 90,
+    *,
+    rate_limit_backoff: list[int] | None = None,
+    max_rate_limit_wait: int | None = None,
+) -> str:
     backoff = [5, 15, 30, 60, 120, 240]
-    rate_limit_backoff = [60, 120, 240, 360, 600, 900]
+    rate_limit_backoff = rate_limit_backoff or [60, 120, 240, 360, 600, 900]
     last_err = None
     for i in range(retries):
         try:
@@ -73,6 +80,8 @@ def fetch_url_with_retry(url: str, retries: int = 6, timeout: int = 90) -> str:
                     _retry_after_seconds(exc.headers) or 0,
                     rate_limit_backoff[min(i, len(rate_limit_backoff) - 1)],
                 )
+                if max_rate_limit_wait is not None:
+                    wait_s = min(wait_s, max_rate_limit_wait)
             else:
                 wait_s = backoff[min(i, len(backoff) - 1)]
             if i == retries - 1:
@@ -123,7 +132,16 @@ def fetch_recent_candidates(
                 "sortOrder": "descending",
             }
             url = f"{CONFIG.arxiv_api}?{urllib.parse.urlencode(params)}"
-            xml_text = fetch_url_with_retry(url, retries=6, timeout=90)
+            # A rolling workday run has several later opportunities to recover
+            # a rate-limited date.  Fail this source quickly so the remaining
+            # providers can still publish a clearly marked degraded report.
+            xml_text = fetch_url_with_retry(
+                url,
+                retries=2,
+                timeout=90,
+                rate_limit_backoff=[15, 30],
+                max_rate_limit_wait=30,
+            )
 
             root = ET.fromstring(xml_text)
             entries = root.findall("atom:entry", namespace)

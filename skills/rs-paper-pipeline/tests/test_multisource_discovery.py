@@ -3,19 +3,51 @@ from dataclasses import replace
 import sys
 import unittest
 from unittest.mock import patch
+from urllib.error import HTTPError
 from urllib.parse import parse_qs, urlparse
 
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "scripts"))
 
-from clients import github_ops, multisource_client
+from clients import arxiv_client, github_ops, multisource_client
 import check_source_api_keys
 import paper_processor
 from services import issue_index
 
 
 class MultiSourceDiscoveryTest(unittest.TestCase):
+    def test_arxiv_rate_limit_wait_is_capped_for_rolling_discovery(self):
+        error = HTTPError("https://export.arxiv.org/api/query", 429, "rate limited", {"Retry-After": "600"}, None)
+        with (
+            patch.object(arxiv_client.urllib.request, "urlopen", side_effect=error),
+            patch.object(arxiv_client.time, "sleep") as sleep,
+            self.assertRaises(HTTPError),
+        ):
+            arxiv_client.fetch_url_with_retry(
+                "https://export.arxiv.org/api/query",
+                retries=2,
+                rate_limit_backoff=[15, 30],
+                max_rate_limit_wait=30,
+            )
+
+        sleep.assert_called_once_with(30)
+
+    def test_arxiv_failure_does_not_abort_other_source_pipeline(self):
+        health = []
+        with (
+            patch.object(
+                multisource_client,
+                "CONFIG",
+                replace(multisource_client.CONFIG, multisource_enabled=False),
+            ),
+            patch.object(multisource_client, "fetch_arxiv_candidates", side_effect=HTTPError("url", 429, "rate limited", {}, None)),
+        ):
+            candidates = multisource_client.fetch_recent_candidates(target_date="20260901", source_status=health)
+
+        self.assertEqual(candidates, [])
+        self.assertEqual(health, [{"name": "arXiv", "status": "unavailable"}])
+
     def test_dedup_merges_sources_and_prefers_real_arxiv_id(self):
         scopus = multisource_client._candidate(
             source="Elsevier Scopus",
