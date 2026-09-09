@@ -17,6 +17,28 @@ from services import issue_index
 
 
 class MultiSourceDiscoveryTest(unittest.TestCase):
+    def test_arxiv_discovery_keeps_authors_and_affiliations(self):
+        xml = """<?xml version="1.0" encoding="UTF-8"?>
+        <feed xmlns="http://www.w3.org/2005/Atom" xmlns:arxiv="http://arxiv.org/schemas/atom">
+          <entry>
+            <id>https://arxiv.org/abs/2609.00001v1</id>
+            <title>RGB-D Salient Object Detection with Multimodal Fusion</title>
+            <summary>We study visual salient object detection with RGB and depth inputs.</summary>
+            <published>2026-09-01T12:00:00Z</published>
+            <author><name>Alice Example</name><arxiv:affiliation>Example University</arxiv:affiliation></author>
+            <author><name>Bob Example</name></author>
+          </entry>
+        </feed>"""
+        with (
+            patch.object(arxiv_client, "fetch_url_with_retry", return_value=xml),
+            patch.object(arxiv_client.time, "sleep"),
+        ):
+            candidates = arxiv_client.fetch_recent_candidates(max_results=1, target_date="20260901")
+
+        self.assertEqual(len(candidates), 1)
+        self.assertEqual(candidates[0]["authors"], "Example Alice, Example Bob")
+        self.assertEqual(candidates[0]["institutions"], "Example University")
+
     def test_arxiv_rate_limit_wait_is_capped_for_rolling_discovery(self):
         error = HTTPError("https://export.arxiv.org/api/query", 429, "rate limited", {"Retry-After": "600"}, None)
         with (

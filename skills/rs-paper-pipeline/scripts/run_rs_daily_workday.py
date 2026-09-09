@@ -420,22 +420,29 @@ def _run_step(date_str: str, step: str, cmd: list[str], ok_extra: dict | None = 
     _write_state(date_str, step, "ok", ok_extra)
 
 
-ROLLING_LOOKBACK_DAYS = 7
+WEEKEND_LOOKBACK_DAYS = 7
+
+
+def is_weekend_schedule(today: datetime | None = None) -> bool:
+    now = today or datetime.now(BEIJING_TZ)
+    return now.weekday() >= 5
 
 
 def resolve_target_dates(
     today: datetime | None = None,
-    lookback_days: int = ROLLING_LOOKBACK_DAYS,
+    lookback_days: int = WEEKEND_LOOKBACK_DAYS,
 ) -> list[str]:
     now = today or datetime.now(BEIJING_TZ)
     if lookback_days < 1:
         raise ValueError("lookback_days must be at least 1")
 
-    # Every cloud run reconciles a rolling calendar window.  arXiv moderation,
-    # holidays and publisher metadata deposits can make a paper visible several
-    # days after its nominal publication date.  Oldest-first processing keeps
-    # digest updates deterministic; incremental mode prevents duplicate cards
-    # and repeated analysis of papers already admitted.
+    # Workday runs stay focused on yesterday so the newest daily report cannot
+    # be starved by historical backlogs. Weekend runs reconcile a rolling
+    # calendar window; incremental mode prevents duplicate cards and repeated
+    # analysis of papers already admitted.
+    if not is_weekend_schedule(now):
+        return [(now - timedelta(days=1)).strftime("%Y%m%d")]
+
     return [
         (now - timedelta(days=delta)).strftime("%Y%m%d")
         for delta in range(lookback_days, 0, -1)

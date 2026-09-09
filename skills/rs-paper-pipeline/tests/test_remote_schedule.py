@@ -1,4 +1,6 @@
 import sys
+import json
+import tempfile
 import unittest
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
@@ -13,23 +15,23 @@ import run_remote_schedule
 
 
 class RemoteScheduleTest(unittest.TestCase):
-    def test_schedule_targets_previous_seven_calendar_days_oldest_first(self):
+    def test_workday_schedule_targets_previous_day_only(self):
         beijing = timezone(timedelta(hours=8))
         now = datetime(2026, 9, 9, 9, 30, tzinfo=beijing)
         self.assertEqual(
             run_remote_schedule.run_rs_daily_workday.resolve_target_dates(now),
-            [
-                "20260902",
-                "20260903",
-                "20260904",
-                "20260905",
-                "20260906",
-                "20260907",
-                "20260908",
-            ],
+            ["20260908"],
         )
 
-    def test_schedule_window_is_calendar_based_even_on_weekends(self):
+    def test_monday_schedule_targets_sunday_only(self):
+        beijing = timezone(timedelta(hours=8))
+        now = datetime(2026, 9, 7, 3, 0, tzinfo=beijing)
+        self.assertEqual(
+            run_remote_schedule.run_rs_daily_workday.resolve_target_dates(now),
+            ["20260906"],
+        )
+
+    def test_weekend_schedule_reconciles_previous_seven_days(self):
         beijing = timezone(timedelta(hours=8))
         now = datetime(2026, 9, 6, 12, 0, tzinfo=beijing)
         self.assertEqual(
@@ -45,6 +47,27 @@ class RemoteScheduleTest(unittest.TestCase):
             ],
         )
 
+    def test_weekend_backfill_notice_counts_recovered_and_failed_papers(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            memory_dir = Path(tmp)
+            (memory_dir / "rs_daily_stats_20260904.json").write_text(
+                json.dumps({"todo_count": 3, "failed_items": [{"paper_id": "failed"}]}),
+                encoding="utf-8",
+            )
+            (memory_dir / "rs_daily_stats_20260905.json").write_text(
+                json.dumps({"todo_count": 2, "failed_items": []}),
+                encoding="utf-8",
+            )
+
+            with patch("builtins.print") as output:
+                result = run_remote_schedule._weekend_backfill_notice(
+                    ["20260904", "20260905"],
+                    memory_dir=memory_dir,
+                )
+
+        self.assertEqual(result, {"found": 5, "recovered": 4, "failed": 1})
+        self.assertTrue(any("::warning title=PaperClaw 周末补漏::" in str(call) for call in output.call_args_list))
+
     def test_schedule_rejects_empty_lookback_window(self):
         with self.assertRaises(ValueError):
             run_remote_schedule.run_rs_daily_workday.resolve_target_dates(lookback_days=0)
@@ -56,6 +79,7 @@ class RemoteScheduleTest(unittest.TestCase):
                 "resolve_target_dates",
                 return_value=["20260901", "20260902"],
             ),
+            patch.object(run_remote_schedule.run_rs_daily_workday, "is_weekend_schedule", return_value=False),
             patch.object(
                 run_remote_schedule.run_rs_daily_workday,
                 "_date_already_completed",
@@ -79,6 +103,7 @@ class RemoteScheduleTest(unittest.TestCase):
                 "resolve_target_dates",
                 return_value=["20260901"],
             ),
+            patch.object(run_remote_schedule.run_rs_daily_workday, "is_weekend_schedule", return_value=False),
             patch.object(
                 run_remote_schedule.run_rs_daily_workday,
                 "_date_already_completed",

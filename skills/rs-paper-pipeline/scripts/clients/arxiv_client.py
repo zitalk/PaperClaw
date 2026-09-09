@@ -109,7 +109,7 @@ def fetch_recent_candidates(
             query_parts.append(f"all:{keyword}")
     keyword_query = " OR ".join(query_parts)
     category_query = " OR ".join(f"cat:{category}" for category in ARXIV_CATEGORIES)
-    namespace = {"atom": "http://www.w3.org/2005/Atom"}
+    namespace = ATOM_NAMESPACE
 
     if target_date:
         valid_days = {datetime.strptime(target_date, "%Y%m%d").date()}
@@ -158,6 +158,15 @@ def fetch_recent_candidates(
                 title = (entry.find("atom:title", namespace).text or "").strip().replace("\n", " ")
                 abstract = (entry.find("atom:summary", namespace).text or "").strip().replace("\n", " ")
                 published = (entry.find("atom:published", namespace).text or "").strip()
+                authors: list[str] = []
+                affiliations: list[str] = []
+                for author_node in entry.findall("atom:author", namespace):
+                    name = author_node.findtext("atom:name", default="", namespaces=namespace)
+                    if name and name.strip():
+                        authors.append(name.strip())
+                    affiliation = author_node.findtext("arxiv:affiliation", default="", namespaces=namespace)
+                    if affiliation and affiliation.strip():
+                        affiliations.append(affiliation.strip())
                 try:
                     published_date = datetime.strptime(published[:10], "%Y-%m-%d").date()
                 except Exception:
@@ -179,6 +188,8 @@ def fetch_recent_candidates(
                         "title": title,
                         "abstract": abstract,
                         "published": published[:10],
+                        "authors": format_authors(authors),
+                        "institutions": format_affiliations(affiliations),
                     }
                 )
 
