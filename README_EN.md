@@ -3,8 +3,8 @@
 
   <h1>PaperClaw</h1>
 
-  <p><strong>A personal paper radar for multimodal vision and UAV research</strong></p>
-  <p>Four core directions + Extended reading · Overlapping tags · Daily paper cards</p>
+  <p><strong>A personal paper radar for visual perception and industrial intelligence</strong></p>
+  <p>Five core directions + Extended reading · Overlapping tags · Daily paper cards</p>
 
   <p>
     <a href="https://papers.zitalk.cn/"><img src="https://img.shields.io/badge/Research_Portal-Live-0D6B66?style=flat-square" alt="Research portal" /></a>
@@ -17,7 +17,7 @@
 
 ---
 
-PaperClaw tracks four overlapping core research directions plus an Extended reading category for adjacent methods. Each paper appears once in the library, with multiple core direction and subtopic tags where appropriate.
+PaperClaw tracks five overlapping core research directions plus an Extended reading category for adjacent methods. Each paper appears once in the library, with multiple core direction and subtopic tags where appropriate.
 
 ## Research radar
 
@@ -27,6 +27,7 @@ PaperClaw tracks four overlapping core research directions plus an Extended read
 | Multi-view and multi-object perception | Multi-object tracking; multi-camera tracking; cross-view matching and ReID; multi-view geometry and 3D perception; spatiotemporal association and robustness |
 | UAV vision | Aerial object detection; segmentation and scene understanding; tracking and cross-view retrieval; visual localization/navigation/mapping; cooperative perception; multimodal and adverse-condition perception |
 | Training-free open-set segmentation | Training-free open-vocabulary segmentation; open-set/open-world segmentation; frozen foundation-model inference; spatial and boundary refinement; context/prototypes/calibration; cross-domain and remote-sensing extensions |
+| Industrial anomaly detection | Industrial visual anomaly detection/localization; surface defect detection/segmentation; few-shot, zero-shot and generalization; logical/structural anomalies; multimodal and 3D anomaly detection; foundation models and synthetic anomalies |
 | Extended reading | One flat category for relevant adjacent work; no subtopics or subtopic tags |
 
 See the [complete subtopic and keyword tables](./README.md#研究雷达) and the [shared taxonomy](./skills/rs-paper-pipeline/scripts/config/research_taxonomy.json).
@@ -39,7 +40,7 @@ SOD and COD are task groups within the multimodal research direction; related si
 
 - arXiv papers bypass the venue gate; other sources must match the [explicit venue allowlist](./docs/venue-policy.md). No journal blacklist is used. Date, relevance and deduplication checks still apply.
 - Sources: arXiv, OpenAlex, Crossref, Semantic Scholar, IEEE Xplore, Elsevier Scopus and Springer Nature.
-- GitHub Actions runs remotely on weekdays at 03:00, 09:30, 12:30, 15:30, 18:30, 21:30 and 23:30 Beijing time. Monday covers the previous Friday through Sunday; other weekdays cover the preceding day. Later rounds append to the same digest even after a successful run, retaining existing cards without duplicate counts. A personal computer does not need to stay online.
+- GitHub Actions runs remotely on weekdays at 03:00 and 15:30 Beijing time, scanning the preceding day. On Sunday at 03:00 it reconciles the previous seven calendar days and reports recovered omissions. Existing cards are retained without duplicate analysis or counts, and a personal computer does not need to stay online.
 - Papers are saved as GitHub Issues and daily reports. Transient arXiv downloads are cleaned after analysis; metadata sources do not download full text.
 
 ## Use and configuration

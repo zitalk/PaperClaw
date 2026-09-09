@@ -24,6 +24,8 @@ class ResearchProfileFilterTest(unittest.TestCase):
         self.assertIn("camera LiDAR fusion", config["rs_query_terms"])
         self.assertIn("vision language perception", config["rs_query_terms"])
         self.assertIn("training-free open-vocabulary segmentation", config["rs_query_terms"])
+        self.assertIn("industrial anomaly detection", config["rs_query_terms"])
+        self.assertIn("surface defect detection", config["rs_query_terms"])
         self.assertIn("{{candidate_lines}}", load_filter_prompt_template())
 
     def test_research_direction_examples_pass_domain_filter(self):
@@ -45,6 +47,9 @@ class ResearchProfileFilterTest(unittest.TestCase):
             "Camouflaged Object Segmentation in Images",
             "Concealed Object Detection",
             "伪装目标检测",
+            "Industrial Visual Anomaly Detection for Manufacturing Inspection",
+            "Surface Defect Detection and Segmentation in Steel Images",
+            "MVTec AD Visual Anomaly Localization",
         ]
         for text in examples:
             with self.subTest(text=text):
@@ -58,6 +63,9 @@ class ResearchProfileFilterTest(unittest.TestCase):
             "Land Cover Classification from Satellite Images",
             "Large Language Model Agents for Recommendation Systems",
             "Chemical oxygen demand COD removal in wastewater treatment",
+            "Predictive Maintenance with Vibration Time Series",
+            "Network Traffic Anomaly Detection",
+            "Video Anomaly Detection for Pedestrian Surveillance",
         ]
         for text in examples:
             with self.subTest(text=text):

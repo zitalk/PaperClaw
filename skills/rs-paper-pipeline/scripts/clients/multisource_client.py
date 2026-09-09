@@ -33,6 +33,7 @@ QUERY_BUNDLES = (
     "multi-view multi-camera multi-object tracking",
     "UAV drone aerial visual perception",
     "training-free open-vocabulary open-set segmentation",
+    "industrial visual anomaly detection surface defect inspection",
 )
 USER_AGENT = CONFIG.arxiv_user_agent
 SEMANTIC_MIN_INTERVAL_SECONDS = 1.1

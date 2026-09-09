@@ -93,9 +93,27 @@
     "annotation-free semantic segmentation",
     "open-vocabulary remote sensing segmentation",
     "open-vocabulary aerial segmentation",
-    "open-vocabulary UAV segmentation"
+    "open-vocabulary UAV segmentation",
+    "industrial anomaly detection",
+    "industrial visual anomaly detection",
+    "visual anomaly detection",
+    "visual anomaly localization",
+    "industrial defect detection",
+    "surface defect detection",
+    "defect segmentation",
+    "quality inspection vision",
+    "few-shot anomaly detection",
+    "zero-shot anomaly detection",
+    "logical anomaly detection",
+    "3D anomaly detection",
+    "multimodal anomaly detection",
+    "MVTec anomaly detection"
   ],
   "rs_signal_patterns": [
+    "(?i)\\b(?:industrial|manufacturing|factory|production[- ]line) (?:visual |image[- ]based )?(?:anomaly|defect) (?:detection|localization|segmentation|inspection)\\b",
+    "(?i)\\b(?:visual|image) anomaly (?:detection|localization|segmentation)\\b",
+    "(?i)\\b(?:surface|product|component|fabric|steel|PCB|semiconductor|weld|casting) defect (?:detection|localization|segmentation|inspection)\\b",
+    "(?i)\\b(?:MVTec(?: AD| LOCO| 3D-AD)?|BTAD|MPDD|Real-IAD)\\b.*\\b(?:anomal(?:y|ies)|defects?|inspection)\\b",
     "(?i)\\bcamouflaged? object (?:detection|segmentation)\\b",
     "(?i)\\bconcealed object (?:detection|segmentation)\\b",
     "(?:伪装|隐蔽)目标(?:检测|分割)",
@@ -124,6 +142,7 @@
     "(?i)\\b(?:UAV|drone|aerial|multi-view|multi-camera|cross-camera)\\b.*\\b(?:multi-object|multiple object|multi-target) (?:association|tracking)\\b"
   ],
   "broad_signal_patterns": [
+    "(?i)\\b(?:industrial inspection|visual inspection|quality inspection|machine vision|surface defect|MVTec(?: AD| LOCO| 3D-AD)?|BTAD|MPDD|Real-IAD)\\b",
     "(?i)\\b(?:multimodal|multi-modal|cross-modal|inter-modal|multi-sensor|multisensor|cross-sensor)\\b",
     "(?i)\\b(?:sensor|feature|image|decision|modality) fusion\\b",
     "(?i)\\b(?:vision-language|vision language|visual-language|visual language|VLM)\\b",
@@ -151,6 +170,9 @@
     "(?i)\\b(?:large language model|LLM) agents?\\b"
   ],
   "ai_signal_patterns": [
+    "(?i)\\b(?:industrial|visual|image) anomaly (?:detection|localization|segmentation)\\b",
+    "(?i)\\b(?:surface|product|component) defect (?:detection|localization|segmentation|inspection)\\b",
+    "(?i)\\b(?:MVTec(?: AD| LOCO| 3D-AD)?|BTAD|MPDD|Real-IAD)\\b",
     "(?i)\\b(?:camouflaged?|concealed) object (?:detection|segmentation)\\b",
     "(?:伪装|隐蔽)目标(?:检测|分割)",
     "(?i)\\bcomputer vision\\b",

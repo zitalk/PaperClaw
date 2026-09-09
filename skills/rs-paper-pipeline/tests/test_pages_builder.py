@@ -31,6 +31,7 @@ class PagesBuilderTest(unittest.TestCase):
             "Cross-Camera Multi-Object Tracking and Re-Identification": "多视角与多目标感知",
             "Small Object Detection in UAV Aerial Imagery": "无人机视觉",
             "Training-Free Open-Vocabulary Semantic Segmentation": "免训练开放集分割",
+            "Industrial Visual Anomaly Detection for Manufacturing Inspection": "工业异常检测",
         }
         for title, expected in examples.items():
             with self.subTest(title=title):
@@ -45,19 +46,41 @@ class PagesBuilderTest(unittest.TestCase):
             )["categories"],
         )
 
-    def test_four_core_directions_plus_extended_reading_and_cod_topic(self):
+    def test_five_core_directions_plus_extended_reading_and_cod_topic(self):
         directions = public_directions()
-        self.assertEqual(len(directions), 5)
+        self.assertEqual(len(directions), 6)
         self.assertEqual(directions[-1]["name"], "拓展阅读")
         self.assertEqual(directions[-1]["topics"], [])
         self.assertNotIn("多模态显著目标检测", [d["name"] for d in directions])
         self.assertIn("mm-cod", [t["id"] for t in directions[0]["topics"]])
+        industrial = next(d for d in directions if d["name"] == "工业异常检测")
+        self.assertIn("iad-detection", [t["id"] for t in industrial["topics"]])
 
     def test_cross_direction_labels_are_not_exclusive(self):
         result = classify_research("Training-Free Open-Vocabulary Aerial Segmentation with Vision-Language Models")
         self.assertEqual(set(result["categories"]), {"免训练开放集分割", "多模态视觉学习", "无人机视觉"})
         result = classify_research("UAV Cross-Camera Multi-Object Tracking")
         self.assertEqual(set(result["categories"]), {"无人机视觉", "多视角与多目标感知"})
+        result = classify_research("RGB-D Industrial Visual Anomaly Detection and Localization")
+        self.assertEqual(set(result["categories"]), {"多模态视觉学习", "工业异常检测"})
+
+    def test_industrial_anomaly_requires_visual_inspection_evidence(self):
+        examples = [
+            "Industrial Visual Anomaly Detection on MVTec AD",
+            "Surface Defect Detection and Segmentation for Steel Inspection",
+            "Logical Anomaly Localization for Manufacturing Assembly Inspection",
+            "3D Anomaly Detection for Industrial Point-Cloud Inspection",
+        ]
+        for title in examples:
+            with self.subTest(title=title):
+                self.assertIn("工业异常检测", classify_research(title)["categories"])
+        for title in [
+            "Predictive Maintenance with Vibration Time Series",
+            "Network Traffic Anomaly Detection",
+            "Video Anomaly Detection for Pedestrian Surveillance",
+        ]:
+            with self.subTest(title=title):
+                self.assertNotIn("工业异常检测", classify_research(title)["categories"])
 
     def test_extended_reading_has_evidence_and_does_not_override_core(self):
         examples = [
@@ -283,7 +306,7 @@ class PagesBuilderTest(unittest.TestCase):
             self.assertTrue((output / "index.html").exists())
             payload = (output / "data" / "papers.json").read_text(encoding="utf-8")
             data = json.loads(payload)
-            self.assertEqual(len(data["directions"]), 5)
+            self.assertEqual(len(data["directions"]), 6)
             self.assertTrue(all("categories" in p and "topics" in p for p in data["papers"]))
             self.assertGreaterEqual(len(data["papers"]), 17)
             self.assertNotIn("GITHUB_TOKEN", payload)

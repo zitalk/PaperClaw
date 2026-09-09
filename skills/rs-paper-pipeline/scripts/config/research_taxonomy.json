@@ -1,5 +1,5 @@
 {
-  "version": "2026-09-04",
+  "version": "2026-09-09",
   "classification_note": "规则基于标题、摘要和日报概括生成可重叠标签，不代表逐篇质量评分。显著/伪装目标检测属于任务分组，不能据此推断输入必为多模态。",
   "directions": [
     {
@@ -274,6 +274,77 @@
             "cross-domain segmentation"
           ],
           "pattern": "remote sensing|aerial|UAV|domain|遥感|航拍|无人机|跨域"
+        }
+      ]
+    },
+    {
+      "id": "industrial-anomaly",
+      "name": "工业异常检测",
+      "all_of": [
+        "(?:\\b(?:industrial|manufactur(?:ing|ed)?|factory|production[- ]line|quality inspection|visual inspection|machine vision|surface defect|product defect|component defect|MVTec(?: AD| LOCO| 3D-AD)?|BTAD|MPDD|Real-IAD)\\b|工业|制造业|工厂|产线|质检|质量检测|视觉检测|机器视觉|表面缺陷|产品缺陷|零部件缺陷)",
+        "(?:\\b(?:anomal(?:y|ies|ous)|defects?|faults?)\\b.{0,30}\\b(?:detect(?:ion)?|locali[sz](?:ation|ing)?|segment(?:ation|ing)?|inspect(?:ion|ing)?|classif(?:ication|ying))\\b|\\b(?:detect(?:ion)?|locali[sz](?:ation|ing)?|segment(?:ation|ing)?|inspect(?:ion|ing)?|classif(?:ication|ying))\\b.{0,30}\\b(?:anomal(?:y|ies|ous)|defects?|faults?)\\b|异常.{0,12}(?:检测|定位|分割|识别)|缺陷.{0,12}(?:检测|定位|分割|识别)|(?:检测|定位|分割|识别).{0,12}(?:异常|缺陷))",
+        "(?:\\b(?:visual|vision|image|imagery|video|camera|pixel|point[- ]cloud|RGB|depth|3D|detection|localization|segmentation|inspection)\\b|视觉|图像|影像|视频|相机|像素|点云|深度|三维|检测|定位|分割)"
+      ],
+      "topics": [
+        {
+          "id": "iad-detection",
+          "name": "工业视觉异常检测与定位",
+          "keywords": [
+            "industrial anomaly detection",
+            "visual anomaly localization",
+            "MVTec AD / VisA"
+          ],
+          "pattern": "industrial anomaly|visual anomaly|anomaly (?:detection|localization|segmentation)|MVTec(?: AD)?|Real-IAD|工业异常|视觉异常|异常(?:检测|定位|分割)"
+        },
+        {
+          "id": "iad-defect",
+          "name": "表面缺陷检测与分割",
+          "keywords": [
+            "surface defect detection",
+            "defect segmentation",
+            "quality inspection"
+          ],
+          "pattern": "surface defect|product defect|component defect|defect (?:detection|localization|segmentation|inspection)|表面缺陷|产品缺陷|零部件缺陷|缺陷(?:检测|定位|分割)|质检"
+        },
+        {
+          "id": "iad-generalization",
+          "name": "小样本、零样本与泛化",
+          "keywords": [
+            "few-shot anomaly detection",
+            "zero-shot anomaly detection",
+            "domain-generalized inspection"
+          ],
+          "pattern": "few[- ]shot|zero[- ]shot|one[- ]class|open[- ]set|open[- ]vocabulary|domain general|cross[- ]domain|小样本|少样本|零样本|单类|开放集|开放词汇|域泛化|跨域"
+        },
+        {
+          "id": "iad-logical",
+          "name": "逻辑与结构异常",
+          "keywords": [
+            "logical anomaly",
+            "structural anomaly",
+            "assembly inspection"
+          ],
+          "pattern": "logical anomal|structural anomal|assembly (?:anomaly|inspection|verification)|MVTec LOCO|逻辑异常|结构异常|装配(?:异常|检测|检查)"
+        },
+        {
+          "id": "iad-multimodal-3d",
+          "name": "多模态与三维异常检测",
+          "keywords": [
+            "RGB-D anomaly detection",
+            "3D anomaly detection",
+            "point-cloud inspection"
+          ],
+          "pattern": "multimodal|multi-modal|RGB[-+ ]?D|3D anomal|point[- ]cloud|depth|MVTec 3D|多模态|三维异常|点云|深度"
+        },
+        {
+          "id": "iad-foundation-synthesis",
+          "name": "基础模型与合成异常",
+          "keywords": [
+            "VLM / foundation model",
+            "synthetic anomaly generation",
+            "diffusion-based anomaly synthesis"
+          ],
+          "pattern": "foundation model|vision[- ]language|\\b(?:VLM|CLIP|DINO|SAM)\\b|synthetic anomal|anomaly synth|diffusion|基础模型|视觉语言|合成异常|异常生成|扩散模型"
         }
       ]
     },

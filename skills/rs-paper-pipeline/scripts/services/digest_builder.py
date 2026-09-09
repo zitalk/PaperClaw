@@ -126,7 +126,7 @@ def build_digest_with_llm(date: str, papers: list, stats: dict | None = None, fa
         return "\n".join(lines)
 
     prompt = (
-        "你是多模态视觉与无人机视觉论文日报编辑。请基于给定论文列表输出严格JSON：\n"
+        "你是视觉感知与工业智能论文日报编辑。请基于给定论文列表输出严格JSON：\n"
         "{\n"
         '  "overview": "120-180字，概述今日研究趋势",\n'
         '  "highlights": ["3条，每条20-40字"],\n'

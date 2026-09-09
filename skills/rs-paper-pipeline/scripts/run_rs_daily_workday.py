@@ -299,7 +299,7 @@ def _build_daily_report_urls(date_str: str) -> tuple[str, str]:
 
 
 def _build_notify_message(date_str: str, stats_path: str, issue) -> tuple[str, str]:
-    title = f"多模态视觉与无人机日报 {date_str}"
+    title = f"视觉感知与工业智能日报 {date_str}"
     stats = _load_stats(stats_path)
     selected_items = stats.get("selected_items") or []
     selected_count = stats.get("llm_selected_count")

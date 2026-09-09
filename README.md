@@ -3,8 +3,8 @@
 
   <h1>PaperClaw</h1>
 
-  <p><strong>面向多模态视觉与无人机研究的个人论文雷达</strong></p>
-  <p>四个核心方向＋拓展阅读 · 交叉标签 · 每日论文卡片</p>
+  <p><strong>面向视觉感知与工业智能的个人论文雷达</strong></p>
+  <p>五个核心方向＋拓展阅读 · 交叉标签 · 每日论文卡片</p>
 
   <p>
     <a href="https://papers.zitalk.cn/"><img src="https://img.shields.io/badge/研究门户-在线访问-0D6B66?style=flat-square" alt="研究门户" /></a>
@@ -24,7 +24,7 @@
 
 ## 研究雷达
 
-四个核心方向允许交叉，另设第五个展示方向“拓展阅读”。一篇论文可拥有多个核心方向与子方向标签，但只计为一篇。网页支持方向、子方向、日期和关键词筛选。
+五个核心方向允许交叉，另设第六个展示方向“拓展阅读”。一篇论文可拥有多个核心方向与子方向标签，但只计为一篇。网页支持方向、子方向、日期和关键词筛选。
 
 ### 1. 多模态视觉学习
 
@@ -78,7 +78,20 @@
 | 上下文、原型与类别校准 | context reasoning · prototype · class calibration |
 | 跨域与遥感扩展 | remote sensing · aerial / UAV · cross-domain segmentation |
 
-### 5. 拓展阅读
+### 5. 工业异常检测
+
+关注面向工业产品、零部件、表面和装配质量的视觉异常检测。必须使用图像、视频、深度或点云作为主要证据；纯振动、电流等时序故障诊断不在本方向内。
+
+| 子方向 | 代表关键词 |
+|---|---|
+| 工业视觉异常检测与定位 | industrial anomaly detection · visual anomaly localization · MVTec AD / VisA |
+| 表面缺陷检测与分割 | surface defect detection · defect segmentation · quality inspection |
+| 小样本、零样本与泛化 | few-shot anomaly detection · zero-shot anomaly detection · domain-generalized inspection |
+| 逻辑与结构异常 | logical anomaly · structural anomaly · assembly inspection |
+| 多模态与三维异常检测 | RGB-D anomaly detection · 3D anomaly detection · point-cloud inspection |
+| 基础模型与合成异常 | VLM / foundation model · synthetic anomaly generation · diffusion-based anomaly synthesis |
+
+### 6. 拓展阅读
 
 与核心方向相关性较弱，但在方法、传感器或应用上具有借鉴价值的论文。**只保留一个方向，不划分子方向、不挂子标签。** 优先归入明确命中的核心方向；只有未命中核心方向、且存在方法联系的论文才进入拓展阅读，不把所有未分类论文自动装入这里。
 
@@ -91,6 +104,7 @@
 | 无人机 RGB-T 显著目标检测 | 多模态视觉学习＋无人机视觉 |
 | 无人机跨相机多目标跟踪 | 多视角与多目标感知＋无人机视觉 |
 | 冻结视觉语言模型的免训练航拍开放词汇分割 | 免训练开放集分割＋无人机视觉＋多模态视觉学习 |
+| RGB-D 工业零件异常定位 | 工业异常检测＋多模态视觉学习 |
 
 标签由标题、已有摘要和日报概括中的明确证据生成。拓展阅读只显示一个方向标签，不与核心方向重复挂标。核心方向和拓展阅读都缺少证据的论文仍标记“待归类”，不强制归入任何方向；关键词命中只是辅助，不代表单篇论文质量评价。核心方向存在交叉，因此各方向数量相加可超过论文总数。
 
