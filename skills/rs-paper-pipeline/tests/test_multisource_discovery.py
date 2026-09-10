@@ -216,7 +216,7 @@ class MultiSourceDiscoveryTest(unittest.TestCase):
             "authentication_or_api_key_configuration_rejected",
         )
 
-    def test_springer_uses_current_metadata_endpoint_and_schema(self):
+    def test_springer_uses_compatible_meta_endpoint_and_local_date_filter(self):
         payload = {
             "result": [{"total": "1"}],
             "records": [{
@@ -243,13 +243,14 @@ class MultiSourceDiscoveryTest(unittest.TestCase):
         source, url = request.call_args_list[0].args[:2]
         query = parse_qs(urlparse(url).query)
         self.assertEqual(source, "Springer Nature")
-        self.assertEqual(urlparse(url).path, "/metadata/v1/articles")
+        self.assertEqual(urlparse(url).path, "/meta/v2/json")
         self.assertEqual(query["api_key"], ["test-key"])
+        self.assertNotIn("onlinedate", query["q"][0])
         self.assertEqual(papers[0]["venue"], "Machine Vision and Applications")
         self.assertEqual(papers[0]["authors"], "Example Alice, Example Bob")
         self.assertEqual(papers[0]["url"], "https://doi.org/10.1007/example")
 
-    def test_healthcheck_uses_current_springer_metadata_endpoint(self):
+    def test_healthcheck_uses_compatible_springer_meta_endpoint(self):
         with patch.dict(
             check_source_api_keys.os.environ,
             {"SPRINGER_NATURE_API_KEY": "test-key"},
@@ -257,32 +258,9 @@ class MultiSourceDiscoveryTest(unittest.TestCase):
         ):
             springer = next(check for check in check_source_api_keys.build_checks() if check.name == "Springer Nature")
 
-        self.assertEqual(urlparse(springer.url).path, "/metadata/v1/articles")
+        self.assertEqual(urlparse(springer.url).path, "/meta/v2/json")
         self.assertEqual(parse_qs(urlparse(springer.url).query)["api_key"], ["test-key"])
-        self.assertEqual(urlparse(springer.fallback_url).path, "/meta/v2/json")
-
-    def test_springer_falls_back_when_current_endpoint_rejects_key(self):
-        payload = {"result": [{"total": "0"}], "records": []}
-
-        def fake_request(source, url, **kwargs):
-            if urlparse(url).path == "/metadata/v1/articles":
-                raise multisource_client.ProviderUnavailable("HTTP 401 authentication_or_entitlement")
-            return payload
-
-        with (
-            patch.object(
-                multisource_client,
-                "CONFIG",
-                replace(multisource_client.CONFIG, springer_nature_api_key="test-key"),
-            ),
-            patch.object(multisource_client, "_json_request", side_effect=fake_request) as request,
-        ):
-            self.assertEqual(multisource_client.fetch_springer("2026-09-01"), [])
-
-        paths = [urlparse(call.args[1]).path for call in request.call_args_list]
-        self.assertEqual(paths[0], "/metadata/v1/articles")
-        self.assertTrue(all(path == "/meta/v2/json" for path in paths[1:]))
-        self.assertEqual(len(paths), len(multisource_client.QUERY_BUNDLES) + 1)
+        self.assertEqual(springer.fallback_url, "")
 
     def test_healthcheck_maps_ieee_418_to_temporary_provider_block(self):
         self.assertEqual(

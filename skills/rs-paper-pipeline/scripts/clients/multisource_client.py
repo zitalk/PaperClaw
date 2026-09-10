@@ -40,8 +40,7 @@ SEMANTIC_MIN_INTERVAL_SECONDS = 1.1
 _semantic_last_request = 0.0
 IEEE_MIN_INTERVAL_SECONDS = 1.1
 _ieee_last_request = 0.0
-SPRINGER_METADATA_URL = "https://api.springernature.com/metadata/v1/articles"
-SPRINGER_LEGACY_URL = "https://api.springernature.com/meta/v2/json"
+SPRINGER_METADATA_URL = "https://api.springernature.com/meta/v2/json"
 
 
 class ProviderUnavailable(RuntimeError):
@@ -346,22 +345,17 @@ def fetch_springer(target_date: str) -> list[dict[str, Any]]:
     if not CONFIG.springer_nature_api_key:
         return []
     output: list[dict[str, Any]] = []
-    endpoint = SPRINGER_METADATA_URL
     for query in QUERY_BUNDLES:
+        # This repository's free Meta API key accepts one basic keyword
+        # constraint, but rejects Metadata v1 and compound keyword + date
+        # constraints. The caller applies the exact target-day filter locally.
         params = {
             "api_key": CONFIG.springer_nature_api_key,
-            "q": f'keyword: "{query}" onlinedate:{target_date}',
+            "q": f'keyword: "{query}"',
             "s": 1,
             "p": 100,
         }
-        try:
-            payload = _json_request("Springer Nature", _url(endpoint, **params))
-        except ProviderUnavailable as exc:
-            if endpoint != SPRINGER_METADATA_URL or "authentication_or_entitlement" not in str(exc):
-                raise
-            endpoint = SPRINGER_LEGACY_URL
-            print("  [Springer Nature] Metadata v1 未授权，自动回退 Meta v2")
-            payload = _json_request("Springer Nature", _url(endpoint, **params))
+        payload = _json_request("Springer Nature", _url(SPRINGER_METADATA_URL, **params))
         for work in payload.get("records", []):
             if not isinstance(work, dict):
                 continue

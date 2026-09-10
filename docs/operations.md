@@ -61,7 +61,7 @@ RS_GITHUB_REPO=zitalk/PaperClaw
 | Actions secret | `SEMANTIC_SCHOLAR_API_KEY` | Semantic Scholar 元数据检索（全局严格 ≤ 1 请求/秒） |
 | Actions secret | `IEEE_API_KEY` | IEEE Xplore 元数据检索；未审批时自动跳过 |
 | Actions secret | `ELSEVIER_API_KEY` | Elsevier Scopus 默认 `STANDARD` 元数据接口；不要求 Institutional Token |
-| Actions secret | `SPRINGER_NATURE_API_KEY` | Springer Nature Metadata v1 元数据检索；当前 Key 不兼容时自动回退 Meta v2 |
+| Actions secret | `SPRINGER_NATURE_API_KEY` | Springer Nature Meta v2 基础关键词检索；精确日期与方向由 PaperClaw 本地过滤 |
 | Actions variable | `RS_GITHUB_REPO` | 目标仓库，值为 `zitalk/PaperClaw` |
 | Actions variable（可选） | `LLM_MODEL`、`LLM_API_URL` | 自定义模型与兼容接口 |
 

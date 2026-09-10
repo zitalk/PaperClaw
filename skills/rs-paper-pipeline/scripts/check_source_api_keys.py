@@ -122,7 +122,7 @@ def build_checks() -> list[Check]:
             name="Springer Nature",
             secret_names=("SPRINGER_NATURE_API_KEY",),
             url=_url(
-                "https://api.springernature.com/metadata/v1/articles",
+                "https://api.springernature.com/meta/v2/json",
                 api_key=springer_key,
                 q="keyword: multimodal vision",
                 s=1,
@@ -132,13 +132,6 @@ def build_checks() -> list[Check]:
             validator=lambda value: isinstance(value, dict)
             and "result" in value
             and "records" in value,
-            fallback_url=_url(
-                "https://api.springernature.com/meta/v2/json",
-                api_key=springer_key,
-                q="keyword: multimodal vision",
-                s=1,
-                p=1,
-            ),
         ),
     ]
 
