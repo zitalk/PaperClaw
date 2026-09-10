@@ -114,6 +114,17 @@ class MultiSourceDiscoveryTest(unittest.TestCase):
         sleep.assert_called_once()
         self.assertAlmostEqual(sleep.call_args.args[0], 0.85, places=6)
 
+    def test_ieee_slot_serializes_requests(self):
+        with (
+            patch.object(multisource_client, "_ieee_last_request", 100.0),
+            patch.object(multisource_client.time, "monotonic", side_effect=[100.25, 101.10]),
+            patch.object(multisource_client.time, "sleep") as sleep,
+        ):
+            multisource_client._ieee_slot()
+
+        sleep.assert_called_once()
+        self.assertAlmostEqual(sleep.call_args.args[0], 0.85, places=6)
+
     def test_elsevier_uses_api_key_and_default_scopus_endpoint_only(self):
         with (
             patch.object(
@@ -248,6 +259,36 @@ class MultiSourceDiscoveryTest(unittest.TestCase):
 
         self.assertEqual(urlparse(springer.url).path, "/metadata/v1/articles")
         self.assertEqual(parse_qs(urlparse(springer.url).query)["api_key"], ["test-key"])
+        self.assertEqual(urlparse(springer.fallback_url).path, "/meta/v2/json")
+
+    def test_springer_falls_back_when_current_endpoint_rejects_key(self):
+        payload = {"result": [{"total": "0"}], "records": []}
+
+        def fake_request(source, url, **kwargs):
+            if urlparse(url).path == "/metadata/v1/articles":
+                raise multisource_client.ProviderUnavailable("HTTP 401 authentication_or_entitlement")
+            return payload
+
+        with (
+            patch.object(
+                multisource_client,
+                "CONFIG",
+                replace(multisource_client.CONFIG, springer_nature_api_key="test-key"),
+            ),
+            patch.object(multisource_client, "_json_request", side_effect=fake_request) as request,
+        ):
+            self.assertEqual(multisource_client.fetch_springer("2026-09-01"), [])
+
+        paths = [urlparse(call.args[1]).path for call in request.call_args_list]
+        self.assertEqual(paths[0], "/metadata/v1/articles")
+        self.assertTrue(all(path == "/meta/v2/json" for path in paths[1:]))
+        self.assertEqual(len(paths), len(multisource_client.QUERY_BUNDLES) + 1)
+
+    def test_healthcheck_maps_ieee_418_to_temporary_provider_block(self):
+        self.assertEqual(
+            check_source_api_keys._safe_http_detail(418, "IEEE Xplore"),
+            "provider_anti_bot_or_temporary_block",
+        )
 
 
 if __name__ == "__main__":

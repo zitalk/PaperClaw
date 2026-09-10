@@ -32,6 +32,7 @@ class Check:
     url: str
     headers: dict[str, str]
     validator: Callable[[Any], bool]
+    fallback_url: str = ""
 
 
 @dataclass(frozen=True)
@@ -131,6 +132,13 @@ def build_checks() -> list[Check]:
             validator=lambda value: isinstance(value, dict)
             and "result" in value
             and "records" in value,
+            fallback_url=_url(
+                "https://api.springernature.com/meta/v2/json",
+                api_key=springer_key,
+                q="keyword: multimodal vision",
+                s=1,
+                p=1,
+            ),
         ),
     ]
 
@@ -140,6 +148,8 @@ def _safe_http_detail(status: int, source: str = "") -> str:
         return "authentication_or_entitlement_rejected"
     if status == 429:
         return "rate_limited"
+    if status == 418:
+        return "provider_anti_bot_or_temporary_block"
     if status == 400:
         if source.startswith("Elsevier"):
             return "authentication_or_api_key_configuration_rejected"
@@ -149,14 +159,10 @@ def _safe_http_detail(status: int, source: str = "") -> str:
     return "unexpected_http_response"
 
 
-def run_check(check: Check) -> Result:
-    missing = [name for name in check.secret_names if not _env(name)]
-    if missing:
-        return Result(check.name, "FAIL", None, f"missing_secret:{','.join(missing)}")
-
+def _run_check_url(check: Check, url: str) -> Result:
     request_headers = {"User-Agent": USER_AGENT, **check.headers}
     for attempt in range(1, MAX_ATTEMPTS + 1):
-        request = urllib.request.Request(check.url, headers=request_headers)
+        request = urllib.request.Request(url, headers=request_headers)
         try:
             with urllib.request.urlopen(request, timeout=TIMEOUT_SECONDS) as response:
                 status = int(response.status)
@@ -166,9 +172,9 @@ def run_check(check: Check) -> Result:
             return Result(check.name, "FAIL", status, "unexpected_response_schema")
         except urllib.error.HTTPError as exc:
             status = int(exc.code)
-            retryable = status == 429 or 500 <= status <= 599
+            retryable = status in (418, 429) or 500 <= status <= 599
             if retryable and attempt < MAX_ATTEMPTS:
-                time.sleep(2 * attempt)
+                time.sleep(15 if status == 418 else 2 * attempt)
                 continue
             return Result(check.name, "FAIL", status, _safe_http_detail(status, check.name))
         except (urllib.error.URLError, TimeoutError):
@@ -184,6 +190,25 @@ def run_check(check: Check) -> Result:
             return Result(check.name, "FAIL", None, "unexpected_client_error")
 
     return Result(check.name, "FAIL", None, "retry_exhausted")
+
+
+def run_check(check: Check) -> Result:
+    missing = [name for name in check.secret_names if not _env(name)]
+    if missing:
+        return Result(check.name, "FAIL", None, f"missing_secret:{','.join(missing)}")
+
+    result = _run_check_url(check, check.url)
+    if result.status == "FAIL" and result.http_status in (401, 403) and check.fallback_url:
+        fallback = _run_check_url(check, check.fallback_url)
+        if fallback.status == "PASS":
+            return Result(
+                check.name,
+                "PASS",
+                fallback.http_status,
+                "authenticated_metadata_query_via_legacy_fallback",
+            )
+        return fallback
+    return result
 
 
 def write_github_summary(results: list[Result]) -> None:

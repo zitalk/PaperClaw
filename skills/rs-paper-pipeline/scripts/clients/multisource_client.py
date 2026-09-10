@@ -38,6 +38,10 @@ QUERY_BUNDLES = (
 USER_AGENT = CONFIG.arxiv_user_agent
 SEMANTIC_MIN_INTERVAL_SECONDS = 1.1
 _semantic_last_request = 0.0
+IEEE_MIN_INTERVAL_SECONDS = 1.1
+_ieee_last_request = 0.0
+SPRINGER_METADATA_URL = "https://api.springernature.com/metadata/v1/articles"
+SPRINGER_LEGACY_URL = "https://api.springernature.com/meta/v2/json"
 
 
 class ProviderUnavailable(RuntimeError):
@@ -85,9 +89,10 @@ def _json_request(
         except urllib.error.HTTPError as exc:
             if exc.code in (401, 403):
                 raise ProviderUnavailable(f"HTTP {exc.code} authentication_or_entitlement") from None
-            if exc.code == 429 or 500 <= exc.code <= 599:
+            if exc.code in (418, 429) or 500 <= exc.code <= 599:
                 if attempt < attempts:
-                    wait_seconds = min(_retry_after(exc.headers, 2**attempt), 30)
+                    fallback = 15 * attempt if exc.code == 418 else 2**attempt
+                    wait_seconds = min(_retry_after(exc.headers, fallback), 30)
                     print(f"  [{source}] HTTP {exc.code}，{wait_seconds}s 后重试 {attempt}/{attempts}")
                     time.sleep(wait_seconds)
                     continue
@@ -106,6 +111,14 @@ def _semantic_slot() -> None:
     if elapsed < SEMANTIC_MIN_INTERVAL_SECONDS:
         time.sleep(SEMANTIC_MIN_INTERVAL_SECONDS - elapsed)
     _semantic_last_request = time.monotonic()
+
+
+def _ieee_slot() -> None:
+    global _ieee_last_request
+    elapsed = time.monotonic() - _ieee_last_request
+    if elapsed < IEEE_MIN_INTERVAL_SECONDS:
+        time.sleep(IEEE_MIN_INTERVAL_SECONDS - elapsed)
+    _ieee_last_request = time.monotonic()
 
 
 def _clean_text(value: Any) -> str:
@@ -333,17 +346,22 @@ def fetch_springer(target_date: str) -> list[dict[str, Any]]:
     if not CONFIG.springer_nature_api_key:
         return []
     output: list[dict[str, Any]] = []
+    endpoint = SPRINGER_METADATA_URL
     for query in QUERY_BUNDLES:
-        payload = _json_request(
-            "Springer Nature",
-            _url(
-                "https://api.springernature.com/metadata/v1/articles",
-                api_key=CONFIG.springer_nature_api_key,
-                q=f'keyword: "{query}" onlinedate:{target_date}',
-                s=1,
-                p=100,
-            ),
-        )
+        params = {
+            "api_key": CONFIG.springer_nature_api_key,
+            "q": f'keyword: "{query}" onlinedate:{target_date}',
+            "s": 1,
+            "p": 100,
+        }
+        try:
+            payload = _json_request("Springer Nature", _url(endpoint, **params))
+        except ProviderUnavailable as exc:
+            if endpoint != SPRINGER_METADATA_URL or "authentication_or_entitlement" not in str(exc):
+                raise
+            endpoint = SPRINGER_LEGACY_URL
+            print("  [Springer Nature] Metadata v1 未授权，自动回退 Meta v2")
+            payload = _json_request("Springer Nature", _url(endpoint, **params))
         for work in payload.get("records", []):
             if not isinstance(work, dict):
                 continue
@@ -401,6 +419,7 @@ def fetch_ieee(target_date: str) -> list[dict[str, Any]]:
                 start_record=1,
                 format="json",
             ),
+            before_request=_ieee_slot,
         )
         for work in payload.get("articles", []):
             if not isinstance(work, dict):
