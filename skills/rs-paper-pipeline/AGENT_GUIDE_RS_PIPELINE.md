@@ -272,7 +272,7 @@ python3 scripts/cli.py reconcile --date YYYYMMDD
 
 默认策略：
 
-- `rs-pipeline-schedule.yml` 在北京时间工作日 09:10 触发
+- `rs-pipeline-schedule-reset.yml` 在北京时间工作日 13:00、22:00 触发，并在周日 13:00 补扫
 - `rs-pipeline-manual.yml` 只负责手动运维
 - 两个 workflow 都调用统一 CLI，不额外复制 Python 业务逻辑
 - 默认走仓库内的筛选配置文件
