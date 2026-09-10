@@ -4,31 +4,52 @@
 
 # [20260909](./202609/20260909.md)
 <!-- paperclaw-report: zitalk/PaperClaw -->
-<!-- paperclaw-run: {"status": "degraded", "checked_at": "2026-09-10T05:32:52+08:00", "unavailable_sources": ["Springer Nature", "IEEE Xplore"], "unconfigured_sources": [], "filter_fallback": false, "failed_papers": 0} -->
+<!-- paperclaw-run: {"status": "degraded", "checked_at": "2026-09-10T09:19:57+08:00", "unavailable_sources": ["Springer Nature"], "unconfigured_sources": [], "filter_fallback": false, "failed_papers": 6} -->
 
 ## 📌 今日概况
 
-检索完成，但存在异常 · 最近检查：2026-09-10 05:32:52（北京时间）
-本轮检索候选论文 99 篇；刊会准入通过 1 篇（排除 98 篇）；本轮 LLM 新筛中 1 篇，复用已收录匹配 0 篇；本轮新增入报 1 篇；目标日累计收录 1 篇。
+检索完成，但存在异常 · 最近检查：2026-09-10 09:19:57（北京时间）
+本轮检索候选论文 148 篇；刊会准入通过 43 篇（排除 105 篇）；本轮 LLM 新筛中 14 篇，复用已收录匹配 0 篇；本轮新增入报 8 篇；目标日累计收录 8 篇。
 
-部分来源不可用：Springer Nature、IEEE Xplore；本次结果不代表完整覆盖。 今日研究聚焦于工业智能质检领域，提出面向边缘IIoT的钢材表面缺陷分割方法。该方法基于U-Net架构，旨在实现高效、实时的缺陷检测，以支持工业互联网场景下的质量控制。研究体现了深度学习与边缘计算结合的趋势，强调模型效率与部署可行性。
+部分来源不可用：Springer Nature；本次结果不代表完整覆盖。 有 6 篇匹配论文处理失败，请查看日报失败明细。 今日论文聚焦多模态感知与工业智能的交叉创新，涵盖视觉语言模型、多传感器融合、遥感检测与生成式模型等方向。研究趋势显示，无训练框架与跨模态对齐成为提升效率的关键，同时几何与变分方法被引入以解决模态鸿沟和开放世界检测问题。多视图生成与层次化特征融合进一步推动自动驾驶和城市感知的实用性。
 
 ## ✨ 今日亮点
 
-- 钢材表面缺陷分割结合边缘IIoT，提升质检实时性。
-- U-Net架构在工业视觉任务中持续展现应用潜力。
-- 研究关注模型部署效率，适配边缘计算环境。
+- 无训练组合视频检索利用基础模型实现高效多模态验证
+- 非平衡最优传输为视觉语言模型模态鸿沟提供变分解释
+- 双曲几何与四叉树编码分别提升开放世界检测和变化检测
 
 ## 🗂 今日文章列表
 
 | 标题 | 作者 | 单位 | 一句话概括 | Issue |
 |---|---|---|---|---|
-| [20260909] Intelligent Steel Surface Defect Segmentation for Edge-Oriented IIoT Quality Control | Campos Matheus, Bruno Augusto Pereira, Freitas Moisés, Adriano C. Pinto, Alison de Oliveira Moraes, Sarmento Renan, Arthur H. C. Miranda, Nohara Evandro | 暂无 | 提出面向边缘IIoT的U-Net钢材缺陷分割方法，用于工业质量控制。 | [#346](https://github.com/zitalk/PaperClaw/issues/346) |
+| [20260909] UOT-Gap: A Variational Principle for the Modality Gap in Vision-Language Models via Unbalanced Optimal Transport | Yang Zonglin, Ma Huilan, Zheng Xudan, Xie Yuejun | Guangdong Police College | 提出非平衡最优传输变分原理，解释并量化视觉语言模型中的模态鸿沟。 | [#348](https://github.com/zitalk/PaperClaw/issues/348) |
+| [20260909] Beyond Similarity: Foundation Models as an Efficient Backbone for Training-Free Composed Video Retrieval | Demidov Dmitry, Muhammad Zaigham Zaheer, Thawakar Omkar, Abdelrahman Mohamed Shaker, Anwer Rao | Mohamed bin Zayed University of Artificial Intelligence, UAE | 利用基础模型作为无训练骨干，实现组合视频检索的查询自适应推理。 | [#349](https://github.com/zitalk/PaperClaw/issues/349) |
+| [20260909] StreetDiff: Multi-view Street Scenes Generation via Cross-view Consistent Multi-view Stable Diffusion with Structure Prompts | Zhang Qi, Wang Yanyifan, Zhang Weiyuan, Huang Hui | College of Computer Science and Software Engineering, Shenzhen University, China | 基于跨视图一致多视图扩散与结构提示，生成多视角街景图像。 | [#350](https://github.com/zitalk/PaperClaw/issues/350) |
+| [20260909] CLFTv2: Efficient Camera-LiDAR Fusion for Semantic Segmentation via Hierarchical Feature Pyramids | Tahves Toomas, Bellone Mauro, Sell Raivo | Department of Mechanical and Industrial Engineering, Tallinn University of Technology, Tallinn, Estonia (；the FinEst Centre for Smart Cities, Tallinn University of Technology, Tallinn, Estonia；Universitas Mercatorum, Rome, Italy | 通过层次特征金字塔实现高效相机-激光雷达融合语义分割。 | [#351](https://github.com/zitalk/PaperClaw/issues/351) |
+| [20260909] From Pixels to Hierarchical Sequences: Quadtree Mask Encoding for Vision-Language Binary Change Detection | An Xiao, Zhang Ruikang, Zhong Chen, Shen Xuli, Sun Jiaxing, Wu Jiang, He Wei | Wuhan University；Peking University；Shanghai Artificial Intelligence Laboratory | 采用四叉树掩码编码将像素转为层次序列，用于视觉语言变化检测。 | [#352](https://github.com/zitalk/PaperClaw/issues/352) |
+| [20260909] Layerwise Tunable Lifting Scheme for the Convolutional Neural Network | Yovkochov Abdumannon, Le An, Seo Sungbal, Bae You-Suk, Nguyen Truong | Electrical and Computer Engineering Department, University of California San Diego, La Jolla, CA 92093, USA；Department of Computer Engineering, Tech University of Korea, Siheung 15073, Korea | 提出层可调提升方案，将双正交小波滤波器融入卷积神经网络。 | [#353](https://github.com/zitalk/PaperClaw/issues/353) |
+| [20260909] MethaneFuse: Learning from Multi-Sensor Satellite Observations for Methane Plume Detection | Wang Yuyao, Juliana Y. Leung, Niu Di | Department of Electrical and；University of Alberta；Department of Civil and | 融合多传感器卫星观测，在部分传感器缺失下检测甲烷羽流。 | [#354](https://github.com/zitalk/PaperClaw/issues/354) |
+| [20260909] Hyperbolic Geometry for Open-World Object Detection in Remote Sensing Imagery | Li Wuzhou, Zhou Jiawei, Wang Shenghang, Li Xiang | School of Computer Science and Artificial Intelligence, Wuhan Textile University, Wuhan, China (；the Electronic Information School, Wuhan University, Wuhan, China (；the Electrical and Computer Engineering, Ohio State University, Columbus, OH, USA (；School of Artificial Intelligence, Wuhan University, Wuhan, China ( | 引入双曲几何进行遥感图像开放世界目标检测与未知目标发现。 | [#355](https://github.com/zitalk/PaperClaw/issues/355) |
+
+## ⚠️ 未纳入日报的匹配论文
+
+以下论文通过关键词/LLM 筛选，但在处理过程中失败未纳入日报。可通过来源链接查看原文。
+
+| 标题 | 来源 | 失败原因 |
+|------|-------|----------|
+| Beyond Weak Labels: Prompt-Guided Local Refinement for Weakly Supervised Water Segmentation in High-Resolution Multispectral Imagery | [2609.10371v1](https://arxiv.org/abs/2609.10371v1) | 质检未通过: 作者为空或无效; 图片数量不足（至少1张） |
+| Beyond One-Size-Fits-All: Sample-Adaptive Strategy Routing for Vision Token Pruning in MLLMs | [2609.10346v1](https://arxiv.org/abs/2609.10346v1) | 质检未通过: 作者为空或无效; 图片数量不足（至少1张） |
+| Geometry Without Coordinates: LiDAR Diffusion as a 3D Feature Bridge | [2609.10322v1](https://arxiv.org/abs/2609.10322v1) | 质检未通过: 作者为空或无效; 图片数量不足（至少1张） |
+| Isotropic Embedding Perturbations for Robust Vision Language Encoders | [2609.10292v1](https://arxiv.org/abs/2609.10292v1) | 质检未通过: 作者为空或无效; 图片数量不足（至少1张） |
+| When Fusion Fails: Corruption-Aware Rebalanced Fusion for Multi-Modal Medical Image Segmentation | [2609.10261v1](https://arxiv.org/abs/2609.10261v1) | 质检未通过: 作者为空或无效; 图片数量不足（至少1张） |
+| ScopeMamba-YOLO: Widening the Perceptual Scope Inward and Outward for Small Object Detection in Remote Sensing Imagery | [2609.10156v1](https://arxiv.org/abs/2609.10156v1) | 质检未通过: 作者为空或无效; 图片数量不足（至少1张） |
+
 
 ## 🔎 观察
 
-- 边缘智能成为工业视觉落地关键，算法需平衡精度与资源消耗。
-- 单一论文显示缺陷分割研究仍以经典架构优化为主，创新性有限。
+- 无训练与变分方法正成为多模态对齐和检索的高效替代方案，降低对大规模标注的依赖。
+- 遥感与自动驾驶领域持续吸收几何与层次化表示，以应对开放世界和跨视图一致性挑战。
 
 ---
 
