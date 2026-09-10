@@ -337,7 +337,7 @@ def fetch_springer(target_date: str) -> list[dict[str, Any]]:
         payload = _json_request(
             "Springer Nature",
             _url(
-                "https://api.springernature.com/meta/v2/json",
+                "https://api.springernature.com/metadata/v1/articles",
                 api_key=CONFIG.springer_nature_api_key,
                 q=f'keyword: "{query}" onlinedate:{target_date}',
                 s=1,
@@ -348,21 +348,35 @@ def fetch_springer(target_date: str) -> list[dict[str, Any]]:
             if not isinstance(work, dict):
                 continue
             urls = work.get("url") or []
+            if isinstance(urls, (str, dict)):
+                urls = [urls]
             landing_url = ""
             for link in urls:
                 if isinstance(link, dict) and link.get("value"):
                     landing_url = str(link["value"])
                     break
+                if isinstance(link, str) and link.strip():
+                    landing_url = link.strip()
+                    break
+            authors: list[str] = []
+            for creator in work.get("creators") or []:
+                if isinstance(creator, dict):
+                    name = creator.get("creator") or creator.get("name")
+                else:
+                    name = creator
+                if name:
+                    authors.append(str(name))
+            doi = work.get("doi")
             item = _candidate(
                 source="Springer Nature",
-                source_id=work.get("identifier", ""),
+                source_id=work.get("identifier") or doi or "",
                 title=work.get("title"),
                 abstract=work.get("abstract"),
                 published=work.get("onlineDate") or work.get("publicationDate"),
-                doi=work.get("doi"),
-                authors=[str(value) for value in (work.get("creators") or [])],
-                venue=work.get("publicationName"),
-                url=landing_url,
+                doi=doi,
+                authors=authors,
+                venue=work.get("journalTitle") or work.get("publicationName"),
+                url=landing_url or (f"https://doi.org/{doi}" if doi else ""),
             )
             if item:
                 output.append(item)

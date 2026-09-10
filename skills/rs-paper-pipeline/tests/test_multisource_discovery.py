@@ -205,6 +205,50 @@ class MultiSourceDiscoveryTest(unittest.TestCase):
             "authentication_or_api_key_configuration_rejected",
         )
 
+    def test_springer_uses_current_metadata_endpoint_and_schema(self):
+        payload = {
+            "result": [{"total": "1"}],
+            "records": [{
+                "identifier": "doi:10.1007/example",
+                "doi": "10.1007/example",
+                "title": "Multimodal Industrial Anomaly Detection",
+                "abstract": "A visual inspection method.",
+                "publicationDate": "2026-09-01",
+                "journalTitle": "Machine Vision and Applications",
+                "creators": [{"creator": "Alice Example"}, "Bob Example"],
+            }],
+        }
+        with (
+            patch.object(
+                multisource_client,
+                "CONFIG",
+                replace(multisource_client.CONFIG, springer_nature_api_key="test-key"),
+            ),
+            patch.object(multisource_client, "_json_request", return_value=payload) as request,
+        ):
+            papers = multisource_client.fetch_springer("2026-09-01")
+
+        self.assertEqual(request.call_count, len(multisource_client.QUERY_BUNDLES))
+        source, url = request.call_args_list[0].args[:2]
+        query = parse_qs(urlparse(url).query)
+        self.assertEqual(source, "Springer Nature")
+        self.assertEqual(urlparse(url).path, "/metadata/v1/articles")
+        self.assertEqual(query["api_key"], ["test-key"])
+        self.assertEqual(papers[0]["venue"], "Machine Vision and Applications")
+        self.assertEqual(papers[0]["authors"], "Example Alice, Example Bob")
+        self.assertEqual(papers[0]["url"], "https://doi.org/10.1007/example")
+
+    def test_healthcheck_uses_current_springer_metadata_endpoint(self):
+        with patch.dict(
+            check_source_api_keys.os.environ,
+            {"SPRINGER_NATURE_API_KEY": "test-key"},
+            clear=False,
+        ):
+            springer = next(check for check in check_source_api_keys.build_checks() if check.name == "Springer Nature")
+
+        self.assertEqual(urlparse(springer.url).path, "/metadata/v1/articles")
+        self.assertEqual(parse_qs(urlparse(springer.url).query)["api_key"], ["test-key"])
+
 
 if __name__ == "__main__":
     unittest.main()

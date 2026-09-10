@@ -35,8 +35,17 @@ class VenuePolicyTest(unittest.TestCase):
                     self.assertTrue(venue_decision({field: value, "arxiv_id": "2609.01234"})[0])
 
     def test_does_not_confuse_similar_journal_names(self):
-        for venue in ["Internet of Things", "IEEE Transactions on Human-Machine Systems", "Expert Systems", "Pattern Recognition Letters", "IEEE Transactions on Unknown"]:
+        for venue in ["Internet of Things", "IoT", "IEEE Transactions on Human-Machine Systems", "Expert Systems", "Pattern Recognition Letters", "IEEE Transactions on Unknown"]:
             self.assertFalse(venue_decision({"venue": venue})[0])
+
+    def test_iot_allowlist_is_ieee_journal_only(self):
+        for venue in ["IEEE Internet of Things Journal", "IEEE IoT Journal", "IoTJ", "JIOT"]:
+            with self.subTest(venue=venue):
+                self.assertEqual(venue_decision({"venue": venue}), (True, "allowlist: IoTJ"))
+        self.assertEqual(
+            venue_decision({"venue": "IoT", "doi": "10.3390/iot7030077"}),
+            (False, "venue_not_allowlisted"),
+        )
 
     def test_content_and_database_names_cannot_admit_a_paper(self):
         self.assertFalse(venue_decision({"title": "CVPR arXiv sensors", "sources": ["arXiv"]})[0])

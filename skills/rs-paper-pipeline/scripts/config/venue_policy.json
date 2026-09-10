@@ -1,5 +1,5 @@
 {
-  "version": "2026-09-04",
+  "version": "2026-09-10",
   "ccf_reference": "https://www.ccf.org.cn/Academic_Evaluation/By_category/",
   "scope": "Personal vision/AI/robotics shortlist, not the entire CCF catalogue. No quartile-based or IEEE Transactions wildcard admission.",
   "allow": [
@@ -13,7 +13,7 @@
     {"name": "IEEE Transactions on Neural Networks and Learning Systems", "abbr": "TNNLS", "ccf": "B"},
     {"name": "IEEE Transactions on Cybernetics", "abbr": "TCYB", "ccf": "B"},
     {"name": "IEEE Transactions on Systems, Man, and Cybernetics: Systems", "abbr": "TSMC", "aliases": ["TSMC-S", "IEEE Transactions on Systems, Man and Cybernetics: Systems"]},
-    {"name": "IEEE Internet of Things Journal", "abbr": "IoTJ", "aliases": ["IEEE IoT Journal", "IEEE IoTJ", "IoT Journal", "IOT", "JIOT"]},
+    {"name": "IEEE Internet of Things Journal", "abbr": "IoTJ", "aliases": ["IEEE IoT Journal", "IEEE IoTJ", "IoT Journal", "JIOT"]},
     {"name": "Pattern Recognition", "abbr": "PR", "ccf": "B", "doi_prefixes": ["10.1016/j.patcog."]},
     {"name": "Computer Vision and Image Understanding", "abbr": "CVIU", "ccf": "B"},
     {"name": "ACM Transactions on Multimedia Computing, Communications, and Applications", "abbr": "TOMM", "ccf": "B"},

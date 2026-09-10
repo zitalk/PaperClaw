@@ -121,7 +121,7 @@ def build_checks() -> list[Check]:
             name="Springer Nature",
             secret_names=("SPRINGER_NATURE_API_KEY",),
             url=_url(
-                "https://api.springernature.com/meta/v2/json",
+                "https://api.springernature.com/metadata/v1/articles",
                 api_key=springer_key,
                 q="keyword: multimodal vision",
                 s=1,
