@@ -351,7 +351,7 @@ def fetch_springer(target_date: str) -> list[dict[str, Any]]:
         # constraints. The caller applies the exact target-day filter locally.
         params = {
             "api_key": CONFIG.springer_nature_api_key,
-            "q": f'keyword: "{query}"',
+            "q": f"keyword: {query}",
             "s": 1,
             "p": 100,
         }

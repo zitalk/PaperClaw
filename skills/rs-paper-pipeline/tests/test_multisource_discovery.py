@@ -245,6 +245,7 @@ class MultiSourceDiscoveryTest(unittest.TestCase):
         self.assertEqual(source, "Springer Nature")
         self.assertEqual(urlparse(url).path, "/meta/v2/json")
         self.assertEqual(query["api_key"], ["test-key"])
+        self.assertEqual(query["q"], [f"keyword: {multisource_client.QUERY_BUNDLES[0]}"])
         self.assertNotIn("onlinedate", query["q"][0])
         self.assertEqual(papers[0]["venue"], "Machine Vision and Applications")
         self.assertEqual(papers[0]["authors"], "Example Alice, Example Bob")
