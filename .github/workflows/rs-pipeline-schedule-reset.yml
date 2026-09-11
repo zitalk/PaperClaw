@@ -3,14 +3,14 @@ name: PaperClaw Scheduled Pipeline
 on:
   workflow_dispatch:
   schedule:
-    # 13:00 Asia/Shanghai, Monday-Friday (05:00 UTC).
-    - cron: "0 5 * * 1-5"
-    # 22:00 Asia/Shanghai, Monday-Friday. Together with the 13:00 run above,
+    # 13:17 Asia/Shanghai, Monday-Friday (05:17 UTC); avoid the hourly peak.
+    - cron: "17 5 * * 1-5"
+    # 22:17 Asia/Shanghai, Monday-Friday. Together with the 13:17 run above,
     # workdays scan the previous calendar day at most twice.
-    - cron: "0 14 * * 1-5"
-    # Sunday at 13:00 Asia/Shanghai: reconcile the previous seven days and
+    - cron: "17 14 * * 1-5"
+    # Sunday at 13:17 Asia/Shanghai: reconcile the previous seven days and
     # emit a workflow warning/summary when historical omissions are recovered.
-    - cron: "0 5 * * 0"
+    - cron: "17 5 * * 0"
 
 concurrency:
   group: paperclaw-academic-api-clients

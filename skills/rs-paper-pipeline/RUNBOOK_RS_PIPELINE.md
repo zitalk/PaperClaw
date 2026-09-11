@@ -44,7 +44,7 @@ python3 scripts/cli.py run
 
 默认日期规则：
 
-- 工作日 13:00、22:00 各检索一次前一天；仅周日 13:00 增量补扫最近 7 个自然日
+- 工作日 13:17、22:17 各检索一次前一天；仅周日 13:17 增量补扫最近 7 个自然日
 - 周末发现遗漏时，在 GitHub Actions warning 和运行摘要中提示补录与失败数量
 - 按从旧到新的日期顺序处理
 - 已收录论文复用原卡片和筛选结果，只处理迟到新记录
@@ -144,7 +144,7 @@ pkill -f daily_arxiv_cross_filter.py
 
 行为说明：
 
-- `rs-pipeline-schedule-reset.yml`：北京时间工作日 13:00、22:00 定时触发，周日 13:00 补扫
+- `rs-pipeline-schedule-reset.yml`：北京时间工作日 13:17、22:17 定时触发，周日 13:17 补扫
 - `rs-pipeline-manual.yml`：手动支持 `run / reconcile / doctor`
 - 若无可用通知通道，定时任务会自动退到 `--no-notify`
 - Actions 也会读取仓库内的筛选配置文件，不再把关键词和 prompt 写死在代码里

@@ -41,6 +41,8 @@ _semantic_last_request = 0.0
 IEEE_MIN_INTERVAL_SECONDS = 1.1
 _ieee_last_request = 0.0
 SPRINGER_METADATA_URL = "https://api.springernature.com/meta/v2/json"
+SPRINGER_PAGE_SIZE = 20
+SPRINGER_MAX_RECORDS_PER_QUERY = 100
 
 
 class ProviderUnavailable(RuntimeError):
@@ -349,14 +351,20 @@ def fetch_springer(target_date: str) -> list[dict[str, Any]]:
         # This repository's free Meta API key accepts one basic keyword
         # constraint, but rejects Metadata v1 and compound keyword + date
         # constraints. The caller applies the exact target-day filter locally.
-        params = {
-            "api_key": CONFIG.springer_nature_api_key,
-            "q": f"keyword: {query}",
-            "s": 1,
-            "p": 100,
-        }
-        payload = _json_request("Springer Nature", _url(SPRINGER_METADATA_URL, **params))
-        for work in payload.get("records", []):
+        records: list[dict[str, Any]] = []
+        for start in range(1, SPRINGER_MAX_RECORDS_PER_QUERY + 1, SPRINGER_PAGE_SIZE):
+            params = {
+                "api_key": CONFIG.springer_nature_api_key,
+                "q": f"keyword: {query}",
+                "s": start,
+                "p": SPRINGER_PAGE_SIZE,
+            }
+            payload = _json_request("Springer Nature", _url(SPRINGER_METADATA_URL, **params))
+            page = [record for record in payload.get("records", []) if isinstance(record, dict)]
+            records.extend(page)
+            if len(page) < SPRINGER_PAGE_SIZE:
+                break
+        for work in records:
             if not isinstance(work, dict):
                 continue
             urls = work.get("url") or []

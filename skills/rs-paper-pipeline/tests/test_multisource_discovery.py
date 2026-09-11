@@ -246,6 +246,7 @@ class MultiSourceDiscoveryTest(unittest.TestCase):
         self.assertEqual(urlparse(url).path, "/meta/v2/json")
         self.assertEqual(query["api_key"], ["test-key"])
         self.assertEqual(query["q"], [f"keyword: {multisource_client.QUERY_BUNDLES[0]}"])
+        self.assertEqual(query["p"], [str(multisource_client.SPRINGER_PAGE_SIZE)])
         self.assertNotIn("onlinedate", query["q"][0])
         self.assertEqual(papers[0]["venue"], "Machine Vision and Applications")
         self.assertEqual(papers[0]["authors"], "Example Alice, Example Bob")
@@ -260,7 +261,10 @@ class MultiSourceDiscoveryTest(unittest.TestCase):
             springer = next(check for check in check_source_api_keys.build_checks() if check.name == "Springer Nature")
 
         self.assertEqual(urlparse(springer.url).path, "/meta/v2/json")
-        self.assertEqual(parse_qs(urlparse(springer.url).query)["api_key"], ["test-key"])
+        health_query = parse_qs(urlparse(springer.url).query)
+        self.assertEqual(health_query["api_key"], ["test-key"])
+        self.assertEqual(health_query["q"], [f"keyword: {multisource_client.QUERY_BUNDLES[0]}"])
+        self.assertEqual(health_query["p"], [str(multisource_client.SPRINGER_PAGE_SIZE)])
         self.assertEqual(springer.fallback_url, "")
 
     def test_healthcheck_maps_ieee_418_to_temporary_provider_block(self):

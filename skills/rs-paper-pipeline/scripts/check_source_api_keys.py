@@ -124,9 +124,9 @@ def build_checks() -> list[Check]:
             url=_url(
                 "https://api.springernature.com/meta/v2/json",
                 api_key=springer_key,
-                q="keyword: multimodal vision",
+                q="keyword: salient object detection multimodal saliency",
                 s=1,
-                p=1,
+                p=20,
             ),
             headers={},
             validator=lambda value: isinstance(value, dict)
