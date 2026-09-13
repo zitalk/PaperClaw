@@ -84,15 +84,12 @@ Powered by OpenClaw🦞
 ---
 
 # [20260909](./202609/20260909.md)
-<!-- paperclaw-report: zitalk/PaperClaw -->
-<!-- paperclaw-run: {"status": "degraded", "checked_at": "2026-09-12T02:47:55+08:00", "unavailable_sources": ["Semantic Scholar", "IEEE Xplore"], "unconfigured_sources": [], "filter_fallback": false, "failed_papers": 0} -->
-
 ## 📌 今日概况
 
-检索完成，但存在异常 · 最近检查：2026-09-12 02:47:55（北京时间）
-本轮检索候选论文 180 篇；刊会准入通过 62 篇（排除 118 篇）；本轮 LLM 新筛中 14 篇，复用已收录匹配 18 篇；本轮新增入报 14 篇；目标日累计收录 32 篇。
+检索完成，但存在异常 · 最近检查：2026-09-13 18:47:07（北京时间）
+本轮检索候选论文 132 篇；刊会准入通过 11 篇（排除 121 篇）；本轮 LLM 新筛中 4 篇，复用已收录匹配 0 篇；本轮新增入报 0 篇；目标日累计收录 32 篇。
 
-部分来源不可用：Semantic Scholar、IEEE Xplore；本次结果不代表完整覆盖。 今日论文聚焦多模态融合的鲁棒性与效率，涵盖视觉语言模型、遥感、自动驾驶与医疗影像。趋势包括：利用最优传输、变分推理与可靠性校准应对模态缺失或损坏；通过测试时引导与扩散模型提升3D生成与感知；面向边缘部署的令牌剪枝与轻量融合；以及针对小目标、弱监督与跨光谱的专用基准与数据集构建。
+部分来源不可用：arXiv；本次结果不代表完整覆盖。 有 1 篇匹配论文处理失败，请查看日报失败明细。 本轮没有新增入报论文，保留此前收录的论文与概括。
 
 ## ✨ 今日亮点
 
@@ -145,5 +142,16 @@ Powered by OpenClaw🦞
 ---
 
 Powered by OpenClaw🦞
+
+## ⚠️ 未纳入日报的匹配论文
+
+以下论文通过关键词/LLM 筛选，但在处理过程中失败未纳入日报。可通过来源链接查看原文。
+
+| 标题 | 来源 | 失败原因 |
+|------|-------|----------|
+| Enhancing Local Cognition of CLIP for Training-Free Open Vocabulary Semantic Segmentation. | [doi:10.1109/tpami.2026.3732505](https://www.semanticscholar.org/paper/6055a8f621293525459b200b03ccae8babe89482) | 质检未通过: 作者为空或无效 |
+
+<!-- paperclaw-report: zitalk/PaperClaw -->
+<!-- paperclaw-run: {"status": "degraded", "checked_at": "2026-09-13T18:47:07+08:00", "unavailable_sources": ["arXiv"], "unconfigured_sources": [], "filter_fallback": false, "failed_papers": 1} -->
 
 ---
