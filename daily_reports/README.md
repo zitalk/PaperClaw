@@ -2,6 +2,32 @@
 
 最近三天日报（最新在前）：
 
+# [20260913](./202609/20260913.md)
+<!-- paperclaw-report: zitalk/PaperClaw -->
+<!-- paperclaw-run: {"status": "degraded", "checked_at": "2026-09-14T18:39:48+08:00", "unavailable_sources": ["arXiv"], "unconfigured_sources": [], "filter_fallback": false, "failed_papers": 0} -->
+
+## 📌 今日概况
+
+检索完成，但存在异常 · 最近检查：2026-09-14 18:39:48（北京时间）
+
+本轮检索候选论文 56 篇；刊会准入通过 0 篇（排除 56 篇）；本轮 LLM 新筛中 0 篇，复用已收录匹配 0 篇；本轮新增入报 0 篇；目标日累计收录 0 篇。当日未检索到符合条件并纳入日报的论文。 部分来源不可用：arXiv；本次结果不代表完整覆盖。
+
+## ✨ 今日亮点
+
+- 本次有异常，请查看来源状态及失败明细；不能将部分结果当作完整检索结果。
+
+## 🔎 检索说明
+
+- 日报日期是论文检索目标日期；最近检查时间是任务实际执行时间。
+- 零结果不代表所有来源当天没有新论文，只表示本次未纳入符合条件的论文。
+- 同一日期后续补扫会更新这份日报，不重复创建日报 Issue。
+
+---
+
+Powered by OpenClaw🦞
+
+---
+
 # [20260912](./202609/20260912.md)
 <!-- paperclaw-report: zitalk/PaperClaw -->
 <!-- paperclaw-run: {"status": "degraded", "checked_at": "2026-09-13T18:57:04+08:00", "unavailable_sources": ["arXiv"], "unconfigured_sources": [], "filter_fallback": false, "failed_papers": 0} -->
@@ -51,51 +77,5 @@ Powered by OpenClaw🦞
 ---
 
 Powered by OpenClaw🦞
-
----
-
-# [20260910](./202609/20260910.md)
-## 📌 今日概况
-
-检索完成，但存在异常 · 最近检查：2026-09-13 18:50:55（北京时间）
-本轮检索候选论文 106 篇；刊会准入通过 6 篇（排除 100 篇）；本轮 LLM 新筛中 2 篇，复用已收录匹配 0 篇；本轮新增入报 0 篇；目标日累计收录 13 篇。
-
-部分来源不可用：arXiv；本次结果不代表完整覆盖。 本轮没有新增入报论文，保留此前收录的论文与概括。
-
-## ✨ 今日亮点
-
-- 事件相机实现空地旋翼跟踪，拓展异构平台相对定位。
-- 扩散模型与高斯泼溅结合，提升高程超分与去雾重建质量。
-- 视觉语言模型软提示与鲁棒性评估，推动少样本适应。
-
-## 🗂 今日文章列表
-
-| 标题 | 作者 | 单位 | 一句话概括 | Issue |
-|---|---|---|---|---|
-| [20260910] EVPeriscope: Extended Perception across Aerial and Ground Vehicles with Event-based Propeller Tracking | Ong Dexter, Kumar Vijay, Chaudhari Pratik | General Robotics, Automation, Sensing and Perception (GRASP) Laboratory；University of Pennsylvania, Philadelphia PA 19104, USA | 利用事件相机跟踪旋翼，实现空地车辆间扩展感知与相对定位。 | [#367](https://github.com/zitalk/PaperClaw/issues/367) |
-| [20260910] Guided Super-Resolution of Digital Elevation Models with Diffusion-Based Image Generators | Armand Mihai Nicolicioiu, Narnhofer Dominik, Metzger Nando, Panangian Daniel, Bittner Ksenia, Schindler Konrad | Remote Sensing Technology Institute, German Aerospace Center (DLR) | 基于扩散图像生成器引导数字高程模型超分辨率重建。 | [#368](https://github.com/zitalk/PaperClaw/issues/368) |
-| [20260910] MC-DeTra: Motion-Consistent Joint Object Detection and Socially-Aware Trajectory Forecasting in Bird's-Eye-View Images | Diuzhev Vladislav, Yudin Dmitry | Moscow Institute of Physics and Technology, Moscow, Russia；Artificial Intelligence Research Institute, Moscow, Russia | 在鸟瞰图中联合运动一致目标检测与社会感知轨迹预测。 | [#369](https://github.com/zitalk/PaperClaw/issues/369) |
-| [20260910] MMGait: Benchmarking and Unifying Gait Recognition across Heterogeneous Modalities | Hou Saihui, Wang Chenye, Cai Qingyuan, Li Aoqi, Huang Yongzhen | School of Artificial Intelligence, Beijing Normal University, Beijing, China (；The Hong Kong University of Science and Technology, Hong Kong, China (；School of Artificial Intelligence, Beijing Normal University；School of Artificial Intelligence, Beijing Normal University, Beijing, China | 构建多模态步态识别基准，统一异构模态下的识别框架。 | [#370](https://github.com/zitalk/PaperClaw/issues/370) |
-| [20260910] Prototype Matters: Modality-unified Prototype Self-distillation for Unsupervised Visible-infrared Person Re-identification | Wang Menglin, Gong Xiaojin | Nanjing Normal University Nanjing China；Zhejiang University Hangzhou China | 提出模态统一原型自蒸馏，用于无监督可见光-红外行人重识别。 | [#371](https://github.com/zitalk/PaperClaw/issues/371) |
-| [20260910] Your Model Already Knows Don't Teach It, Learn to Ask It: Soft Prompting for Few-Shot Adaptation of Vision-Language Models | Gautam Rajendrakumar Gare, Li Siyi, Wang Hewei, Cesar Daniel Hernandez, Zhao Wei, Wolfgang M. Pauli, Galeotti John, Ramanan Deva | Carnegie Mellon University | 通过软提示实现视觉语言模型少样本域外目标检测适应。 | [#372](https://github.com/zitalk/PaperClaw/issues/372) |
-| [20260910] Tri-DehazeGS: Scene--Medium Decoupled Gaussian Splatting with Transmittance-Aware Optimization | Jiang Kui, Gu Yang, Liu Jiacheng, Liu Shiyu, Chen Youyu, Liu Hui | Harbin Institute of Technology | 解耦场景与介质的高斯泼溅，结合透射率优化实现去雾新视角合成。 | [#373](https://github.com/zitalk/PaperClaw/issues/373) |
-| [20260910] RIDE: Relocalization-Informed Depth Estimation with 3D Gaussian Splatting | Lian Jiarong, Xiao Zhe, Zhang Zhaoyang, Li Wei, Chen Ruizhi | The Chinese University of Hong Kong, Shenzhen；Carnegie Mellon University | 利用重定位信息与3D高斯泼溅进行度量深度估计。 | [#374](https://github.com/zitalk/PaperClaw/issues/374) |
-| [20260910] Toward Interpretable Multimodal Fusion: Heat Conduction Modeling for Hyperspectral and LiDAR Joint Classification | Wei Kan, Cui Jiahui, Yao Jing, Zhao Xinyu, Wang Lei, Ghamisi Pedram | State Key Laboratory of Remote Sensing and Digital Earth, Aerospace Information Research Institute, Chinese Academy of Sciences, Beijing, China (；the Faculty of Electrical and Computer Engineering, University of Iceland, 101 Reykjavik, Iceland ( | 基于热传导建模的高光谱与LiDAR可解释多模态融合分类。 | [#375](https://github.com/zitalk/PaperClaw/issues/375) |
-| [20260910] OmniKVQuant: KV Cache Quantization for Omni-LLMs | Yoo Suho, Ok Hyunjong, Choi Jongmin, Jung Jihoo, Joon Son Chung | KAIST；POSTECH | 面向全模态大语言模型的无训练KV缓存2比特量化框架。 | [#435](https://github.com/zitalk/PaperClaw/issues/435) |
-| [20260910] Harness Robotic OS: A Unified Embodied-Agent Runtime for Closed-Loop Quadruped Inspection | Yan Yaoyuan, Heng Zhiyou, Jie Haoxiang, Liu Gang, Yan Hongjie, Zhou Wei | AI Lab, Country Garden Services；East China Normal University | 统一具身智能体运行时，支持四足机器人闭环巡检任务。 | [#436](https://github.com/zitalk/PaperClaw/issues/436) |
-| [20260910] ReconPlusGen: Injecting Reconstruction Prior into Multi-view 3D Generation through Noise Inversion and Modulation | Liu Jiarui, Li Heng, Li Weiyu, Deng Keng, Deng Junyuan, Zhongxing Zheng, Huang Junyu, Chang Jiahao, Han Xiaoguang, Tan Ping | HKUST；LightIllusions；BYD；CUHK-Shenzhen | 通过噪声反转与调制将重建先验注入多视图3D生成。 | [#437](https://github.com/zitalk/PaperClaw/issues/437) |
-| [20260910] Beyond Benchmarks: Using VLMs to Reveal Systematic Classification Failures Under Real World Conditions | Alblas Dieuwertje, Alma M. Liezenga, Jan Erik van Woerden, Taggenbrock Fedor, Aljawaheri Dalia, Schutte Klamer | Intelligent Imaging, Defense, Safety & Security, TNO | 利用视觉语言模型揭示真实条件下系统性分类失败。 | [#438](https://github.com/zitalk/PaperClaw/issues/438) |
-
-## 🔎 观察
-
-- 事件相机与高斯泼溅的跨域结合，正成为动态场景感知与重建的新范式。
-- 多模态融合从简单拼接转向物理建模与原型对齐，可解释性需求上升。
-
----
-
-Powered by OpenClaw🦞
-
-<!-- paperclaw-report: zitalk/PaperClaw -->
-<!-- paperclaw-run: {"status": "degraded", "checked_at": "2026-09-13T18:50:55+08:00", "unavailable_sources": ["arXiv"], "unconfigured_sources": [], "filter_fallback": false, "failed_papers": 0} -->
 
 ---
