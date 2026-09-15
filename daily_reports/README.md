@@ -2,6 +2,42 @@
 
 最近三天日报（最新在前）：
 
+# [20260915](./202609/20260915.md)
+<!-- paperclaw-report: zitalk/PaperClaw -->
+<!-- paperclaw-run: {"status": "degraded", "checked_at": "2026-09-16T02:18:53+08:00", "unavailable_sources": ["IEEE Xplore"], "unconfigured_sources": [], "filter_fallback": false, "failed_papers": 0} -->
+
+## 📌 今日概况
+
+检索完成，但存在异常 · 最近检查：2026-09-16 02:18:53（北京时间）
+本轮检索候选论文 81 篇；刊会准入通过 6 篇（排除 75 篇）；本轮 LLM 新筛中 3 篇，复用已收录匹配 0 篇；本轮新增入报 3 篇；目标日累计收录 3 篇。
+
+部分来源不可用：IEEE Xplore；本次结果不代表完整覆盖。 今日论文聚焦多模态感知与协作推理。视觉-触觉表征学习引入超球面均匀代理，提升几何感知能力；铁路场景的LiDAR-相机标定强调鲁棒粗到细策略，应对复杂环境；人-物交互检测则借助多智能体辩论机制，融合视觉语言模型与大型语言模型。整体趋势显示，几何约束、鲁棒标定与多智能体协作正成为视觉感知与工业智能的重要方向。
+
+## ✨ 今日亮点
+
+- 视觉-触觉学习采用超球面均匀代理，增强几何感知表征。
+- 铁路LiDAR-相机标定提出鲁棒粗到细框架，适应复杂场景。
+- 多智能体辩论机制被用于人-物交互检测，提升推理能力。
+
+## 🗂 今日文章列表
+
+| 标题 | 作者 | 单位 | 一句话概括 | Issue |
+|---|---|---|---|---|
+| [20260915] Geometry-Aware Visual-Tactile Image Representation Learning with Uniform Proxies on the Hypersphere | Guo Chen, Liu Wenxi, Huang Aiping, Lin Chia-Wen, Zhao Tiesong | 暂无 | 提出超球面均匀代理的几何感知视觉-触觉图像表征学习方法。 | [#443](https://github.com/zitalk/PaperClaw/issues/443) |
+| [20260915] Robust Coarse-to-Fine LiDAR-Camera Calibration for Railway Perception | Wang Tian, Song Hai-Feng, Zhou Min, Liu Ling, Dong Hai-Rong | 暂无 | 面向铁路感知的鲁棒粗到细LiDAR-相机标定方法。 | [#444](https://github.com/zitalk/PaperClaw/issues/444) |
+| [20260915] AgentHOI: Towards Multi-Agent Collaborative Human-Object Interaction Detection | Wang Yuxia, Lei Yu, Liu Qi | 暂无 | 利用多智能体协作与辩论机制检测人-物交互。 | [#445](https://github.com/zitalk/PaperClaw/issues/445) |
+
+## 🔎 观察
+
+- 多模态学习正从简单融合转向几何约束与空间结构建模。
+- 工业场景标定与交互检测均强调鲁棒性和协作推理。
+
+---
+
+Powered by OpenClaw🦞
+
+---
+
 # [20260914](./202609/20260914.md)
 <!-- paperclaw-report: zitalk/PaperClaw -->
 <!-- paperclaw-run: {"status": "degraded", "checked_at": "2026-09-15T18:07:20+08:00", "unavailable_sources": ["arXiv", "Semantic Scholar"], "unconfigured_sources": [], "filter_fallback": false, "failed_papers": 0} -->
@@ -37,32 +73,6 @@ Powered by OpenClaw🦞
 检索完成，但存在异常 · 最近检查：2026-09-14 18:39:48（北京时间）
 
 本轮检索候选论文 56 篇；刊会准入通过 0 篇（排除 56 篇）；本轮 LLM 新筛中 0 篇，复用已收录匹配 0 篇；本轮新增入报 0 篇；目标日累计收录 0 篇。当日未检索到符合条件并纳入日报的论文。 部分来源不可用：arXiv；本次结果不代表完整覆盖。
-
-## ✨ 今日亮点
-
-- 本次有异常，请查看来源状态及失败明细；不能将部分结果当作完整检索结果。
-
-## 🔎 检索说明
-
-- 日报日期是论文检索目标日期；最近检查时间是任务实际执行时间。
-- 零结果不代表所有来源当天没有新论文，只表示本次未纳入符合条件的论文。
-- 同一日期后续补扫会更新这份日报，不重复创建日报 Issue。
-
----
-
-Powered by OpenClaw🦞
-
----
-
-# [20260912](./202609/20260912.md)
-<!-- paperclaw-report: zitalk/PaperClaw -->
-<!-- paperclaw-run: {"status": "degraded", "checked_at": "2026-09-13T18:57:04+08:00", "unavailable_sources": ["arXiv"], "unconfigured_sources": [], "filter_fallback": false, "failed_papers": 0} -->
-
-## 📌 今日概况
-
-检索完成，但存在异常 · 最近检查：2026-09-13 18:57:04（北京时间）
-
-本轮检索候选论文 65 篇；刊会准入通过 0 篇（排除 65 篇）；本轮 LLM 新筛中 0 篇，复用已收录匹配 0 篇；本轮新增入报 0 篇；目标日累计收录 0 篇。当日未检索到符合条件并纳入日报的论文。 部分来源不可用：arXiv；本次结果不代表完整覆盖。
 
 ## ✨ 今日亮点
 
