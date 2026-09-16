@@ -4,33 +4,47 @@
 
 # [20260915](./202609/20260915.md)
 <!-- paperclaw-report: zitalk/PaperClaw -->
-<!-- paperclaw-run: {"status": "degraded", "checked_at": "2026-09-16T02:18:53+08:00", "unavailable_sources": ["IEEE Xplore"], "unconfigured_sources": [], "filter_fallback": false, "failed_papers": 0} -->
+<!-- paperclaw-run: {"status": "ok", "checked_at": "2026-09-16T09:36:22+08:00", "unavailable_sources": [], "unconfigured_sources": [], "filter_fallback": false, "failed_papers": 0} -->
 
 ## 📌 今日概况
 
-检索完成，但存在异常 · 最近检查：2026-09-16 02:18:53（北京时间）
-本轮检索候选论文 81 篇；刊会准入通过 6 篇（排除 75 篇）；本轮 LLM 新筛中 3 篇，复用已收录匹配 0 篇；本轮新增入报 3 篇；目标日累计收录 3 篇。
+检索完成 · 最近检查：2026-09-16 09:36:22（北京时间）
+本轮检索候选论文 146 篇；刊会准入通过 55 篇（排除 91 篇）；本轮 LLM 新筛中 14 篇，复用已收录匹配 3 篇；本轮新增入报 14 篇；目标日累计收录 17 篇。
 
-部分来源不可用：IEEE Xplore；本次结果不代表完整覆盖。 今日论文聚焦多模态感知与协作推理。视觉-触觉表征学习引入超球面均匀代理，提升几何感知能力；铁路场景的LiDAR-相机标定强调鲁棒粗到细策略，应对复杂环境；人-物交互检测则借助多智能体辩论机制，融合视觉语言模型与大型语言模型。整体趋势显示，几何约束、鲁棒标定与多智能体协作正成为视觉感知与工业智能的重要方向。
+ 今日论文聚焦多模态感知与视觉语言模型的高效适配。视觉-触觉、LiDAR-相机、音视频等跨模态融合持续深入，强调几何感知与鲁棒标定。同时，提示学习、令牌选择、量化蒸馏等轻量化技术成为提升VLM推理与边缘部署效率的关键。多智能体协作、时序上下文建模以及跨域基准构建，进一步推动动态场景理解与泛化能力。
 
 ## ✨ 今日亮点
 
-- 视觉-触觉学习采用超球面均匀代理，增强几何感知表征。
-- 铁路LiDAR-相机标定提出鲁棒粗到细框架，适应复杂场景。
-- 多智能体辩论机制被用于人-物交互检测，提升推理能力。
+- 视觉-触觉与LiDAR-相机标定研究强调几何感知与鲁棒融合。
+- VLM高效适配成为热点，涵盖提示学习、令牌选择与量化蒸馏。
+- 多智能体协作与时序上下文建模提升动态场景理解能力。
 
 ## 🗂 今日文章列表
 
 | 标题 | 作者 | 单位 | 一句话概括 | Issue |
 |---|---|---|---|---|
-| [20260915] Geometry-Aware Visual-Tactile Image Representation Learning with Uniform Proxies on the Hypersphere | Guo Chen, Liu Wenxi, Huang Aiping, Lin Chia-Wen, Zhao Tiesong | 暂无 | 提出超球面均匀代理的几何感知视觉-触觉图像表征学习方法。 | [#443](https://github.com/zitalk/PaperClaw/issues/443) |
-| [20260915] Robust Coarse-to-Fine LiDAR-Camera Calibration for Railway Perception | Wang Tian, Song Hai-Feng, Zhou Min, Liu Ling, Dong Hai-Rong | 暂无 | 面向铁路感知的鲁棒粗到细LiDAR-相机标定方法。 | [#444](https://github.com/zitalk/PaperClaw/issues/444) |
-| [20260915] AgentHOI: Towards Multi-Agent Collaborative Human-Object Interaction Detection | Wang Yuxia, Lei Yu, Liu Qi | 暂无 | 利用多智能体协作与辩论机制检测人-物交互。 | [#445](https://github.com/zitalk/PaperClaw/issues/445) |
+| [20260915] Geometry-Aware Visual-Tactile Image Representation Learning with Uniform Proxies on the Hypersphere | Guo Chen, Liu Wenxi, Huang Aiping, Lin Chia-Wen, Zhao Tiesong | 暂无 | 提出几何感知的视觉-触觉表征学习，在超球面上使用均匀代理提升多模态对齐。 | [#443](https://github.com/zitalk/PaperClaw/issues/443) |
+| [20260915] Robust Coarse-to-Fine LiDAR-Camera Calibration for Railway Perception | Wang Tian, Song Hai-Feng, Zhou Min, Liu Ling, Dong Hai-Rong | 暂无 | 面向铁路感知的鲁棒粗到细LiDAR-相机标定方法，提升多模态融合可靠性。 | [#444](https://github.com/zitalk/PaperClaw/issues/444) |
+| [20260915] AgentHOI: Towards Multi-Agent Collaborative Human-Object Interaction Detection | Wang Yuxia, Lei Yu, Liu Qi | 暂无 | AgentHOI利用多智能体协作与辩论机制，增强人-物交互检测的准确性。 | [#445](https://github.com/zitalk/PaperClaw/issues/445) |
+| [20260915] GRACE: Geometry- and Ray-Aware Camera-Efficient Multi-View Pedestrian Tracking | Sakai Taigo, Hotta Kazuhiro, Kouno Hiroki, Kato Naoki | Meijo university；Department of Science Technology；and predicts a center heatmap | GRACE通过几何与射线感知实现相机高效的多视角行人跟踪。 | [#447](https://github.com/zitalk/PaperClaw/issues/447) |
+| [20260915] TEMPO: Learning Temporal Context for Dynamic Robot Manipulation | Feng Zhenyang, Heo Jimin, Erik B. Sudderth, Jain Unnat | University of California, Irvine | TEMPO学习时序上下文以解决动态机器人操作中的运动模糊与状态混叠。 | [#448](https://github.com/zitalk/PaperClaw/issues/448) |
+| [20260915] TecoPrompt: Temporal-Conservative Prompt Learning for Vision-Language Models | Shao Zeyi, Hua Haowen, Zhang Jiaxin, See John, Boukhers Zeyd, Yang Cong | Soochow University, Suzhou, China；Heriot-Watt University Malaysia, Putrajaya, Malaysia；Fraunhofer FIT, Sankt Augustin, Germany；research [43] suggests that prompt-based adaptation may be inherently more | TecoPrompt提出时序保守提示学习，提升视觉语言模型在少样本与标签噪声下的鲁棒性。 | [#449](https://github.com/zitalk/PaperClaw/issues/449) |
+| [20260915] RegRet: Enhancing Region-Level Retrieval in Large Multimodal Models | Liang Xun, Yang Honghui, Pan Weihang, Zhao Ruisi, Pan Boyuan, Hu Yao, Wang Wenxiao, Lin Binbin, Cai Deng | State Key Lab of CAD&CG, Zhejiang University；School of Software Technology, Zhejiang University | RegRet增强大型多模态模型的区域级检索能力，引入区域感知编码器。 | [#450](https://github.com/zitalk/PaperClaw/issues/450) |
+| [20260915] StackTok: Accelerating VLMs Inference with Budget-Adaptive Visual Token Selection | Wang Zhenbin, Zhang Lei, Wang Lituan, Huang Wei, Wang Yan, Zhang Zhenwei | Sichuan University | StackTok以预算自适应视觉令牌选择加速VLM推理，无需训练。 | [#451](https://github.com/zitalk/PaperClaw/issues/451) |
+| [20260915] Hyper-RED: Scalable Event Pre-training via Semantic Hypergraph Distillation | Wang Meisen, Tian Zhiqiang, Bao Wei, Wang Chengjie, Du Shaoyi, Li Siqi | School of Software Engineering, Xi’an Jiaotong University, Xi’an 710049, China；National Key Laboratory of Human-Machine Hybrid Augmented Intelligence；National Engineering Research Center for Visual Information and Applications；and Institute of Artificial Intelligence and Robotics；Xi’an Jiaotong University, Xi’an 710049, China；BNRist, THUIBCS, BLBCI, School of Software, Tsinghua University, Beijing 100084, China；Yangtze Delta Region Institute, Tsinghua University, Jiaxing 314006, China；College of Grassland Science, Inner Mongolia Agricultural University, Hohhot 010018, China | Hyper-RED通过语义超图蒸馏实现可扩展的事件相机预训练。 | [#452](https://github.com/zitalk/PaperClaw/issues/452) |
+| [20260915] PSMP-CLIP: Patch-Prompt SAM and Multi-Semantic Prompting for CLIP-Based Zero-Shot Anomaly Detection | Xiang Xuezhi, Wu Guanghao, Xiang Heqi, Liu Jiayao, Li Xiaoheng, Chen Yiming, Zhang Shanjun | Information and Communication Engineering, Harbin Engineering University, Harbin, China；Key Laboratory of Advanced Marine Communication and Information Technology, Harbin, China；Department of Computer Science, University of Toronto, Toronto, ON M5 S；Department of Computer Science, Kanagawa University, Kanagawa, 221-8686, Japan | PSMP-CLIP结合补丁提示SAM与多语义提示，提升CLIP零样本异常检测。 | [#453](https://github.com/zitalk/PaperClaw/issues/453) |
+| [20260915] VideoMM: Adaptive Macro-Micro Inference for Efficient Video MLLMs | Guo Haoyu, Feng Yuan, Lv Junlin, Xiao Mingjun, S Kevin Zhou, Xie Xike | School of Biomedical Engineering, University of Science and Technology of China；School of Computer Science, USTC；Data Darkness Lab, MIRACLE Center, Suzhou Institute for Advanced Research；To mitigate this, existing research has focused on reducing the | VideoMM采用自适应宏微观推理，高效处理长视频多模态大模型任务。 | [#454](https://github.com/zitalk/PaperClaw/issues/454) |
+| [20260915] Efficient Quantization-Aware Distillation with Cross-Modal Alignment for Edge Vision-Language Models | Jeon Jinwoo, Do GyuYeop, Lim Yubin, Kim Nam-Joon, Hyun Gon Ryu, Lee Hyuk-Jae, Lee Byung-Jun | Korea University；Seoul National University | 面向边缘VLM的高效量化感知蒸馏与跨模态对齐方法。 | [#455](https://github.com/zitalk/PaperClaw/issues/455) |
+| [20260915] SAVTrack: Selective Vote Aggregation for Reliability-Aware Point Cloud Tracking | Zhou Sifan, Tan Linyue, Wang Qiwei, Zhao Ziyu, Lu Xiaobo | a School of Automation, Southeast University, Nanjing, China；b Key Laboratory of Measurement and Control of Complex Systems of Engineering, Ministry of Education, Nanjing, China；c University of Pennsylvania, Philadelphia, PA, USA；d Harbin Institute of Technology (Shenzhen), Shenzhen, China；also exposing an important question: do all point-to-center；metric cues, which can lead to ambiguous center estimates；center, making the contribution of each local observation | SAVTrack通过选择性投票聚合实现可靠性感知的点云跟踪。 | [#456](https://github.com/zitalk/PaperClaw/issues/456) |
+| [20260915] G3AR: Graph-Guided Neural Visual Geometry for Scalable Multi-Sequence Aerial Registration | Jeng Wen Joshua Lean, Yen Ting-Yu, Sun Wei-Fang, See Simon, Chu Hung-Kuo, Hung Shih-Hsuan | National Tsing Hua University National Tsing Hua University NVIDIA；NVIDIA National Tsing Hua University National Tsing Hua University | G3AR利用图引导神经视觉几何，实现可扩展的多序列航空影像配准。 | [#457](https://github.com/zitalk/PaperClaw/issues/457) |
+| [20260915] AsyncCouple-Flow: Asynchronous Cross-Modal Coupling and Flow Matching for Spatio-Temporal Forecasting | Wu Zhixiang, Liu Yining, Zhao Bo, Chen Szu-Yu, Duan Huiran, Lin Chu, Yang Chuanguang | Institute of Computing Technology, Chinese Academy of Sciences, China；Emory University, USA；University of California, Berkeley, USA；Yale University, USA；Stevens Institute of Technology, USA；City University of New York, USA | AsyncCouple-Flow提出异步跨模态耦合与流匹配，用于时空预测。 | [#458](https://github.com/zitalk/PaperClaw/issues/458) |
+| [20260915] Multimodal Emergency Vehicle Classification via Audio-Visual Transformers and Knowledge Distillation | John Vijay, Dabaja Amar | Department of Mathematics and Computer Science；Lawrence Technological University, Southfield, MI, USA | 基于音视频Transformer与知识蒸馏的多模态紧急车辆分类。 | [#459](https://github.com/zitalk/PaperClaw/issues/459) |
+| [20260915] VPRef: A Cross-Domain Benchmark for Referring Remote Sensing Image Segmentation | Liu Quanwei, Huang Tao, Yang Jiaqi, Xiang Wei | College of Science and Engineering, James Cook University, Cairns,, Australia (；College of Science and Engineering, James Cook University, Cairns QLD, Australia and the Center for AI and Data Science Innovation, James Cook University, Cairns QLD, Australia (；Department of Forest and Wildlife Ecology, University of Wisconsin-Madison, Madison, WI USA (；School of Computing, Engineering and Mathematical Sciences, La Trobe University, Melbourne, VIC, Australia ( | VPRef构建跨域基准，推动指代遥感图像分割的泛化评估。 | [#460](https://github.com/zitalk/PaperClaw/issues/460) |
 
 ## 🔎 观察
 
-- 多模态学习正从简单融合转向几何约束与空间结构建模。
-- 工业场景标定与交互检测均强调鲁棒性和协作推理。
+- 多模态融合正从简单拼接转向几何感知与可靠性建模，以应对标定误差与模态缺失。
+- VLM高效适配技术密集涌现，提示学习、令牌选择与量化蒸馏共同推动边缘部署。
 
 ---
 
