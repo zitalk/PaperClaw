@@ -431,6 +431,7 @@ def is_weekend_schedule(today: datetime | None = None) -> bool:
 def resolve_target_dates(
     today: datetime | None = None,
     lookback_days: int = WEEKEND_LOOKBACK_DAYS,
+    weekend_backfill: bool | None = None,
 ) -> list[str]:
     now = today or datetime.now(BEIJING_TZ)
     if lookback_days < 1:
@@ -440,7 +441,10 @@ def resolve_target_dates(
     # be starved by historical backlogs. Weekend runs reconcile a rolling
     # calendar window; incremental mode prevents duplicate cards and repeated
     # analysis of papers already admitted.
-    if not is_weekend_schedule(now):
+    if weekend_backfill is None:
+        weekend_backfill = is_weekend_schedule(now)
+
+    if not weekend_backfill:
         return [(now - timedelta(days=1)).strftime("%Y%m%d")]
 
     return [

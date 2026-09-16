@@ -47,6 +47,17 @@ class RemoteScheduleTest(unittest.TestCase):
             ],
         )
 
+    def test_explicit_workday_mode_stays_daily_when_runner_starts_on_saturday(self):
+        beijing = timezone(timedelta(hours=8))
+        delayed_start = datetime(2026, 9, 12, 0, 30, tzinfo=beijing)
+        self.assertEqual(
+            run_remote_schedule.run_rs_daily_workday.resolve_target_dates(
+                delayed_start,
+                weekend_backfill=False,
+            ),
+            ["20260911"],
+        )
+
     def test_weekend_backfill_notice_counts_recovered_and_failed_papers(self):
         with tempfile.TemporaryDirectory() as tmp:
             memory_dir = Path(tmp)
@@ -95,6 +106,40 @@ class RemoteScheduleTest(unittest.TestCase):
         self.assertEqual(pipeline_main.call_count, 2)
         pipeline_main.assert_any_call(target_date="20260901", notify=False, force=False, incremental=True)
         pipeline_main.assert_any_call(target_date="20260902", notify=False, force=False, incremental=True)
+
+    def test_weekend_mode_prepares_one_shared_arxiv_cache(self):
+        with (
+            patch.object(
+                run_remote_schedule.run_rs_daily_workday,
+                "resolve_target_dates",
+                return_value=["20260905", "20260906"],
+            ) as resolve,
+            patch.object(run_remote_schedule, "_prepare_weekend_arxiv_cache") as prepare,
+            patch.object(run_remote_schedule, "_weekend_backfill_notice", return_value={"found": 0, "recovered": 0, "failed": 0}),
+            patch.object(run_remote_schedule.run_rs_daily_workday, "main") as pipeline_main,
+        ):
+            self.assertEqual(run_remote_schedule.main("weekend_backfill"), 0)
+
+        resolve.assert_called_once_with(weekend_backfill=True)
+        prepare.assert_called_once_with(["20260905", "20260906"])
+        self.assertEqual(pipeline_main.call_count, 2)
+
+    def test_weekend_arxiv_prefetch_calls_api_once_and_writes_cache(self):
+        items = [{"arxiv_id": "2609.00001", "published": "2026-09-05"}]
+        with tempfile.TemporaryDirectory() as tmp, patch.object(
+            run_remote_schedule.arxiv_client,
+            "fetch_recent_candidates",
+            return_value=items,
+        ) as fetch:
+            cache = run_remote_schedule._prepare_weekend_arxiv_cache(
+                ["20260905", "20260906"],
+                memory_dir=Path(tmp),
+            )
+            payload = json.loads(cache.read_text(encoding="utf-8"))
+            run_remote_schedule.os.environ.pop(run_remote_schedule.ARXIV_SCHEDULE_CACHE_ENV, None)
+
+        fetch.assert_called_once_with(max_results=1200, days_back=8, target_date=None)
+        self.assertEqual(payload, {"status": "ok", "items": items})
 
     def test_completed_date_still_runs_incremental_discovery(self):
         with (

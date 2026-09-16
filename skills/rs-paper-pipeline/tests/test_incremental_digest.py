@@ -89,10 +89,10 @@ class IncrementalDigestTest(unittest.TestCase):
             self.assertIn("本轮新增入报 0 篇；目标日累计收录 1 篇", body)
             self.assertEqual(calls, 0)
 
-    def test_no_addition_round_still_reports_source_failure(self):
+    def test_no_addition_round_still_reports_source_coverage_warning(self):
         stats = {"source_status": [{"name": "IEEE Xplore", "status": "unavailable"}], "new_included_count": 0}
         body = refresh_digest_status(report(1), stats, 1)
-        self.assertEqual(read_run_status(body)["status"], "degraded")
+        self.assertEqual(read_run_status(body)["status"], "partial")
         self.assertIn("IEEE Xplore", body)
         self.assertIn("Old summary 1", body)
 

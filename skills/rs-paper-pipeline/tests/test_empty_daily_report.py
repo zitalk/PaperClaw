@@ -33,14 +33,15 @@ class EmptyDailyReportTest(unittest.TestCase):
             self.assertIn(REPORT_MARKER, body)
             self.assertIn("最终纳入日报 0 篇", body)
 
-    def test_unavailable_sources_are_not_healthy_zero_results(self):
+    def test_unavailable_optional_source_is_partial_not_pipeline_failure(self):
         body = build_digest_with_llm("20260904", [], self.stats(source_status=[
             {"name": "arXiv", "status": "ok"},
             {"name": "IEEE Xplore", "status": "unavailable"},
         ]))
-        self.assertEqual(read_run_status(body)["status"], "degraded")
+        self.assertEqual(read_run_status(body)["status"], "partial")
         self.assertIn("IEEE Xplore", body)
-        self.assertNotIn(daily_encouragement("20260904"), body)
+        self.assertIn("覆盖受限", body)
+        self.assertIn(daily_encouragement("20260904"), body)
 
     def test_processing_failure_or_missing_archival_record_is_degraded(self):
         for failures in ([], [{"title": "Example", "error": "metadata_error"}]):
@@ -74,7 +75,7 @@ class EmptyDailyReportTest(unittest.TestCase):
         llm.assert_not_called()
 
     def test_optional_source_failure_does_not_repeat_completed_paper_processing(self):
-        body = '<!-- paperclaw-run: {"status":"degraded"} -->\nhttps://github.com/zitalk/PaperClaw/issues/1'
+        body = '<!-- paperclaw-run: {"status":"partial"} -->\nhttps://github.com/zitalk/PaperClaw/issues/1'
         with (
             patch.object(workday, "_get_repo"),
             patch.object(workday, "get_today_digest_issue", return_value=SimpleNamespace(body=body, number=99)),
@@ -98,6 +99,25 @@ class EmptyDailyReportTest(unittest.TestCase):
         self.assertEqual(by_name["Semantic Scholar"], "ok")
         self.assertEqual(by_name["OpenAlex"], "not_configured")
         self.assertEqual(by_name["IEEE Xplore"], "unavailable")
+
+    def test_schedule_arxiv_cache_is_filtered_by_target_date_without_api_call(self):
+        config = SimpleNamespace(multisource_enabled=False)
+        with tempfile.TemporaryDirectory() as temp:
+            cache = Path(temp) / "arxiv.json"
+            cache.write_text(json.dumps({"status": "ok", "items": [
+                {"arxiv_id": "2609.00001", "title": "UAV object detection", "abstract": "aerial vision", "published": "2026-09-04"},
+                {"arxiv_id": "2609.00002", "title": "Multimodal segmentation", "abstract": "vision", "published": "2026-09-05"},
+            ]}), encoding="utf-8")
+            health = []
+            with (
+                patch.object(sources, "CONFIG", config),
+                patch.dict("os.environ", {sources.ARXIV_SCHEDULE_CACHE_ENV: str(cache)}),
+                patch.object(sources, "fetch_arxiv_candidates") as api,
+            ):
+                candidates = sources.fetch_recent_candidates(target_date="20260904", source_status=health)
+        api.assert_not_called()
+        self.assertEqual([item["arxiv_id"] for item in candidates], ["2609.00001"])
+        self.assertEqual(health, [{"name": "arXiv", "status": "ok"}])
 
     def test_filter_fallback_is_exposed_as_degraded(self):
         warnings = []

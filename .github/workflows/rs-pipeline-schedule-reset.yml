@@ -46,6 +46,9 @@ jobs:
       RS_FILTER_PROMPT_FILE: scripts/prompts/filter_cross_prompt.md
       RS_KEEP_DOWNLOADS: "false"
       RS_MULTISOURCE_ENABLED: "true"
+      # Use the schedule that triggered the run, not the delayed runner start
+      # time. A Friday run starting after midnight must remain a workday run.
+      RS_SCHEDULE_MODE: ${{ github.event.schedule == '17 5 * * 0' && 'weekend_backfill' || 'workday_daily' }}
       PYTHONUNBUFFERED: "1"
 
     steps:
@@ -79,7 +82,7 @@ jobs:
 
       - name: Run scheduled pipeline
         working-directory: skills/rs-paper-pipeline
-        run: python3 scripts/run_remote_schedule.py
+        run: python3 scripts/run_remote_schedule.py --mode "$RS_SCHEDULE_MODE"
 
       - name: Refresh Pages
         if: success()

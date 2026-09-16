@@ -5,12 +5,14 @@ from __future__ import annotations
 
 import html
 import json
+import os
 import re
 import time
 import urllib.error
 import urllib.parse
 import urllib.request
 from datetime import datetime, timedelta
+from pathlib import Path
 from typing import Any, Callable
 
 from clients.arxiv_client import (
@@ -43,10 +45,36 @@ _ieee_last_request = 0.0
 SPRINGER_METADATA_URL = "https://api.springernature.com/meta/v2/json"
 SPRINGER_PAGE_SIZE = 20
 SPRINGER_MAX_RECORDS_PER_QUERY = 100
+ARXIV_SCHEDULE_CACHE_ENV = "RS_ARXIV_SCHEDULE_CACHE"
 
 
 class ProviderUnavailable(RuntimeError):
     pass
+
+
+def _cached_arxiv_candidates(target_date: str | None) -> tuple[list[dict[str, Any]], str, str] | None:
+    """Read a schedule-level arXiv result so a weekly backfill queries it once."""
+    cache_value = os.environ.get(ARXIV_SCHEDULE_CACHE_ENV, "").strip()
+    if not cache_value or not target_date:
+        return None
+    try:
+        payload = json.loads(Path(cache_value).read_text(encoding="utf-8"))
+        if not isinstance(payload, dict):
+            return None
+        status = str(payload.get("status") or "")
+        if status == "unavailable":
+            return [], "unavailable", str(payload.get("reason") or "schedule_cache_unavailable")
+        if status != "ok":
+            return None
+        iso_date = datetime.strptime(target_date, "%Y%m%d").date().isoformat()
+        items = [
+            item for item in (payload.get("items") or [])
+            if isinstance(item, dict) and item.get("published") == iso_date
+        ]
+        return items, "ok", "schedule_cache"
+    except (OSError, ValueError, TypeError):
+        # A malformed/missing cache should not disable normal discovery.
+        return None
 
 
 def _date_window(target_date: str | None, days_back: int) -> set[str]:
@@ -544,13 +572,26 @@ def fetch_recent_candidates(
     health = source_status if source_status is not None else []
     health.clear()
     valid_days = _date_window(target_date, days_back)
-    try:
-        arxiv_items = fetch_arxiv_candidates(max_results=max_results, days_back=days_back, target_date=target_date)
-        health.append({"name": "arXiv", "status": "ok"})
-    except Exception as exc:
-        arxiv_items = []
-        health.append({"name": "arXiv", "status": "unavailable"})
-        print(f"  [arXiv] 跳过：{type(exc).__name__}")
+    cached_arxiv = _cached_arxiv_candidates(target_date)
+    if cached_arxiv is not None:
+        arxiv_items, arxiv_status, cache_detail = cached_arxiv
+        health.append({"name": "arXiv", "status": arxiv_status})
+        if arxiv_status == "ok":
+            print(f"  [arXiv] 复用周日批量检索缓存：日期内候选 {len(arxiv_items)}")
+        else:
+            print(f"  [arXiv] 跳过：{cache_detail}")
+    else:
+        try:
+            arxiv_items = fetch_arxiv_candidates(max_results=max_results, days_back=days_back, target_date=target_date)
+            health.append({"name": "arXiv", "status": "ok"})
+        except urllib.error.HTTPError as exc:
+            arxiv_items = []
+            health.append({"name": "arXiv", "status": "unavailable"})
+            print(f"  [arXiv] 跳过：HTTP {exc.code}")
+        except Exception as exc:
+            arxiv_items = []
+            health.append({"name": "arXiv", "status": "unavailable"})
+            print(f"  [arXiv] 跳过：{type(exc).__name__}")
     normalized: list[dict[str, Any]] = []
     for item in arxiv_items:
         normalized_item = _candidate(

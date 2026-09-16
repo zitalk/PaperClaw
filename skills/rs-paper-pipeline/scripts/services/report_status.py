@@ -26,7 +26,16 @@ def run_status(stats: dict | None, failed_items: list | None = None) -> dict:
     skipped = [s["name"] for s in sources if s.get("status") == "not_configured"]
     warnings = stats.get("filter_warnings") or []
     failed = failed_items or stats.get("failed_items") or []
-    status = "degraded" if unavailable or warnings or failed else ("ok" if sources else "unknown")
+    # A temporarily unavailable optional source reduces coverage, but it does
+    # not mean the pipeline itself failed.  Reserve ``degraded`` for failures
+    # that can change or lose accepted-paper results (LLM fallback or paper
+    # processing failures), and expose source outages as ``partial``.
+    if warnings or failed:
+        status = "degraded"
+    elif unavailable:
+        status = "partial"
+    else:
+        status = "ok" if sources else "unknown"
     return {
         "status": status,
         "checked_at": datetime.now(timezone(timedelta(hours=8))).isoformat(timespec="seconds"),
@@ -38,7 +47,12 @@ def run_status(stats: dict | None, failed_items: list | None = None) -> dict:
 
 
 def status_heading(run: dict) -> str:
-    label = {"ok": "检索完成", "degraded": "检索完成，但存在异常", "unknown": "检索统计已生成（来源状态未记录）"}[run["status"]]
+    label = {
+        "ok": "检索完成",
+        "partial": "检索完成，部分来源覆盖受限",
+        "degraded": "检索完成，但存在异常",
+        "unknown": "检索统计已生成（来源状态未记录）",
+    }.get(run.get("status"), "检索统计已生成（状态未知）")
     time_text = run["checked_at"].replace("T", " ").replace("+08:00", "（北京时间）")
     return f"{label} · 最近检查：{time_text}"
 

@@ -5,9 +5,46 @@ from __future__ import annotations
 
 import json
 import os
+import urllib.error
 from pathlib import Path
 
 import run_rs_daily_workday
+from clients import arxiv_client
+from clients.multisource_client import ARXIV_SCHEDULE_CACHE_ENV
+
+
+SCHEDULE_MODES = ("workday_daily", "weekend_backfill")
+
+
+def _safe_source_error(exc: Exception) -> str:
+    if isinstance(exc, urllib.error.HTTPError):
+        return f"HTTP {exc.code}"
+    return type(exc).__name__
+
+
+def _prepare_weekend_arxiv_cache(
+    target_dates: list[str],
+    memory_dir: Path | None = None,
+) -> Path:
+    """Query arXiv once for the weekly window and share it with every date run."""
+    memory_dir = memory_dir or Path("memory")
+    memory_dir.mkdir(parents=True, exist_ok=True)
+    cache_path = memory_dir / "arxiv_weekend_schedule_cache.json"
+    try:
+        items = arxiv_client.fetch_recent_candidates(
+            max_results=1200,
+            days_back=max(len(target_dates) + 1, 8),
+            target_date=None,
+        )
+        payload = {"status": "ok", "items": items}
+        print(f"ARXIV_WEEKEND_CACHE_READY candidates={len(items)} dates={len(target_dates)}")
+    except Exception as exc:
+        reason = _safe_source_error(exc)
+        payload = {"status": "unavailable", "items": [], "reason": reason}
+        print(f"::warning title=arXiv 周末批量检索不可用::{reason}")
+    cache_path.write_text(json.dumps(payload, ensure_ascii=False), encoding="utf-8")
+    os.environ[ARXIV_SCHEDULE_CACHE_ENV] = str(cache_path.resolve())
+    return cache_path
 
 
 def _weekend_backfill_notice(
@@ -50,24 +87,33 @@ def _weekend_backfill_notice(
     return result
 
 
-def main() -> int:
-    target_dates = run_rs_daily_workday.resolve_target_dates()
-    weekend_backfill = run_rs_daily_workday.is_weekend_schedule()
+def main(mode: str | None = None) -> int:
+    mode = mode or os.environ.get("RS_SCHEDULE_MODE") or "workday_daily"
+    if mode not in SCHEDULE_MODES:
+        raise ValueError(f"unsupported schedule mode: {mode}")
+    weekend_backfill = mode == "weekend_backfill"
+    target_dates = run_rs_daily_workday.resolve_target_dates(
+        weekend_backfill=weekend_backfill,
+    )
     processed = 0
 
-    for date_str in target_dates:
-        # Discovery happens exactly once inside the workday pipeline.  The
-        # filter writes counts to its stats JSON, including zero-result runs.
-        # The same date's digest is updated on retries, never duplicated.
-        # This is especially important for Semantic Scholar's cumulative 1 RPS
-        # quota: a separate preflight would immediately repeat every request.
-        run_rs_daily_workday.main(
-            target_date=date_str,
-            notify=False,
-            force=False,
-            incremental=True,
-        )
-        processed += 1
+    if weekend_backfill:
+        _prepare_weekend_arxiv_cache(target_dates)
+
+    try:
+        for date_str in target_dates:
+            # Discovery happens exactly once inside each date pipeline. arXiv
+            # additionally reuses the schedule-level cache on Sunday, while
+            # per-date providers retain their own exact-date API constraints.
+            run_rs_daily_workday.main(
+                target_date=date_str,
+                notify=False,
+                force=False,
+                incremental=True,
+            )
+            processed += 1
+    finally:
+        os.environ.pop(ARXIV_SCHEDULE_CACHE_ENV, None)
 
     if weekend_backfill:
         notice = _weekend_backfill_notice(target_dates)
@@ -76,10 +122,14 @@ def main() -> int:
             f"found={notice['found']} recovered={notice['recovered']} failed={notice['failed']}"
         )
 
-    mode = "weekend_backfill" if weekend_backfill else "workday_daily"
     print(f"REMOTE_SCHEDULE_DONE mode={mode} dates={len(target_dates)} processed={processed}")
     return 0
 
 
 if __name__ == "__main__":
-    raise SystemExit(main())
+    import argparse
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--mode", choices=SCHEDULE_MODES, default=None)
+    arguments = parser.parse_args()
+    raise SystemExit(main(arguments.mode))
