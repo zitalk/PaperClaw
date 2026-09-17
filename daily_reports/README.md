@@ -4,17 +4,26 @@
 
 # [20260916](./202609/20260916.md)
 <!-- paperclaw-report: zitalk/PaperClaw -->
-<!-- paperclaw-run: {"status": "partial", "checked_at": "2026-09-17T02:15:50+08:00", "unavailable_sources": ["arXiv", "Semantic Scholar", "IEEE Xplore"], "unconfigured_sources": [], "filter_fallback": false, "failed_papers": 0} -->
+<!-- paperclaw-run: {"status": "degraded", "checked_at": "2026-09-17T18:01:16+08:00", "unavailable_sources": ["arXiv", "Semantic Scholar"], "unconfigured_sources": [], "filter_fallback": false, "failed_papers": 1} -->
 
 ## 📌 今日概况
 
-检索完成，部分来源覆盖受限 · 最近检查：2026-09-17 02:15:50（北京时间）
+检索完成，但存在异常 · 最近检查：2026-09-17 18:01:16（北京时间）
 
-本轮检索候选论文 82 篇；刊会准入通过 0 篇（排除 82 篇）；本轮 LLM 新筛中 0 篇，复用已收录匹配 0 篇；本轮新增入报 0 篇；目标日累计收录 0 篇。当日未检索到符合条件并纳入日报的论文。 部分来源不可用：arXiv、Semantic Scholar、IEEE Xplore；本次结果不代表完整覆盖。
+本轮检索候选论文 94 篇；刊会准入通过 1 篇（排除 93 篇）；本轮 LLM 新筛中 1 篇，复用已收录匹配 0 篇；本轮新增入报 0 篇；目标日累计收录 0 篇。当日筛中论文均未通过处理或质检，未纳入日报。 部分来源不可用：arXiv、Semantic Scholar；本次结果不代表完整覆盖。 有 1 篇匹配论文处理失败，请查看日报失败明细。
+
+
+## ⚠️ 未纳入日报的匹配论文
+
+以下论文通过关键词/LLM 筛选，但在处理过程中失败未纳入日报。可通过来源链接查看原文。
+
+| 标题 | 来源 | 失败原因 |
+|------|-------|----------|
+| MICTracker: Modality Informativeness Controlled Multi-modal Fusion for Adaptive RGB-D Visual Tracking | [doi:10.1007/s11263-026-03048-y](https://doi.org/10.1007/s11263-026-03048-y) | 质检未通过: 摘要为空或无效 |
 
 ## ✨ 今日亮点
 
-- 留一点时间给思考，好的问题值得耐心打磨。
+- 本次有异常，请查看来源状态及失败明细；不能将部分结果当作完整检索结果。
 
 ## 🔎 检索说明
 
