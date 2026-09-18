@@ -2,6 +2,32 @@
 
 最近三天日报（最新在前）：
 
+# [20260918](./202609/20260918.md)
+<!-- paperclaw-report: zitalk/PaperClaw -->
+<!-- paperclaw-run: {"status": "partial", "checked_at": "2026-09-19T01:45:20+08:00", "unavailable_sources": ["arXiv", "IEEE Xplore"], "unconfigured_sources": [], "filter_fallback": false, "failed_papers": 0} -->
+
+## 📌 今日概况
+
+检索完成，部分来源覆盖受限 · 最近检查：2026-09-19 01:45:20（北京时间）
+
+本轮检索候选论文 47 篇；刊会准入通过 1 篇（排除 46 篇）；本轮 LLM 新筛中 0 篇，复用已收录匹配 0 篇；本轮新增入报 0 篇；目标日累计收录 0 篇。当日未检索到符合条件并纳入日报的论文。 部分来源不可用：arXiv、IEEE Xplore；本次结果不代表完整覆盖。
+
+## ✨ 今日亮点
+
+- 研究的进展，常常藏在持续积累的每一个小步里。
+
+## 🔎 检索说明
+
+- 日报日期是论文检索目标日期；最近检查时间是任务实际执行时间。
+- 零结果不代表所有来源当天没有新论文，只表示本次未纳入符合条件的论文。
+- 同一日期后续补扫会更新这份日报，不重复创建日报 Issue。
+
+---
+
+Powered by OpenClaw🦞
+
+---
+
 # [20260917](./202609/20260917.md)
 ## 📌 今日概况
 
@@ -64,77 +90,6 @@ Powered by OpenClaw🦞
 - 日报日期是论文检索目标日期；最近检查时间是任务实际执行时间。
 - 零结果不代表所有来源当天没有新论文，只表示本次未纳入符合条件的论文。
 - 同一日期后续补扫会更新这份日报，不重复创建日报 Issue。
-
----
-
-Powered by OpenClaw🦞
-
----
-
-# [20260915](./202609/20260915.md)
-<!-- paperclaw-report: zitalk/PaperClaw -->
-<!-- paperclaw-run: {"status": "partial", "checked_at": "2026-09-16T18:13:27+08:00", "unavailable_sources": ["Semantic Scholar", "IEEE Xplore"], "unconfigured_sources": [], "filter_fallback": false, "failed_papers": 0} -->
-
-## 📌 今日概况
-
-检索完成，部分来源覆盖受限 · 最近检查：2026-09-16 18:13:27（北京时间）
-本轮检索候选论文 172 篇；刊会准入通过 73 篇（排除 99 篇）；本轮 LLM 新筛中 21 篇，复用已收录匹配 14 篇；本轮新增入报 21 篇；目标日累计收录 38 篇。
-
-部分来源不可用：Semantic Scholar、IEEE Xplore；本次结果不代表完整覆盖。 今日论文覆盖多模态感知、三维重建、视觉-语言模型与机器人操作等方向。视觉-触觉表征学习引入超球面均匀代理，LiDAR-相机标定面向铁路场景强调鲁棒性。多智能体协作与提示学习持续升温，事件相机预训练与多分辨率注意力拓展感知边界。三维高斯泼溅在SLAM、全景与卫星DSM重建中密集出现，量化蒸馏与视觉令牌选择推动边缘部署。整体趋势显示：多模态对齐更注重几何与可靠性，训练免调优与轻量化成为落地关键。
-
-## ✨ 今日亮点
-
-- 视觉-触觉表征学习采用超球面均匀代理，提升多模态几何一致性。
-- 三维高斯泼溅密集涌现，覆盖SLAM、全景与卫星DSM重建。
-- 训练免调优与轻量化推理成为多模态模型落地主线。
-
-## 🗂 今日文章列表
-
-| 标题 | 作者 | 单位 | 一句话概括 | Issue |
-|---|---|---|---|---|
-| [20260915] Geometry-Aware Visual-Tactile Image Representation Learning with Uniform Proxies on the Hypersphere | Guo Chen, Liu Wenxi, Huang Aiping, Lin Chia-Wen, Zhao Tiesong | 暂无 | 在超球面上引入均匀代理，学习几何感知的视觉-触觉图像表征。 | [#443](https://github.com/zitalk/PaperClaw/issues/443) |
-| [20260915] Robust Coarse-to-Fine LiDAR-Camera Calibration for Railway Perception | Wang Tian, Song Hai-Feng, Zhou Min, Liu Ling, Dong Hai-Rong | 暂无 | 面向铁路感知的鲁棒粗到精LiDAR-相机标定方法。 | [#444](https://github.com/zitalk/PaperClaw/issues/444) |
-| [20260915] AgentHOI: Towards Multi-Agent Collaborative Human-Object Interaction Detection | Wang Yuxia, Lei Yu, Liu Qi | 暂无 | 多智能体协作与辩论机制用于人-物交互检测。 | [#445](https://github.com/zitalk/PaperClaw/issues/445) |
-| [20260915] GRACE: Geometry- and Ray-Aware Camera-Efficient Multi-View Pedestrian Tracking | Sakai Taigo, Hotta Kazuhiro, Kouno Hiroki, Kato Naoki | Meijo university；Department of Science Technology；and predicts a center heatmap | 几何与射线感知的多视角行人跟踪，降低相机需求。 | [#447](https://github.com/zitalk/PaperClaw/issues/447) |
-| [20260915] TEMPO: Learning Temporal Context for Dynamic Robot Manipulation | Feng Zhenyang, Heo Jimin, Erik B. Sudderth, Jain Unnat | University of California, Irvine | 学习时序上下文以缓解动态机器人操作中的运动歧义。 | [#448](https://github.com/zitalk/PaperClaw/issues/448) |
-| [20260915] TecoPrompt: Temporal-Conservative Prompt Learning for Vision-Language Models | Shao Zeyi, Hua Haowen, Zhang Jiaxin, See John, Boukhers Zeyd, Yang Cong | Soochow University, Suzhou, China；Heriot-Watt University Malaysia, Putrajaya, Malaysia；Fraunhofer FIT, Sankt Augustin, Germany；research [43] suggests that prompt-based adaptation may be inherently more | 时序保守提示学习提升视觉-语言模型少样本与抗噪能力。 | [#449](https://github.com/zitalk/PaperClaw/issues/449) |
-| [20260915] RegRet: Enhancing Region-Level Retrieval in Large Multimodal Models | Liang Xun, Yang Honghui, Pan Weihang, Zhao Ruisi, Pan Boyuan, Hu Yao, Wang Wenxiao, Lin Binbin, Cai Deng | State Key Lab of CAD&CG, Zhejiang University；School of Software Technology, Zhejiang University | 增强大型多模态模型区域级检索能力的RegRet方法。 | [#450](https://github.com/zitalk/PaperClaw/issues/450) |
-| [20260915] StackTok: Accelerating VLMs Inference with Budget-Adaptive Visual Token Selection | Wang Zhenbin, Zhang Lei, Wang Lituan, Huang Wei, Wang Yan, Zhang Zhenwei | Sichuan University | 预算自适应视觉令牌选择加速视觉-语言模型推理。 | [#451](https://github.com/zitalk/PaperClaw/issues/451) |
-| [20260915] Hyper-RED: Scalable Event Pre-training via Semantic Hypergraph Distillation | Wang Meisen, Tian Zhiqiang, Bao Wei, Wang Chengjie, Du Shaoyi, Li Siqi | School of Software Engineering, Xi’an Jiaotong University, Xi’an 710049, China；National Key Laboratory of Human-Machine Hybrid Augmented Intelligence；National Engineering Research Center for Visual Information and Applications；and Institute of Artificial Intelligence and Robotics；Xi’an Jiaotong University, Xi’an 710049, China；BNRist, THUIBCS, BLBCI, School of Software, Tsinghua University, Beijing 100084, China；Yangtze Delta Region Institute, Tsinghua University, Jiaxing 314006, China；College of Grassland Science, Inner Mongolia Agricultural University, Hohhot 010018, China | 语义超图蒸馏实现可扩展的事件相机预训练。 | [#452](https://github.com/zitalk/PaperClaw/issues/452) |
-| [20260915] PSMP-CLIP: Patch-Prompt SAM and Multi-Semantic Prompting for CLIP-Based Zero-Shot Anomaly Detection | Xiang Xuezhi, Wu Guanghao, Xiang Heqi, Liu Jiayao, Li Xiaoheng, Chen Yiming, Zhang Shanjun | Information and Communication Engineering, Harbin Engineering University, Harbin, China；Key Laboratory of Advanced Marine Communication and Information Technology, Harbin, China；Department of Computer Science, University of Toronto, Toronto, ON M5 S；Department of Computer Science, Kanagawa University, Kanagawa, 221-8686, Japan | 结合SAM与多语义提示的CLIP零样本异常检测。 | [#453](https://github.com/zitalk/PaperClaw/issues/453) |
-| [20260915] VideoMM: Adaptive Macro-Micro Inference for Efficient Video MLLMs | Guo Haoyu, Feng Yuan, Lv Junlin, Xiao Mingjun, S Kevin Zhou, Xie Xike | School of Biomedical Engineering, University of Science and Technology of China；School of Computer Science, USTC；Data Darkness Lab, MIRACLE Center, Suzhou Institute for Advanced Research；To mitigate this, existing research has focused on reducing the | 宏微观自适应推理提升长视频多模态大模型效率。 | [#454](https://github.com/zitalk/PaperClaw/issues/454) |
-| [20260915] Efficient Quantization-Aware Distillation with Cross-Modal Alignment for Edge Vision-Language Models | Jeon Jinwoo, Do GyuYeop, Lim Yubin, Kim Nam-Joon, Hyun Gon Ryu, Lee Hyuk-Jae, Lee Byung-Jun | Korea University；Seoul National University | 跨模态对齐的量化感知蒸馏用于边缘视觉-语言模型。 | [#455](https://github.com/zitalk/PaperClaw/issues/455) |
-| [20260915] SAVTrack: Selective Vote Aggregation for Reliability-Aware Point Cloud Tracking | Zhou Sifan, Tan Linyue, Wang Qiwei, Zhao Ziyu, Lu Xiaobo | a School of Automation, Southeast University, Nanjing, China；b Key Laboratory of Measurement and Control of Complex Systems of Engineering, Ministry of Education, Nanjing, China；c University of Pennsylvania, Philadelphia, PA, USA；d Harbin Institute of Technology (Shenzhen), Shenzhen, China；also exposing an important question: do all point-to-center；metric cues, which can lead to ambiguous center estimates；center, making the contribution of each local observation | 选择性投票聚合实现可靠性感知的点云目标跟踪。 | [#456](https://github.com/zitalk/PaperClaw/issues/456) |
-| [20260915] G3AR: Graph-Guided Neural Visual Geometry for Scalable Multi-Sequence Aerial Registration | Jeng Wen Joshua Lean, Yen Ting-Yu, Sun Wei-Fang, See Simon, Chu Hung-Kuo, Hung Shih-Hsuan | National Tsing Hua University National Tsing Hua University NVIDIA；NVIDIA National Tsing Hua University National Tsing Hua University | 图引导神经视觉几何用于可扩展多序列航空配准。 | [#457](https://github.com/zitalk/PaperClaw/issues/457) |
-| [20260915] AsyncCouple-Flow: Asynchronous Cross-Modal Coupling and Flow Matching for Spatio-Temporal Forecasting | Wu Zhixiang, Liu Yining, Zhao Bo, Chen Szu-Yu, Duan Huiran, Lin Chu, Yang Chuanguang | Institute of Computing Technology, Chinese Academy of Sciences, China；Emory University, USA；University of California, Berkeley, USA；Yale University, USA；Stevens Institute of Technology, USA；City University of New York, USA | 异步跨模态耦合与流匹配用于时空预测。 | [#458](https://github.com/zitalk/PaperClaw/issues/458) |
-| [20260915] Multimodal Emergency Vehicle Classification via Audio-Visual Transformers and Knowledge Distillation | John Vijay, Dabaja Amar | Department of Mathematics and Computer Science；Lawrence Technological University, Southfield, MI, USA | 音视频Transformer与知识蒸馏实现紧急车辆分类。 | [#459](https://github.com/zitalk/PaperClaw/issues/459) |
-| [20260915] VPRef: A Cross-Domain Benchmark for Referring Remote Sensing Image Segmentation | Liu Quanwei, Huang Tao, Yang Jiaqi, Xiang Wei | College of Science and Engineering, James Cook University, Cairns,, Australia (；College of Science and Engineering, James Cook University, Cairns QLD, Australia and the Center for AI and Data Science Innovation, James Cook University, Cairns QLD, Australia (；Department of Forest and Wildlife Ecology, University of Wisconsin-Madison, Madison, WI USA (；School of Computing, Engineering and Mathematical Sciences, La Trobe University, Melbourne, VIC, Australia ( | 面向指代遥感图像分割的跨域基准VPRef。 | [#460](https://github.com/zitalk/PaperClaw/issues/460) |
-| [20260915] Modality-Autoregressive World-Action Models | Hung Adam, Bardienus P. Duisterhof, Ramanan Deva, Ichnowski Jeffrey | Carnegie Mellon University | 模态自回归世界-动作模型用于多模态预测。 | [#461](https://github.com/zitalk/PaperClaw/issues/461) |
-| [20260915] ORCA: Occlusion-Aware Refinement and Completion for Novel View Synthesis | Jakubowska Weronika, Zięba Maciej, Spurek Przemysław | Wrocław University of Science and Technology；Jagiellonian University；IDEAS Research Institute | 遮挡感知细化与补全提升新视角合成质量。 | [#462](https://github.com/zitalk/PaperClaw/issues/462) |
-| [20260915] SSC-Priors: Exploring Semantic and Visibility Priors to Boost Lidar Semantic Scene Completion | Martyniuk Tetiana, Seele Jonathan, Boulch Alexandre, Puy Gilles, Marlet Renaud, Raoul de Charette | LIGM, CNRS, Univ Gustave Eiffel, ENPC, IP Paris, France | 语义与可见性先验增强LiDAR语义场景补全。 | [#463](https://github.com/zitalk/PaperClaw/issues/463) |
-| [20260915] PanoGS-SLAM: Panoramic 3D Gaussian Splatting SLAM | Mao Yongqi, Shi Hao, Zhang Yufan, Yi Zhonghua, Guo Xiangfei, Wang Kaiwei | Zhejiang University；National University of Defense Technology | 全景三维高斯泼溅SLAM实现稠密建图与位姿优化。 | [#464](https://github.com/zitalk/PaperClaw/issues/464) |
-| [20260915] Online Geometric Change Detection via Scene Decomposition | Thorne David, Samuel Jia Cong Chua, Joshi Nakul, Wong Aiden, Christa S. Robison, Osteen Philip, Brett T. Lopez | datasets collected at the Army Research Laboratory facility in；This research was sponsored by the DEVCOM Army Research Laboratory changes between submaps despite possibly mismatched fields；University of California, Los Angeles, Los Angeles, CA；DEVCOM Army Research Laboratory (ARL), Adelphi, MD, USA | 基于场景分解的在线几何变化检测方法。 | [#465](https://github.com/zitalk/PaperClaw/issues/465) |
-| [20260915] Semantic-Spatial Agreement Verification for Mitigating Object Hallucination in Multimodal Large Language Models | Ren Ziheng, Gao Qian, Fan Jun, Ding Guohui, Yang Zhenyu, Xiao Yuteng | Shenyang Aerospace University, Shenyang, China | 语义-空间一致性验证缓解多模态大模型物体幻觉。 | [#466](https://github.com/zitalk/PaperClaw/issues/466) |
-| [20260915] Exploring 2D backbone effects for indoor semantic occupancy prediction | Fang Shizhang, Ye Wanling, Zheng Qi | College of Electronics and Information Engineering, Shenzhen University, Shenzhen, China | 探索二维骨干网络对室内语义占用预测的影响。 | [#467](https://github.com/zitalk/PaperClaw/issues/467) |
-| [20260915] Probe-VAD: Ordinal Likelihood Probing for Training-Free Video Anomaly Detection | Gu Jiawei, Zhao Qilin, Guo Tengkuo, Zhong Zhiming, Zhang Shuangqing, Lyu Fan, Zhao Fang, Xie Guo-Sen, Shan Caifeng | School of Intelligence Science and Technology, Nanjing University, Suzhou, China (；the Faculty of Life Science and Medicine, School of Medicine and Health, Harbin Institute of Technology, Harbin, China (；School of Instrumentation Science and Engineering, Harbin Institute of Technology, Harbin, China (；the Computer Vision Center (CVC), Universitat Autònomade Barcelona (UAB), Barcelona, Spain. (；School of Computer Science and Engineering, Nanjing University of Science and Technology, Nanjing, China ( | 序数似然探测实现训练免调优视频异常检测。 | [#468](https://github.com/zitalk/PaperClaw/issues/468) |
-| [20260915] TIO-Former: Ultra-Lightweight 6-Directional ToF-Inertial Odometry for Nano-UAVs via a Streaming Causal Transformer | Liu Yang, He Yifan, Zhao Wenhao, Mo Xiangyu, Xu Yang, Wei Hao, Ma Mingze, Li Huan, Wu Yifan, Gao Fei, Dai Zipeng, Zhou Xin | Zhejiang University, Hangzhou, China | 超轻量六向ToF-惯性里程计用于纳米无人机。 | [#469](https://github.com/zitalk/PaperClaw/issues/469) |
-| [20260915] EventEgoHands++: Event-based Egocentric 3D Hand Mesh Reconstruction with Real Dataset | Hara Ryosei, Ikeda Wataru, Hatano Masashi, Isogawa Mariko | Graduate School of Science and Technology, Keio University, Yokohama, Kanagawa 223-8522, Japan | 事件相机第一视角三维手部网格重建与真实数据集。 | [#470](https://github.com/zitalk/PaperClaw/issues/470) |
-| [20260915] Event-based Selective Attention for Multi-resolution Fast Region of Interest (ROI) Detection | Peres Luca, D’Angelo Giulia, Bartolozzi Chiara, Rhodes Oliver | International Centre for Neuromorphic Systems (ICNS)；University of Manchester；Department of Cybernetics；Faculty of Electrical Engineering；Czech Technical University in Prague | 事件相机选择性注意力实现多分辨率快速ROI检测。 | [#471](https://github.com/zitalk/PaperClaw/issues/471) |
-| [20260915] Hub-Spectral Activation of Latent Multimodal Knowledge | Guo Ying, Chen Haidong, Xu Linrui, Liu Xiaohao, Shi Chuancheng, Xiao Canran, Zhang Dan, Shen Fei, Shen Li, Chua Tat-Seng | the Beijing Key Laboratory of Key Technologies for AI+ Domain Applications, North China University of Technology, Beijing, China (；School of Geosciences and Info-Physics, Central South University, Changsha, China (；School of Computer Science, The University of Sydney, Australia (；School of Cyber Science and Technology, Shenzhen Campus of Sun Yat-sen University, China (；the NExT++ Research Centre, National University of Singapore, Singapore ( | 枢纽谱激活潜在多模态知识以增强跨模态对齐。 | [#472](https://github.com/zitalk/PaperClaw/issues/472) |
-| [20260915] sensVLA: Spatially-Grounded Vision-Language-Action Model for Autonomous Wheel Loader | Gopi Krishna Erabati, Johannsen Bjarne, Stewart Angus, Vardeep Singh Sandhu | sensmore GmbH | 空间接地的视觉-语言-动作模型用于自主轮式装载机。 | [#473](https://github.com/zitalk/PaperClaw/issues/473) |
-| [20260915] Symmetry-Aware Likelihood-Orbit Aggregation for Selective Left-Right Claim Verification | Xiong Zhouzhi, Zhang Chuxi, He Weizhen, Chen Yi, Li Qi, Qi Donglian | Polytechnic Institute, Zhejiang University, Hangzhou, China；College of Electrical Engineering, Zhejiang University, Hangzhou, China；Ocean College, Zhejiang University, China；College of Artificial Intelligence, Zhejiang University, Hangzhou, China | 对称感知似然轨道聚合用于左右声明验证。 | [#474](https://github.com/zitalk/PaperClaw/issues/474) |
-| [20260915] Multi-modal Knowledge Preserving Adapter for Embedding Backward Compatibility | Byun Jaeseok, Kwon Gukyeong, Hsu Han-Kai, Meher Gitika Karumuri, Zhang Zhikang, Yang Hao, Modolo Davide | Seoul National University, South Korea | 多模态知识保持适配器实现嵌入向后兼容。 | [#475](https://github.com/zitalk/PaperClaw/issues/475) |
-| [20260915] HLC-GS: Risk-Map-Guided Height-Layer Consistency Gaussian Splatting for DSM Reconstruction from Optical Satellite Imagery | Yang Jie, Pi Yingdong, Luo Qiyan, Wang Xiaoyu, Wen Lekang, Wang Mi | State Key Laboratory of Information Engineering in Surveying, Mapping and Remote Sensing, Wuhan University；Hubei Luojia Laboratory；School of Computer Science, Wuhan University | 风险图引导高度层一致性高斯泼溅重建卫星DSM。 | [#476](https://github.com/zitalk/PaperClaw/issues/476) |
-| [20260915] MEgoVista: Multi-view Ego-aware Motion Estimation for Metric 4D Hands and Head in the Wild | Xiao Jiangong, Zhang Zhihao, Dong Yifei, Ma Chao, Jin Zhouyi, Hou Zhiwen, Liu Li, Chen Weihuang, Sun Hongbin, Yao Maoqing | Northwestern Polytechnical University；Xi'an Jiaotong University | 多视角自我感知运动估计用于野外度量4D手与头。 | [#477](https://github.com/zitalk/PaperClaw/issues/477) |
-| [20260915] Bridging the Perceptual Gap: Residual-Enhanced Downscaling and Manifold-Aware Perception Alignment Adaptation for NR-IQA | Li Yu, Shen Zhengran, Mi Yachun, Zhou Puchao, Liu Shaohui | Harbin Institute of Technology, Harbin, China | 残差增强下采样与流形感知对齐用于无参考图像质量评估。 | [#478](https://github.com/zitalk/PaperClaw/issues/478) |
-| [20260915] What Do Hallucinations Reveal About Multimodal Reasoning? Diagnosing Visual Grounding Failures via Contrastive Decoding Probes | Zhao Zhipeng, Wang Wenxu, Liu Peishun, Tang Ruichun | Ocean University of China；lucinations co-occur in temporal clusters, and Current hallucination research is dominated by；what should the missions of NLP research be? One | 对比解码探针诊断多模态推理中的视觉接地失败。 | [#479](https://github.com/zitalk/PaperClaw/issues/479) |
-| [20260915] FLAT: Resampling Image and Text into 1D Flexible-Length Aligned Transmodal Tokens for Retrieval and Generation | Sun Guangyu, Shlok Kumar Mishra, Bao Wentao, Robert Zhenheng Yang, Wang Xiao, Wang Xiyuan, Ma Yujunrong, Yuan Chen, Max Xiangjun Fan, Xiao Jun, Cheng Jianpeng | Meta AI | 重采样图像与文本为一维灵活长度对齐跨模态令牌。 | [#480](https://github.com/zitalk/PaperClaw/issues/480) |
-| [20260915] MDN-Control: Mask-Depth-Noise Guided Region Control for Multi-Subject Video Editing | Yu Jiayi, Ye Xi, Wang Lina, Xia Yunkun | School of Cyber Science and Engineering, Wuhan University | 掩码-深度-噪声引导区域控制用于多主体视频编辑。 | [#481](https://github.com/zitalk/PaperClaw/issues/481) |
-
-## 🔎 观察
-
-- 三维高斯泼溅从静态重建走向SLAM、全景与卫星DSM，几何一致性成核心。
-- 训练免调优与轻量化推理密集出现，反映多模态模型向边缘部署加速。
 
 ---
 
