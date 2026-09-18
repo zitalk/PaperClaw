@@ -3,15 +3,12 @@
 最近三天日报（最新在前）：
 
 # [20260917](./202609/20260917.md)
-<!-- paperclaw-report: zitalk/PaperClaw -->
-<!-- paperclaw-run: {"status": "degraded", "checked_at": "2026-09-18T02:20:34+08:00", "unavailable_sources": ["arXiv"], "unconfigured_sources": [], "filter_fallback": false, "failed_papers": 1} -->
-
 ## 📌 今日概况
 
-检索完成，但存在异常 · 最近检查：2026-09-18 02:20:34（北京时间）
-本轮检索候选论文 63 篇；刊会准入通过 2 篇（排除 61 篇）；本轮 LLM 新筛中 2 篇，复用已收录匹配 0 篇；本轮新增入报 1 篇；目标日累计收录 1 篇。
+检索完成，部分来源覆盖受限 · 最近检查：2026-09-18 17:46:37（北京时间）
+本轮检索候选论文 77 篇；刊会准入通过 2 篇（排除 75 篇）；本轮 LLM 新筛中 0 篇，复用已收录匹配 1 篇；本轮新增入报 0 篇；目标日累计收录 1 篇。
 
-部分来源不可用：arXiv；本次结果不代表完整覆盖。 有 1 篇匹配论文处理失败，请查看日报失败明细。 今日论文聚焦无源域自适应与视觉语言先验的结合，探索利用CLIP等模型的知识迁移能力，在无源数据条件下提升目标域性能。研究涉及提示学习与知识蒸馏，旨在缓解域偏移问题，为工业视觉部署提供新思路。
+部分来源不可用：arXiv、Semantic Scholar、IEEE Xplore；本次结果不代表完整覆盖。 本轮没有新增入报论文，保留此前收录的论文与概括。
 
 ## ✨ 今日亮点
 
@@ -25,15 +22,6 @@
 |---|---|---|---|---|
 | [20260917] Source-Free Domain Adaptation with Vision-Language Prior | Tang Song, Bai Yunxiang, Su Wenxin, Ye Mao, Zhang Jianwei, Zhu Xiatian | 暂无 | 该论文提出利用视觉语言先验进行无源域自适应，通过提示学习和知识蒸馏提升目标域性能。 | [#483](https://github.com/zitalk/PaperClaw/issues/483) |
 
-## ⚠️ 未纳入日报的匹配论文
-
-以下论文通过关键词/LLM 筛选，但在处理过程中失败未纳入日报。可通过来源链接查看原文。
-
-| 标题 | 来源 | 失败原因 |
-|------|-------|----------|
-| LAMP: Long-Tailed Multi-modal Prompt Tuning for Vision-Language Models | [doi:10.1007/s11263-026-03013-9](https://doi.org/10.1007/s11263-026-03013-9) | 质检未通过: 摘要为空或无效 |
-
-
 ## 🔎 观察
 
 - 视觉语言模型正成为无源域自适应的重要先验来源，有望减少对源数据的依赖。
@@ -42,6 +30,9 @@
 ---
 
 Powered by OpenClaw🦞
+
+<!-- paperclaw-report: zitalk/PaperClaw -->
+<!-- paperclaw-run: {"status": "partial", "checked_at": "2026-09-18T17:46:37+08:00", "unavailable_sources": ["arXiv", "Semantic Scholar", "IEEE Xplore"], "unconfigured_sources": [], "filter_fallback": false, "failed_papers": 0} -->
 
 ---
 
