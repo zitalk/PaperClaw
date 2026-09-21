@@ -63,6 +63,14 @@ def _cached_arxiv_candidates(target_date: str | None) -> tuple[list[dict[str, An
             return None
         status = str(payload.get("status") or "")
         if status == "unavailable":
+            # A failed weekly prefetch must not suppress arXiv for the entire
+            # job. Permit one date-level probe every ten minutes; other dates
+            # keep using the failure marker to avoid a burst of requests.
+            if time.time() >= float(payload.get("retry_after", 0)):
+                payload["retry_after"] = time.time() + 600
+                Path(cache_value).write_text(json.dumps(payload), encoding="utf-8")
+                print("  [arXiv] 冷却结束，重新尝试当前日期检索")
+                return None
             return [], "unavailable", str(payload.get("reason") or "schedule_cache_unavailable")
         if status != "ok":
             return None

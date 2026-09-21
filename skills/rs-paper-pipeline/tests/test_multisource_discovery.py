@@ -1,6 +1,8 @@
 from pathlib import Path
 from dataclasses import replace
 import sys
+import json
+import tempfile
 import unittest
 from unittest.mock import patch
 from urllib.error import HTTPError
@@ -17,6 +19,35 @@ from services import issue_index
 
 
 class MultiSourceDiscoveryTest(unittest.TestCase):
+    def test_406_recovers_after_backoff(self):
+        from unittest.mock import MagicMock
+        response = MagicMock()
+        response.__enter__.return_value.read.return_value = b"<feed/>"
+        error = HTTPError("https://export.arxiv.org/api/query", 406, "rejected", {}, None)
+        with (
+            patch.object(arxiv_client.urllib.request, "urlopen", side_effect=[error, response]) as request,
+            patch.object(arxiv_client.time, "sleep") as sleep,
+        ):
+            result = arxiv_client.fetch_url_with_retry(
+                "https://export.arxiv.org/api/query", retries=3,
+                rate_limit_backoff=[30, 60], max_rate_limit_wait=120,
+            )
+        self.assertEqual(result, "<feed/>")
+        self.assertEqual(request.call_count, 2)
+        sleep.assert_called_once_with(30)
+
+    def test_failed_weekly_cache_allows_probe_after_cooldown(self):
+        with tempfile.TemporaryDirectory() as folder:
+            path = Path(folder) / "cache.json"
+            path.write_text(json.dumps({"status": "unavailable", "retry_after": 1000}), encoding="utf-8")
+            with (
+                patch.dict("os.environ", {multisource_client.ARXIV_SCHEDULE_CACHE_ENV: str(path)}),
+                patch.object(multisource_client.time, "time", return_value=1001),
+            ):
+                self.assertIsNone(multisource_client._cached_arxiv_candidates("20260918"))
+                self.assertEqual(multisource_client._cached_arxiv_candidates("20260919")[1], "unavailable")
+            self.assertEqual(json.loads(path.read_text())["retry_after"], 1601)
+
     def test_arxiv_discovery_keeps_authors_and_affiliations(self):
         xml = """<?xml version="1.0" encoding="UTF-8"?>
         <feed xmlns="http://www.w3.org/2005/Atom" xmlns:arxiv="http://arxiv.org/schemas/atom">

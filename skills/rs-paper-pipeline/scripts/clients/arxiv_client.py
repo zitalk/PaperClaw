@@ -70,12 +70,15 @@ def fetch_url_with_retry(
     last_err = None
     for i in range(retries):
         try:
-            req = urllib.request.Request(url, headers={"User-Agent": CONFIG.arxiv_user_agent})
+            req = urllib.request.Request(url, headers={
+                "User-Agent": CONFIG.arxiv_user_agent,
+                "Accept": "application/atom+xml, application/xml;q=0.9, */*;q=0.1",
+            })
             with urllib.request.urlopen(req, timeout=timeout) as response:
                 return response.read().decode("utf-8", errors="ignore")
         except HTTPError as exc:
             last_err = exc
-            if exc.code in (429, 503):
+            if exc.code in (406, 429, 503):
                 wait_s = max(
                     _retry_after_seconds(exc.headers) or 0,
                     rate_limit_backoff[min(i, len(rate_limit_backoff) - 1)],
@@ -137,10 +140,10 @@ def fetch_recent_candidates(
             # providers can still publish a clearly marked degraded report.
             xml_text = fetch_url_with_retry(
                 url,
-                retries=2,
+                retries=3,
                 timeout=90,
-                rate_limit_backoff=[15, 30],
-                max_rate_limit_wait=30,
+                rate_limit_backoff=[30, 60, 120],
+                max_rate_limit_wait=120,
             )
 
             root = ET.fromstring(xml_text)

@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import json
 import os
+import time
 import urllib.error
 from pathlib import Path
 
@@ -40,7 +41,8 @@ def _prepare_weekend_arxiv_cache(
         print(f"ARXIV_WEEKEND_CACHE_READY candidates={len(items)} dates={len(target_dates)}")
     except Exception as exc:
         reason = _safe_source_error(exc)
-        payload = {"status": "unavailable", "items": [], "reason": reason}
+        payload = {"status": "unavailable", "items": [], "reason": reason,
+                   "retry_after": time.time() + 600}
         print(f"::warning title=arXiv 周末批量检索不可用::{reason}")
     cache_path.write_text(json.dumps(payload, ensure_ascii=False), encoding="utf-8")
     os.environ[ARXIV_SCHEDULE_CACHE_ENV] = str(cache_path.resolve())
