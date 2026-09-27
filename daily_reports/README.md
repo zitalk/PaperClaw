@@ -29,15 +29,12 @@ Powered by OpenClaw🦞
 ---
 
 # [20260924](./202609/20260924.md)
-<!-- paperclaw-report: zitalk/PaperClaw -->
-<!-- paperclaw-run: {"status": "partial", "checked_at": "2026-09-25T18:15:34+08:00", "unavailable_sources": ["arXiv"], "unconfigured_sources": [], "filter_fallback": false, "failed_papers": 0} -->
-
 ## 📌 今日概况
 
-检索完成，部分来源覆盖受限 · 最近检查：2026-09-25 18:15:34（北京时间）
-本轮检索候选论文 99 篇；刊会准入通过 4 篇（排除 95 篇）；本轮 LLM 新筛中 2 篇，复用已收录匹配 0 篇；本轮新增入报 2 篇；目标日累计收录 2 篇。
+检索完成，部分来源覆盖受限 · 最近检查：2026-09-27 19:07:24（北京时间）
+本轮检索候选论文 106 篇；刊会准入通过 0 篇（排除 106 篇）；本轮 LLM 新筛中 0 篇，复用已收录匹配 0 篇；本轮新增入报 0 篇；目标日累计收录 2 篇。
 
-部分来源不可用：arXiv；本次结果不代表完整覆盖。 今日论文聚焦多模态感知与空间推理的精度提升。一篇针对航拍可见光-红外目标检测，提出频率导向的跨模态交互与光谱校准方法，以解决模态差异与频域信息利用不足问题。另一篇关注视觉语言模型的度量空间推理，通过工具增强框架引入度量深度估计，弥补模型在定量空间理解上的短板。两项工作均强调跨模态或跨工具的信息融合，反映出工业视觉正从定性识别向定量测量与鲁棒融合演进。
+部分来源不可用：arXiv、Semantic Scholar；本次结果不代表完整覆盖。 本轮没有新增入报论文，保留此前收录的论文与概括。
 
 ## ✨ 今日亮点
 
@@ -60,6 +57,9 @@ Powered by OpenClaw🦞
 ---
 
 Powered by OpenClaw🦞
+
+<!-- paperclaw-report: zitalk/PaperClaw -->
+<!-- paperclaw-run: {"status": "partial", "checked_at": "2026-09-27T19:07:24+08:00", "unavailable_sources": ["arXiv", "Semantic Scholar"], "unconfigured_sources": [], "filter_fallback": false, "failed_papers": 0} -->
 
 ---
 
