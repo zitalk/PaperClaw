@@ -2,6 +2,42 @@
 
 最近三天日报（最新在前）：
 
+# [20261001](./202610/20261001.md)
+<!-- paperclaw-report: zitalk/PaperClaw -->
+<!-- paperclaw-run: {"status": "degraded", "checked_at": "2026-10-02T05:31:52+08:00", "unavailable_sources": ["Semantic Scholar"], "unconfigured_sources": [], "filter_fallback": true, "failed_papers": 2} -->
+
+## 📌 今日概况
+
+检索完成，但存在异常 · 最近检查：2026-10-02 05:31:52（北京时间）
+
+本轮检索候选论文 99 篇；刊会准入通过 2 篇（排除 97 篇）；本轮 LLM 新筛中 2 篇，复用已收录匹配 0 篇；本轮新增入报 0 篇；目标日累计收录 0 篇。当日筛中论文均未通过处理或质检，未纳入日报。 部分来源不可用：Semantic Scholar；本次结果不代表完整覆盖。 部分 LLM 输出解析失败，已降级为关键词筛选。 有 2 篇匹配论文处理失败，请查看日报失败明细。
+
+
+## ⚠️ 未纳入日报的匹配论文
+
+以下论文通过关键词/LLM 筛选，但在处理过程中失败未纳入日报。可通过来源链接查看原文。
+
+| 标题 | 来源 | 失败原因 |
+|------|-------|----------|
+| A novel geometry-aware spatio-temporal network for multi-view video feature learning | [doi:10.1016/j.patcog.2026.113396](https://api.elsevier.com/content/abstract/scopus_id/105032364170) | 质检未通过: 摘要为空或无效 |
+| DLCL: Deep Learning-Enabled Cooperative Localization for UAV-UGV Team with Adaptive Perception Recovery | [doi:10.1007/s11263-026-03028-2](https://doi.org/10.1007/s11263-026-03028-2) | 质检未通过: 摘要为空或无效 |
+
+## ✨ 今日亮点
+
+- 本次有异常，请查看来源状态及失败明细；不能将部分结果当作完整检索结果。
+
+## 🔎 检索说明
+
+- 日报日期是论文检索目标日期；最近检查时间是任务实际执行时间。
+- 零结果不代表所有来源当天没有新论文，只表示本次未纳入符合条件的论文。
+- 同一日期后续补扫会更新这份日报，不重复创建日报 Issue。
+
+---
+
+Powered by OpenClaw🦞
+
+---
+
 # [20260930](./202609/20260930.md)
 <!-- paperclaw-report: zitalk/PaperClaw -->
 <!-- paperclaw-run: {"status": "partial", "checked_at": "2026-10-01T20:04:43+08:00", "unavailable_sources": ["Semantic Scholar"], "unconfigured_sources": [], "filter_fallback": false, "failed_papers": 0} -->
@@ -134,32 +170,6 @@ Powered by OpenClaw🦞
 
 - 多模态模型正从静态感知转向动态证据构建，想象与重定位成为提升推理可靠性的新路径。
 - 效率优化不再仅依赖token重要性，空间结构与几何约束的保留成为VLA与VLM推理的关键考量。
-
----
-
-Powered by OpenClaw🦞
-
----
-
-# [20260928](./202609/20260928.md)
-<!-- paperclaw-report: zitalk/PaperClaw -->
-<!-- paperclaw-run: {"status": "partial", "checked_at": "2026-09-29T04:37:41+08:00", "unavailable_sources": ["IEEE Xplore"], "unconfigured_sources": [], "filter_fallback": false, "failed_papers": 0} -->
-
-## 📌 今日概况
-
-检索完成，部分来源覆盖受限 · 最近检查：2026-09-29 04:37:41（北京时间）
-
-本轮检索候选论文 100 篇；刊会准入通过 0 篇（排除 100 篇）；本轮 LLM 新筛中 0 篇，复用已收录匹配 0 篇；本轮新增入报 0 篇；目标日累计收录 0 篇。当日未检索到符合条件并纳入日报的论文。 部分来源不可用：IEEE Xplore；本次结果不代表完整覆盖。
-
-## ✨ 今日亮点
-
-- 留一点时间给思考，好的问题值得耐心打磨。
-
-## 🔎 检索说明
-
-- 日报日期是论文检索目标日期；最近检查时间是任务实际执行时间。
-- 零结果不代表所有来源当天没有新论文，只表示本次未纳入符合条件的论文。
-- 同一日期后续补扫会更新这份日报，不重复创建日报 Issue。
 
 ---
 
