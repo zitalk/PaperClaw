@@ -4,17 +4,26 @@
 
 # [20261002](./202610/20261002.md)
 <!-- paperclaw-report: zitalk/PaperClaw -->
-<!-- paperclaw-run: {"status": "partial", "checked_at": "2026-10-03T03:24:11+08:00", "unavailable_sources": ["Semantic Scholar"], "unconfigured_sources": [], "filter_fallback": false, "failed_papers": 0} -->
+<!-- paperclaw-run: {"status": "degraded", "checked_at": "2026-10-04T20:57:25+08:00", "unavailable_sources": [], "unconfigured_sources": [], "filter_fallback": false, "failed_papers": 1} -->
 
 ## 📌 今日概况
 
-检索完成，部分来源覆盖受限 · 最近检查：2026-10-03 03:24:11（北京时间）
+检索完成，但存在异常 · 最近检查：2026-10-04 20:57:25（北京时间）
 
-本轮检索候选论文 82 篇；刊会准入通过 0 篇（排除 82 篇）；本轮 LLM 新筛中 0 篇，复用已收录匹配 0 篇；本轮新增入报 0 篇；目标日累计收录 0 篇。当日未检索到符合条件并纳入日报的论文。 部分来源不可用：Semantic Scholar；本次结果不代表完整覆盖。
+本轮检索候选论文 111 篇；刊会准入通过 2 篇（排除 109 篇）；本轮 LLM 新筛中 1 篇，复用已收录匹配 0 篇；本轮新增入报 0 篇；目标日累计收录 0 篇。当日筛中论文均未通过处理或质检，未纳入日报。 有 1 篇匹配论文处理失败，请查看日报失败明细。
+
+
+## ⚠️ 未纳入日报的匹配论文
+
+以下论文通过关键词/LLM 筛选，但在处理过程中失败未纳入日报。可通过来源链接查看原文。
+
+| 标题 | 来源 | 失败原因 |
+|------|-------|----------|
+| Motion Controlled Text-to-4D Generation with Multi-View Video Diffusion Model. | [doi:10.1109/tpami.2026.3739585](https://www.semanticscholar.org/paper/58924cbb79b7877e6a92af10d095d6c39ec72d9f) | 质检未通过: 摘要为空或无效 |
 
 ## ✨ 今日亮点
 
-- 留一点时间给思考，好的问题值得耐心打磨。
+- 本次有异常，请查看来源状态及失败明细；不能将部分结果当作完整检索结果。
 
 ## 🔎 检索说明
 
